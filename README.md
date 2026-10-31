@@ -1,15 +1,14 @@
 # SC 源码笔记
 
 > 🌐 **在线阅读（GitHub Pages）**：https://3366434156.github.io/survivalcraft-notes/  
-> 📦 **引擎源码仓库（公开，大陆可直连克隆）**：https://gitee.com/SC-SPM/SurvivalcraftApi —— 页内 `E:\SurvivalcraftAPIProject\` 即其本地克隆路径。  
+> 📦 **引擎源码仓库（公开，大陆可直连克隆）**：https://gitee.com/SC-SPM/SurvivalcraftApi  
 > Survivalcraft 引擎行号级学习库：23 个引擎域 + 20 张逐文件档案，全部实读校准。  
 > 更新：改 md → `python tools/build_wiki.py` 重生成 docs/ → git push 自动上线。
 
 > 🤖 **AI agent 入口**：[AGENTS.md](AGENTS.md) —— 一页纸速览：引擎心智模型 + mod 开发快速通道 + 查库协议。
 
 > 独立知识库：只含 Survivalcraft 引擎/游戏层的学习笔记，**不含任何 mod 项目内容**。
-> **页面自足可读**：机制讲解、表格、代码摘录都写在页内，无需任何本地环境即可完整阅读。
-> 页面中的 `E:\SurvivalcraftAPIProject\...:行号` 是源码引用坐标（2026-10-31 实读快照）：手头有 SC 源码树的人可用它对照定位，没有源码也不影响阅读——把它们当"出处标注"即可。
+> **页面自足可读**：机制讲解、表格、代码摘录都写在页内，无需克隆源码也能完整阅读；页内行号是源码引用坐标（出处标注，对应上方仓库）。
 
 ## 仓库结构
 
