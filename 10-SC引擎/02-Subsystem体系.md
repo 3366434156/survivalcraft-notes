@@ -38,7 +38,7 @@ Subsystem 是"每个世界一份的单例服务"：注册进 Project 模板、�
 | Project 模板 XML | E:\SurvivalcraftAPIProject\Survivalcraft\Content\Assets\Database.xml | `:4343` `<ProjectTemplate Name="Project">`；子系统根模板 `:4454-4457`(Class/IsOptional/Dependencies) |
 | `ModEntity.LoadXdb` | E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\ModEntity.cs | `:321-336` mod 的 .xdb 合并进主库 |
 
-全目录 111 个文件（顶层 40 + BlockBehavior\ 71，20185 行）已全读：四个核心机制见下文保留章节，其余全部子系统的逐文件职责/关键方法行号见 [02a-子系统明细.md](02a-子系统明细.md) 与 `E:\数据\生存战争系列\SC与完美世界完全学习笔记\90-原始报告\A2-Subsystem报告.md`。
+全目录 111 个文件（顶层 40 + BlockBehavior\ 71，20185 行）已全读：四个核心机制见下文保留章节，其余全部子系统的逐文件职责/关键方法行号见 [02a-子系统明细.md](02a-子系统明细.md) 与 `E:\数据\生存战争系列\库外私有笔记\90-原始报告\A2-Subsystem报告.md`。
 
 ## 核心机制
 

@@ -4,7 +4,6 @@
 > 更新流程：改 md → `python wiki/build_wiki.py` 重生成 docs/ → git push 即自动上线。
 
 > 独立知识库：只含 Survivalcraft 引擎/游戏层（源码 E:\SurvivalcraftAPIProject）的学习笔记，**不含任何 mod 项目内容**。
-> 姊妹库：完美世界2.4 项目笔记在 `E:\数据\生存战争系列\SC与完美世界完全学习笔记\`（本项目侧查证走那边；两库互相以绝对路径引用）。
 > 页面行号为 2026-10-31 实读所得；行号跳转依赖本机存在 E:\SurvivalcraftAPIProject 源码树。
 
 ## 快速开始（三跳查找协议）
@@ -46,4 +45,4 @@
 ## 对 mod 开发者的提示
 
 - 本库页首状态行的"全读(N/M)"= 该目录源码文件实读覆盖数。
-- mod 挂点（UpdateComponentBody、OnLightningStrike、GenerateChunkLightSources 等）在各页"原版范例/快查路由"中有引擎侧位置；实际用法案例在姊妹库。
+- mod 挂点（UpdateComponentBody、OnLightningStrike、GenerateChunkLightSources 等）在各页"原版范例/快查路由"中有引擎侧位置；实际用法案例不在本库收录范围。

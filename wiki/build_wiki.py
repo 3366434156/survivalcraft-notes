@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 SC完全学习笔记 wiki 生成器（零依赖，纯标准库）
-- 只渲染 SC 原版库（SC完全学习笔记\），不含任何完美世界内容。
+- 只渲染 SC 原版库（SC完全学习笔记\），不含任何私有mod项目内容。
 - 输出自包含静态站 wiki\site\（无CDN，离线可开，可随仓库上传/GitHub Pages）。
 - 重新生成：python "E:\数据\生存战争系列\SC完全学习笔记\wiki\build_wiki.py"
 """
@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 SC_ROOT = Path(r"E:\数据\生存战争系列\SC完全学习笔记")
-PW_ROOT = Path(r"E:\数据\生存战争系列\SC与完美世界完全学习笔记")
+PW_ROOT = Path(r"E:\数据\生存战争系列\库外私有笔记")
 OUT = SC_ROOT / "docs"  # GitHub Pages 从 /docs 目录部署
 
 # ---------- 收集源文件（10-SC引擎 若尚未迁入 SC 库，则临时回退到主库，标记预览） ----------
@@ -90,7 +90,7 @@ def inline(text, src_file, reg):
             return '<a href="%s">%s</a>' % (val, label)
         if status == "keep":
             return '<a href="%s">%s</a>' % (html.escape(href, quote=True), label)
-        return '<span class="deadlink" title="在姊妹库：SC与完美世界完全学习笔记">%s ⟶姊妹库</span>' % label
+        return '<span class="deadlink" title="在姊妹库：库外私有笔记">%s ⟶姊妹库</span>' % label
     text = LINK_RE.sub(link, text)
     text = BOLD_RE.sub(r"<b>\1</b>", text)
     text = ITAL_RE.sub(r"<i>\1</i>", text)
