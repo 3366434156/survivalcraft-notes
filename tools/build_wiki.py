@@ -144,6 +144,7 @@ def md_to_html(md_text, src_file, reg):
     para = []
     used_ids = set()
     toc = []  # (level, title, id)
+    files = []  # (row-id, 文件名) —— 逐文件表登记
     def flush():
         if para:
             out.append("<p>%s</p>" % inline(" ".join(para), src_file, reg))
@@ -187,12 +188,28 @@ def md_to_html(md_text, src_file, reg):
                 return [c.strip() for c in re.split(r"(?<!\\)\|", r)]
             head = cells(rows[0])
             body = [cells(r) for r in rows[2:]]
+            is_filetable = bool(head) and ("文件" in head[0] or "符号" in head[0])
+            fstart = len(files)
             th = "".join("<th>%s</th>" % inline(c, src_file, reg) for c in head)
             trs = []
             for r in body:
                 r = (r + [""] * len(head))[:len(head)]
-                trs.append("<tr>%s</tr>" % "".join("<td>%s</td>" % inline(c, src_file, reg) for c in r))
-            out.append("<div class=tablewrap><table><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>" % (th, "".join(trs)))
+                rid = ""
+                if is_filetable and r[0]:
+                    raw = r[0].replace("`", "")
+                    rid = "f-%d-%s" % (len(files), slug(raw) or "row")
+                    while rid in used_ids:
+                        rid += "x"
+                    used_ids.add(rid)
+                    files.append((rid, raw))
+                trs.append("<tr%s>%s</tr>" % ((' id="%s"' % rid) if rid else "", "".join("<td>%s</td>" % inline(c, src_file, reg) for c in r)))
+            tbl = "<div class=tablewrap><table><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>" % (th, "".join(trs))
+            if is_filetable:
+                cs = [(raw, rid) for rid, raw in files[fstart:] if ".cs" in raw]
+                if len(cs) >= 3:
+                    chip_html = "".join('<a href="#%s">%s</a>' % (rid, html.escape(raw)) for raw, rid in cs)
+                    tbl = ('<details class=jumpbox><summary>⚡ 文件快速跳转 · %d</summary><div class=chips>%s</div></details>' % (len(cs), chip_html)) + tbl
+            out.append(tbl)
             continue
         if s.startswith("> "):
             flush()
@@ -229,7 +246,7 @@ def md_to_html(md_text, src_file, reg):
             continue
         para.append(s); i += 1
     flush()
-    return "\n".join(out), toc
+    return "\n".join(out), toc, files
 
 # ---------- 页面模板 ----------
 CSS = """
@@ -321,6 +338,35 @@ ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
 #foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
 .deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
+/* ── 交互层 ── */
+#pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0}
+#btt{position:fixed;right:22px;bottom:26px;z-index:18;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--acc);font-size:17px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:all .25s;box-shadow:var(--shadow-sm)}
+#btt.show{opacity:1;pointer-events:auto;transform:none}
+#btt:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);transform:translateY(-2px)}
+pre.code{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:var(--code-ink);border-radius:7px;padding:3px 9px;font-size:11.5px;cursor:pointer;opacity:0;transition:all .18s}
+pre.code:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.15);border-color:var(--acc)}
+.copybtn.ok{color:#4ade80;border-color:rgba(74,222,128,.6)}
+.tablewrap{transition:box-shadow .2s,border-color .2s}
+.tablewrap:hover{border-color:var(--line-strong);box-shadow:0 6px 24px -8px rgba(2,6,23,.18)}
+tr[id] td:first-child{font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:12.5px}
+tr[id] td{transition:background .12s}
+tr[id]:hover td{background:var(--acc-soft)}
+#nav a{transition:background .15s,color .15s,padding-left .15s}
+#nav a:hover{padding-left:15px}
+#tocnav a{transition:color .12s,background .12s,padding-left .15s}
+#tocnav a:hover{padding-left:15px}
+.jumpbox{margin:12px 0 2px}
+.jumpbox summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--acc-ink);background:var(--acc-soft);border:1px solid var(--line);border-radius:9px;padding:5px 12px;display:inline-block;list-style:none;transition:all .15s;user-select:none}
+.jumpbox summary::-webkit-details-marker{display:none}
+.jumpbox summary:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 2px}
+.chips a{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--ink-soft);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px 8px;text-decoration:none;transition:all .12s}
+.chips a:hover{color:var(--acc-ink);border-color:var(--acc);background:var(--acc-soft);transform:translateY(-1px)}
+.rv{opacity:0;transform:translateY(10px)}
+.rv.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
+@media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none}}
 /* 右侧目录 */
 #toc{flex:0 0 224px;position:sticky;top:calc(var(--header-h) + 26px);max-height:calc(100vh - var(--header-h) - 52px);overflow-y:auto;font-size:12.5px;line-height:1.5;padding:4px 0 20px}
 .toc-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ink-faint);margin:8px 10px 10px;text-transform:uppercase}
@@ -398,15 +444,34 @@ if(tocLinks.length){
   };
   document.addEventListener('scroll',onScroll,{passive:true});onScroll();
 }
+// 阅读进度条 + 回到顶部
+const pbar=$('#pbar'),btt=$('#btt');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600)}
+document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
+btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+// 代码块复制按钮
+document.querySelectorAll('pre.code').forEach(pre=>{
+  const b=document.createElement('button');b.className='copybtn';b.textContent='复制';
+  b.addEventListener('click',async()=>{const txt=pre.innerText;let ok=false;
+    try{await navigator.clipboard.writeText(txt);ok=true}catch(e){
+      try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(e2){}}
+    b.textContent=ok?'✓ 已复制':'失败';
+    if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
+  pre.appendChild(b);
+});
+// 区块滚动淡入
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
+document.querySelectorAll('article > .tablewrap, article > blockquote, article > pre.code').forEach(el=>{el.classList.add('rv');io.observe(el)});
 """
 
-def page_shell(title, body_html, nav_html, root_prefix, toc_html):
+def page_shell(title, body_html, nav_html, root_prefix, toc_html, aside_extra):
     js = JS.replace("%ROOT%", json.dumps(root_prefix))
     title_suffix = "" if title == SITE_NAME else " · %s" % SITE_NAME
     return ("<!doctype html><html lang=zh><head><meta charset=utf-8>"
             "<meta name=viewport content='width=device-width,initial-scale=1'>"
             "<script>(function(){try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}})()</script>"
             "<title>%s%s</title><style>%s</style></head><body>"
+            "<div id=pbar></div>"
             "<header id=top>"
             "<button id=burger aria-label=目录>☰</button>"
             "<a class=brand href=\"%sindex.html\"><b>%s</b><small>%s</small></a>"
@@ -415,12 +480,13 @@ def page_shell(title, body_html, nav_html, root_prefix, toc_html):
             "<a class=gh href=\"%s\" target=_blank rel=noopener>GitHub ↗</a>"
             "</header>"
             "<div id=layout><aside id=side><nav id=nav>%s</nav></aside>"
-            "<main id=main><div id=contentrow><article>%s</article><aside id=toc>%s</aside></div>"
+            "<main id=main><div id=contentrow><article>%s</article><aside id=toc>%s%s</aside></div>"
             "<div id=foot>%s · 由 tools/build_wiki.py 生成</div>"
             "</main></div>"
             "<div id=backdrop></div>"
+            "<button id=btt aria-label=回到顶部>↑</button>"
             "<script>%s</script></body></html>"
-            ) % (html.escape(title), title_suffix, CSS, root_prefix, SITE_NAME, SITE_SUB, SITE_REPO, nav_html, body_html, toc_html, SITE_NAME, js)
+            ) % (html.escape(title), title_suffix, CSS, root_prefix, SITE_NAME, SITE_SUB, SITE_REPO, nav_html, body_html, toc_html, aside_extra, SITE_NAME, js)
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
@@ -442,17 +508,36 @@ def main():
     nav_html = "".join(nav)
 
     index_data = []
+    built = []
     for p in pages:
         md = p["src"].read_text(encoding="utf-8", errors="replace")
         m = re.search(r"^#\s+(.+)$", md, re.M)
         title = m.group(1).strip() if m else p["src"].stem
-        body, toc = md_to_html(md, p["src"], reg)
+        body, toc, files = md_to_html(md, p["src"], reg)
+        built.append((p, title, body, toc, files))
+    files_map = {p["src"].name: files for p, title, body, toc, files in built}
+
+    for p, title, body, toc, files in built:
         toc_items = "".join('<a class="lvl%d" href="#%s">%s</a>' % (lvl, hid, html.escape(re.sub(r"[*`]", "", t))) for lvl, t, hid in toc)
         toc_html = ('<div class=toc-title>本页目录</div><nav id=tocnav>%s</nav>' % toc_items) if toc_items else ""
+        aside_extra = ""
+        if p["section"] == "SC引擎":
+            mnum = re.match(r"^(\d{2})-", p["src"].stem)
+            if mnum:
+                num = mnum.group(1)
+                chips = []
+                for dname in sorted(files_map):
+                    if re.match(num + r"[ab]-", dname):
+                        for rid, raw in files_map[dname]:
+                            if ".cs" in raw:
+                                chips.append('<a href="明细/%s#%s">%s</a>' % (dname.replace(".md", ".html"), rid, html.escape(raw)))
+                if chips:
+                    aside_extra = ('<details class=jumpbox open><summary>⚡ 文件速跳 · %d</summary><div class=chips>%s</div></details>'
+                                   % (len(chips), "".join(chips)))
         out_path = OUT / p["out"]
         out_path.parent.mkdir(parents=True, exist_ok=True)
         root_prefix = "../" * p["out"].count("/")
-        out_path.write_text(page_shell(title, body, nav_html, root_prefix, toc_html), encoding="utf-8")
+        out_path.write_text(page_shell(title, body, nav_html, root_prefix, toc_html, aside_extra), encoding="utf-8")
         text_sample = re.sub(r"[`#>*|\-\[\]()]", "", md)[:26000]
         index_data.append({"t": title, "u": p["out"], "b": text_sample.lower()})
         print("OK", p["out"])
