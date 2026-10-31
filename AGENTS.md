@@ -67,7 +67,7 @@ public class MyModLoader : ModLoader {          // public 无参构造必须
 - `JsonModelReader` 已下线（抛异常，`JsonModelReader.cs:98`）——模型用 `.obj`/glTF，`.obj` 必须三角面且 `vt/vn` 齐全。
 - 改 dll 必须重启进程（TypeCache 不清）；模组间 dll 引用走 `AssemblyResolve` 回退链（`ModsManager.cs:525-538`）。
 
-## 3. 任务 → 照抄路由（最常用 12 条；全量见 [02-Mod开发配方.md](02-Mod开发配方.md)）
+## 3. 任务 → 照抄路由（最常用 12 条；全量见 [Mod开发配方.md](Mod开发配方.md)）
 
 | 任务 | 照抄 |
 |---|---|
