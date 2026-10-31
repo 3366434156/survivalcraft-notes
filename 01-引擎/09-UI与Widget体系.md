@@ -1,6 +1,6 @@
 # UI 与 Widget 体系
 
-> 域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(106/106：全文深读32、节选抽读3、签名级71)
+> 域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(106/106 全文深读；A28 将 71 签名级+3 节选升为全文)
 
 ## 一句话定位
 
@@ -112,7 +112,7 @@
 
 ### 富内容管线（Markdown/HTML → Widget 树）
 
-`RichContentBuilder`（抽象，`RichContentBuilder.cs:9`）两个实现：`MarkdownToWidgetsBuilder`（`MarkdownToWidgetsBuilder.cs:18`，`Build(markdown):27` 产出 StackPanelWidget 树）与 `HtmlToWidgetsBuilder`（`HtmlToWidgetsBuilder.cs:10`，3490 行，`BuildHtml:48`，内嵌 CSS 子集：CssStyleParser/CssColorParser/CssTransformParser）。行内样式归 `TextSpan`（`MarkdownSpanParser:72`/`HtmlSpanParser:14`）；块级用 `HtmlBlockSizerWidget`（百分比/显式尺寸壳）、`HtmlStyleBoxWidget`（margin/padding/边框/圆角壳）、`HtmlTransformBoxWidget`（css transform 壳，`ArrangeOverride:27` 施加矩阵）；表格走 `TablePanelWidget`（HTML 路径）或 `MarkdownTableWidget`（`MarkdownTableWidget.cs:24`，瀑布削峰列协商 `Measure:101`）；图片异步 `RichContentImageLoader`（`RichContentImageLoader.cs:20`，`CreateImageBlock:95` 占位→`RefitFrame:76` 应用态重适配→`ResolvePendingWidths:215`）。入口控件 `MarkdownWidget`/`HtmlWidget`（`HtmlWidget.cs:10`，`TryScrollToAnchor:112`）。
+`RichContentBuilder`（抽象，`RichContentBuilder.cs:9`）两个实现：`MarkdownToWidgetsBuilder`（`MarkdownToWidgetsBuilder.cs:18`，`Build(markdown):27` 产出 StackPanelWidget 树）与 `HtmlToWidgetsBuilder`（`HtmlToWidgetsBuilder.cs:10`，3490 行，`BuildHtml:48`，内嵌 CSS 子集：CssStyleParser/CssColorParser/CssTransformParser）。行内样式归 `TextSpan`（`MarkdownSpanParser:72`/`HtmlSpanParser:14`）；块级用 `HtmlBlockSizerWidget`（百分比/显式尺寸壳）、`HtmlStyleBoxWidget`（margin/padding/边框/圆角壳）、`HtmlTransformBoxWidget`（css transform 壳，`ArrangeOverride:27` 施加矩阵）；表格走 `TablePanelWidget`（HTML 路径）或 `MarkdownTableWidget`（`MarkdownTableWidget.cs:24`，TablePanelWidget 底座列协商+超宽切横向滚动 `Measure:101`）；图片异步 `RichContentImageLoader`（`RichContentImageLoader.cs:20`，`CreateImageBlock:95` 占位→`RefitFrame:76` 应用态重适配→`ResolvePendingWidths:215`）。入口控件 `MarkdownWidget`/`HtmlWidget`（`HtmlWidget.cs:10`，`TryScrollToAnchor:112`）。
 
 ### Screens 体系
 
@@ -157,6 +157,9 @@ BevelledButton/BitmapButton/Checkbox/Slider/Link 五件共用同一模式（照�
 - **切语言界面重建**：`LanguageControl.ChangeLanguage` 反射 new 全部 Screen → 自定义 Screen 必须有无参构造，注入代码必须可重入。
 - **Style 覆盖内联**：`Style=` 之前的同名属性被样式盖掉 → 要生效的属性写在 Style 之后。
 - **Grid 隐藏孩子撑宽列**：GridPanelWidget.MeasureOverride 不看 IsVisible（`GridPanelWidget.cs:73`）→ 想让隐藏件退出布局要 Remove 或用 Table/Flex（两者都跳过隐藏件，`TablePanelWidget.cs:541`、`FlexPanelWidget.cs:177-181`）。
+- **持有 Texture2D 的部件泄漏纹理**：widget 树无 Dispose 级联，异步加载的纹理句柄会累积 → 释放放 `UpdateCeases`（被移出更新树时级联调用），代际计数使晚到回调就地销毁（`HtmlWidget.cs:101-106`、`MarkdownWidget.cs:91-96`、`RichContentImageLoader.cs:186-211`）。
+- **TreeViewWidget 改树不生效**：行重建的脏标记在 **Draw** 期消费（`TreeViewWidget.cs:48-54`）→ AddRoot/Clear 后下一帧才显示；节点增删改不自动置脏，须手动 `m_widgetsDirty=true`（`CommunityTreeViewWidget.cs:66-68` 封装先例）。
+- **UniformSpacingPanel 竖排放进竖排 StackPanel 崩整页**：主轴 DesiredSize=∞ 污染上层期望、arrange 经 layoutTransform 算 NaN（`ModSettingItemWidget.cs:272-274` 注释实证）→ 均分行容器一律 Horizontal。
 
 ## 原版范例
 
@@ -176,6 +179,8 @@ BevelledButton/BitmapButton/Checkbox/Slider/Link 五件共用同一模式（照�
 | 触摸手势解析（Tap/Hold/Move） | `TouchInputWidget.cs:38-91`——单指跟踪+Radius 限位输出 TouchInput |
 | 树形列表（滚动面板复用） | `TreeViewWidget.cs:56-105`——覆写 CalculateScrollAreaLength+UpdateNodes 重建行 |
 | 物品格拖抛进世界 | `ViewWidget.cs:53-75`——DragDrop 里算屏幕射线给 SubsystemPickables |
+| UI 内异步加载图片（占位→下载→上屏） | `RichContentImageLoader.cs:95-380`——占位 frame+后台下载解码+Dispatcher 回主线程+代际守卫防晚到回调+宽未定挂起 `ResolvePendingWidths` 收口 |
+| 外部推值与用户操作双向同步（防回环） | `ModSettingItemWidget.cs:88-108`——CommitValue 查 `m_applyingExternalValue` 守卫 + ApplyExternalValueCore 入口类型预检 |
 
 ## 快查路由
 
