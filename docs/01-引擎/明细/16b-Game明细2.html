@@ -1,0 +1,87 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Game/Community 明细（72 文件） · SC学习笔记</title><style>
+:root{--bg:#f7f5f0;--side:#211d18;--sidefg:#cfc8bb;--ink:#2b2620;--acc:#8a6d3b;--acc2:#4a7a6f;--codebg:#23201b;--line:#e2dccc}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75}
+#layout{display:flex;min-height:100vh}
+#side{width:300px;flex:0 0 300px;background:var(--side);color:var(--sidefg);position:sticky;top:0;height:100vh;overflow-y:auto;padding:18px 14px 40px}
+#side h1{font-size:19px;color:#f0e9da;margin:2px 6px 10px;letter-spacing:1px}
+#side h1 small{display:block;font-size:11px;color:#8d8577;font-weight:normal;letter-spacing:2px}
+#search{width:100%;padding:8px 10px;margin:6px 0 14px;border:1px solid #4a4438;border-radius:6px;background:#2d2822;color:#f0e9da;font-size:13px;outline:none}
+#search:focus{border-color:var(--acc)}
+.sec{margin:14px 6px 4px;font-size:12px;color:#8d8577;letter-spacing:3px;border-bottom:1px solid #3a342b;padding-bottom:4px}
+#nav a{display:block;padding:5px 10px;margin:1px 0;border-radius:6px;color:var(--sidefg);text-decoration:none;font-size:13.5px}
+#nav a:hover{background:#332d25;color:#fff}
+#nav a.active{background:var(--acc);color:#fff}
+#nav a .st{float:right;font-size:10px;color:#7fb8a8;opacity:.85}
+#main{flex:1;min-width:0;padding:34px 48px 90px;max-width:980px}
+#main article{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:38px 46px;box-shadow:0 2px 14px rgba(60,45,20,.06)}
+h1{font-size:26px;color:#3a3128;border-bottom:2px solid var(--acc);padding-bottom:10px;margin-top:0}
+h2{font-size:20px;color:#4a3f30;border-left:4px solid var(--acc2);padding-left:10px;margin-top:34px}
+h3{font-size:17px;color:#5a4c38;margin-top:26px}
+blockquote{margin:14px 0;padding:10px 16px;background:#f4efe2;border-left:4px solid var(--acc);border-radius:0 8px 8px 0;color:#5c5142;font-size:14px}
+code{background:#efe9da;border-radius:4px;padding:1px 6px;font-family:Consolas,monospace;font-size:13px;color:#7a4d12}
+pre.code{background:var(--codebg);color:#e8e0cf;border-radius:10px;padding:14px 18px;overflow-x:auto}
+pre.code code{background:none;color:inherit;padding:0;font-size:13px;line-height:1.6}
+.tablewrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff}
+th{background:#efe8d6;color:#4a3c28;text-align:left}
+th,td{border:1px solid var(--line);padding:7px 11px;vertical-align:top}
+tbody tr:nth-child(even){background:#faf7ee}
+a{color:#28615a;text-decoration:none}a:hover{text-decoration:underline;color:var(--acc)}
+.deadlink{color:#9a8f7c;border-bottom:1px dotted #b7ab92}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+#foot{margin-top:22px;font-size:12px;color:#9a8f7c;text-align:center}
+#sres{position:fixed;inset:80px 18% auto;display:none;background:#fffdf8;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.25);max-height:70vh;overflow:auto;z-index:9;padding:8px}
+#sres a{display:block;padding:7px 12px;border-radius:6px;font-size:14px}
+#sres a:hover{background:#f2ecdc}
+#sres .snip{font-size:12px;color:#8a7d68;margin-left:8px}
+@media(max-width:900px){#side{position:fixed;left:-320px;transition:.2s;z-index:10}#side.open{left:0}#main{padding:20px}}
+</style></head><body><div id=layout><aside id=side><h1>SC 完全学习笔记<small>SURVIVALCRAFT · 原版引擎</small></h1><input id=search placeholder='搜索…（按 / 聚焦）'><nav id=nav><div class=sec>总览</div><a href="index.html">README</a><a href="02-范例配方.html">02-范例配方</a><a href="00-规则.html">00-规则</a><div class=sec>SC引擎</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><div class=sec>SC引擎·明细</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><article><h1 id="game-community-明细-72-文件">Game/Community 明细（72 文件）</h1>
+<blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 全列(72/72，头部注释级)；主页面另见 16-玩法物品与背包.md，根目录 226 文件另见 16a-Game明细.md。  前缀：<code>E:\SurvivalcraftAPIProject\Survivalcraft\Game\Community\</code>（下表省略）。分层：Domain(纯规则/状态机，26) → Infrastructure(Http/持久化/导入，35) → Models(协议与落盘模型，11)。职责多取自源文件头注释原文压缩。</blockquote>
+<h2 id="domain-common-2">Domain\Common（2）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>ExternalVersionParser.cs</code></td><td>29</td><td>外部版本文本规范化并解析为 NuGetVersion</td></tr><tr><td><code>WeakEventSource.cs</code></td><td>95</td><td>弱引用事件源：防静态单例事件把换语言重建前的旧屏幕实例钉死不释放</td></tr></tbody></table></div>
+<h2 id="domain-community-7-社区帖子-文件规则">Domain\Community（7，社区帖子/文件规则）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>CommunityDownloadFeedbackInfo.cs</code></td><td>9</td><td>下载反馈信息</td></tr><tr><td><code>CommunityFileRules.cs</code></td><td>33</td><td>服务端 filename 落盘前解码+净化；非法转义回退 id 命名</td></tr><tr><td><code>CommunityFilters.cs</code></td><td>121</td><td>服务器文件类型协议枚举 CommunityFileType（值=API 协议）+ 过滤器</td></tr><tr><td><code>CommunityLocalModMatchingRules.cs</code></td><td>57</td><td>社区可控文件名匹配前归一化（去转义/统一分隔符/取末段），存在性短路判定</td></tr><tr><td><code>CommunityModVersionSelector.cs</code></td><td>70</td><td>社区 mod 多版本时选版规则</td></tr><tr><td><code>ModpackManifestParser.cs</code></td><td>376</td><td>解析整合包清单：ZIP 内嵌条目大小上限、累计解压内存预算、嵌入图标探测序</td></tr><tr><td><code>PostIconRules.cs</code></td><td>45</td><td>帖子图标规则</td></tr></tbody></table></div>
+<h2 id="domain-localresources-10-本地已装-mod-规则">Domain\LocalResources（10，本地已装 mod 规则）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>LocalModCollectionRules.cs</code></td><td>20</td><td>本地 mod 集合规则</td></tr><tr><td><code>ModCompatibility.cs</code></td><td>316</td><td>mod 兼容判定：归一化文本复用 + pattern 编译正则缓存（上限 15）</td></tr><tr><td><code>ModDependencyAvailabilityRules.cs</code></td><td>69</td><td>依赖满足判定：已装但禁用≠缺失（引导启用）；无解析产物判不满足</td></tr><tr><td><code>ModDependencyInfo.cs</code></td><td>25</td><td>依赖声明：规范化文本/引擎解析产物/下载页链接三要素</td></tr><tr><td><code>ModUpdateSelector.cs</code></td><td>120</td><td>mod 更新选择：InvariantCulture+UTC 统一比较时间戳</td></tr><tr><td><code>ModpackActivationRules.cs</code></td><td>47</td><td>整合包启用规则</td></tr><tr><td><code>ModpackModMatcher.cs</code></td><td>92</td><td>整合包条目↔本地 mod 匹配（BCL 去扩展名语义；非法名回退空键）</td></tr><tr><td><code>ModpackPresenceRules.cs</code></td><td>127</td><td>整合包子项"已装"判定规则（输入清单+记录+快照，输出判定不产 UI 文案）</td></tr><tr><td><code>ModpackPresenceSnapshot.cs</code></td><td>15</td><td>在场判定用的本机资源快照（纯数据）</td></tr><tr><td><code>ModpackRules.cs</code></td><td>227</td><td>整合包总规则：URL 取 AbsolutePath 后统一解码一次（防 %2520 二次解码）</td></tr></tbody></table></div>
+<h2 id="domain-transfers-7-下载-上传传输域">Domain\Transfers（7，下载/上传传输域）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>CommunityDownloadQueueItem.cs</code></td><td>30</td><td>下载队列项；Imported 标志：进程死前已导入的项恢复时改判 Completed</td></tr><tr><td><code>CommunityDownloadQueueStateMachine.cs</code></td><td>85</td><td>下载队列纯状态转换规则（UI/网络/文件操作禁入）</td></tr><tr><td><code>CommunityDownloadSourceModels.cs</code></td><td>23</td><td>下载源模型；三值源选择枚举收编为布尔设置</td></tr><tr><td><code>CommunityDownloadSourceResolver.cs</code></td><td>41</td><td>下载源解析：Host 空=默认线路；用户输入畸形时按 null 不裸抛</td></tr><tr><td><code>CommunityTransferProgress.cs</code></td><td>21</td><td>传输进度</td></tr><tr><td><code>CommunityUploadFileNaming.cs</code></td><td>27</td><td>上传文件命名（空输入历史默认值带扩展名兼容）</td></tr><tr><td><code>CommunityUploadModels.cs</code></td><td>31</td><td>上传模型 + CommunityWorldUploadResult</td></tr></tbody></table></div>
+<h2 id="infrastructure-根-2">Infrastructure 根（2）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>CommunityDownloadCacheFile.cs</code></td><td>60</td><td>下载缓存文件</td></tr><tr><td><code>TaskSlot.cs</code></td><td>122</td><td>单槽后台任务生命周期：requestId 防陈旧+失察任务观察，须 UI 线程调用</td></tr></tbody></table></div>
+<h2 id="infrastructure-http-14-网络客户端">Infrastructure\Http（14，网络客户端）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>CommunityApiClient.cs</code></td><td>111</td><td>社区 API 总客户端：空/非 JSON body 归一化 InvalidOperationException</td></tr><tr><td><code>CommunityAuthClient.cs</code></td><td>84</td><td>登录：区分网络故障与响应码异常；用户取消传播不吞</td></tr><tr><td><code>CommunityDownloadFeedbackClient.cs</code></td><td>118</td><td>下载反馈上报：持久化剥离 Token，上报时按登录态补取，未登录匿名尽力而为</td></tr><tr><td><code>CommunityDownloadGuard.cs</code></td><td>22</td><td>下载防护：响应体大小上限（防第三方 URL 内存耗尽）</td></tr><tr><td><code>CommunityHttpDownloader.cs</code></td><td>355</td><td>统一下载器：服务器 stall 空闲超时（linked CTS），保持 is-a OperationCanceledException</td></tr><tr><td><code>CommunityModCatalogClient.cs</code></td><td>20</td><td>mod 目录客户端</td></tr><tr><td><code>CommunityPlayedTimeClient.cs</code></td><td>85</td><td>游玩时间上报：非关键路径，失败只记日志不抛</td></tr><tr><td><code>CommunityTranslateClient.cs</code></td><td>66</td><td>/translate 封装：整篇投递、服务端 AI 保结构翻译+缓存</td></tr><tr><td><code>CommunityUnauthorizedNotifier.cs</code></td><td>32</td><td>401/403 广播：token 失效统一清登录态，调用点无需逐个处理</td></tr><tr><td><code>CommunityUploadClient.cs</code></td><td>258</td><td>发布上传链：取又拍云直传凭证→表单直传（仅 https+*.upyun.com）→登记</td></tr><tr><td><code>HttpClientProvider.cs</code></td><td>28</td><td>共享 HttpClient 集中创建（社区与远程导入超时策略并存）</td></tr><tr><td><code>IModpackSourceResolver.cs</code></td><td>10</td><td>整合包源解析接口</td></tr><tr><td><code>ModpackSourceResolver.cs</code></td><td>160</td><td>整合包源解析：取消传播不触发 fileId 兜底；改流式读防慢网超时</td></tr><tr><td><code>PostIconDecoder.cs</code></td><td>23</td><td>帖子图标解码：Resize 异常时释放已分配位图防泄漏</td></tr></tbody></table></div>
+<h2 id="infrastructure-integration-7-下载-本地导入">Infrastructure\Integration（7，下载→本地导入）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>CommunityUploadFileProvider.cs</code></td><td>177</td><td>上传文件提供：导出失败清理临时文件再抛；未加载 mod 回退记录路径</td></tr><tr><td><code>ICommunityUploadFileProvider.cs</code></td><td>7</td><td>上传文件提供接口</td></tr><tr><td><code>IModpackItemImporter.cs</code></td><td>10</td><td>整合包数据导入接口：false=无处导入，调用方必须计失败</td></tr><tr><td><code>ModDependencyParser.cs</code></td><td>23</td><td>依赖声明解析：DependencyRanges 引擎解析保证非 null，富信息走旁路字典</td></tr><tr><td><code>ModpackItemImporter.cs</code></td><td>72</td><td>单项导入：模组元数据校验+游戏内容写入集中于此</td></tr><tr><td><code>PendingLocalModActions.cs</code></td><td>206</td><td>"重启后执行"的本地 mod 动作清单（local-mod-pending-actions.json）</td></tr><tr><td><code>PendingLocalModCompatibilityOverrideCache.cs</code></td><td>56</td><td>兼容性覆盖缓存：插入序伪 LRU 淘汰（防已卸载包名无限累积）</td></tr></tbody></table></div>
+<h2 id="infrastructure-modpacks-2">Infrastructure\Modpacks（2）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>ModpackDataFiles.cs</code></td><td>306</td><td>整合包数据文件落地：mod 用事务替换（Delete+Move），本体用 MoveFileSafely（备份/回滚）</td></tr><tr><td><code>ModpackPresenceManager.cs</code></td><td>83</td><td>在场快照捕获与失效（导入/扫描触发）</td></tr></tbody></table></div>
+<h2 id="infrastructure-persistence-10-落盘">Infrastructure\Persistence（10，落盘）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>CommunityCredentialStore.cs</code></td><td>429</td><td>凭据加密存储 v4：每服一文件，魔数 SCBPAUTH4，含旧格式迁移</td></tr><tr><td><code>CommunityDownloadQueuePersistence.cs</code></td><td>147</td><td>下载队列持久化：按名恢复下载源；已导入项恢复改判 Completed</td></tr><tr><td><code>CommunityDownloadQueueStore.cs</code></td><td>20</td><td>队列存取：枚举字符串序列化，兼容旧数字格式</td></tr><tr><td><code>CommunityPlayedTimeStore.cs</code></td><td>47</td><td>游玩时间本地存</td></tr><tr><td><code>CommunityStoragePaths.cs</code></td><td>20</td><td>社区本地存储路径集中维护</td></tr><tr><td><code>JsonFileStore.cs</code></td><td>164</td><td>统一 JSON 读写：先写临时文件再替换目标</td></tr><tr><td><code>LocalModReviewStore.cs</code></td><td>30</td><td>本地 mod 评价存</td></tr><tr><td><code>ModpackActivationState.cs</code></td><td>124</td><td>整合包启用态：静态直供；探测式读取，单条失败跳过</td></tr><tr><td><code>ModpackRegistry.cs</code></td><td>581</td><td>整合包磁盘协议与解析缓存的所有者</td></tr><tr><td><code>ModpackStateStore.cs</code></td><td>21</td><td>整合包状态存取</td></tr></tbody></table></div>
+<h2 id="models-api-7-线协议">Models\Api（7，线协议）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>ApiEnvelope.cs</code></td><td>12</td><td>{code,data,msg} 标准信封，各响应空壳继承</td></tr><tr><td><code>AuthModels.cs</code></td><td>37</td><td>v4 凭据 payload：登录数据+归属服务器（自描述）</td></tr><tr><td><code>CommunityModels.cs</code></td><td>109</td><td>社区通用响应模型 + BasicApiResponse</td></tr><tr><td><code>FilePublishedModels.cs</code></td><td>23</td><td>发布成功响应（复用 PostModels 子集，缺省 null）</td></tr><tr><td><code>PlayedTimeModels.cs</code></td><td>33</td><td>游玩时间上报 wire 模型（camelCase 契约键）</td></tr><tr><td><code>PostModels.cs</code></td><td>215</td><td>帖子模型：服务端计数字段类型不稳，FlexibleString/FlexibleInt 归一化</td></tr><tr><td><code>UploadModels.cs</code></td><td>45</td><td>上传模型 + 又拍云凭证请求</td></tr></tbody></table></div>
+<h2 id="models-persistence-4-落盘模型">Models\Persistence（4，落盘模型）</h2>
+<div class=tablewrap><table><thead><tr><th>文件</th><th>行</th><th>职责</th></tr></thead><tbody><tr><td><code>DownloadQueueModels.cs</code></td><td>32</td><td>队列持久化状态：源按名解析，Imported 改判 Completed</td></tr><tr><td><code>LocalModModels.cs</code></td><td>32</td><td>本地 mod 评价数据</td></tr><tr><td><code>LocalResourceModels.cs</code></td><td>36</td><td>本地资源子系统核心数据模型</td></tr><tr><td><code>ModpackModels.cs</code></td><td>114</td><td>ModpackManifest 清单模型：展示性可选字段旧清单显示"无"；同名跳过=不算成功不算失败</td></tr></tbody></table></div></article><div id=foot>由 tools/build_wiki.py 生成 · 零依赖静态站 · 重新生成：python tools/build_wiki.py</div></main></div><div id=sres></div><script>
+const $=s=>document.querySelector(s);
+// 搜索
+let IDX=[];
+fetch('search.json').then(r=>r.json()).then(d=>{IDX=d});
+const box=$('#search'),res=$('#sres');
+box.addEventListener('input',()=>{
+  const q=box.value.trim().toLowerCase();
+  if(!q){res.style.display='none';return}
+  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
+  res.innerHTML=hits.map(p=>{
+    const i=p.b.toLowerCase().indexOf(q);
+    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
+    return `<a href="${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
+  }).join('')||'<a>无命中</a>';
+  res.style.display='block';
+});
+document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
+  if(e.key==='Escape'){res.style.display='none'}
+});
+// 高亮当前页
+const here=location.pathname.split('/').pop();
+document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href').endsWith(here))a.classList.add('active')});
+</script></body></html>
