@@ -1,8 +1,8 @@
 # Game 域明细（根目录 226 文件）
 
-> 域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(226/226：★全文深读 115 + ▲头部 3 + 指针族 108 归属专页；A30a 补全)；逐文件一行。主页面另见 16-玩法物品与背包.md；Community 子域 72 文件另见 16b-Game明细2.md。
+> 域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(226/226：★全文深读 127 + ▲头部 3 + 指针族 96 归属专页；A30a/A32 补全)；逐文件一行。主页面另见 16-玩法物品与背包.md；Community 子域 72 文件另见 16b-Game明细2.md。
 >
-> 前缀：目录 `E:\SurvivalcraftAPIProject\Survivalcraft\Game\`（下表省略）。"声明"=public 类型声明行号。★=深读全文(115，其中 78 行为 A30a 补读)，▲=深读头部/关键段(3)，空=指针族——A30a 已逐页 grep 核实归属专页确实覆盖(108)。指针家族的逐行职责以对应专页为准。
+> 前缀：目录 `E:\SurvivalcraftAPIProject\Survivalcraft\Game\`（下表省略）。"声明"=public 类型声明行号。★=深读全文(127，其中 78 行为 A30a 补读、12 行为 A32 补读)，▲=深读头部/关键段(3)，空=指针族——A30a 已逐页 grep 核实归属专页确实覆盖(96)。指针家族的逐行职责以对应专页为准。
 
 ## 玩家会话与输入（11，本页深读）
 
@@ -205,22 +205,22 @@
 | `TerrainSerializer22.cs` | 213 | | v2.2 区块序列化（05a 页点名） | :4 |
 | `TerrainSerializer23.cs` | 783 | | v2.3 区块序列化（IStorage 抽象，05a 页点名） | :7 |
 
-## 存档版本转换（12 → 11-存档持久化.md：链机制在 11 页 :64/:98/:129；10To14/21To22/22To23 另在 05 页点名；其余为链成员，结构同 21To22 范例）
+## 存档版本转换（12，本页深读 ★ A32 补全；链机制/反射收集另见 11-存档持久化.md :64/:98/:129；10To14/21To22/22To23 另在 05 页点名）
 
 | 文件 | 行 | 职责 | 声明 |
 |---|---|---|---|
-| `VersionConverter.cs` | 186 | 抽象基类 + GenericVersionConverter(:30) | :6 |
-| `VersionConverter10To14.cs` | 70 | 1.0→1.4 升档 | :7 |
-| `VersionConverter20To21.cs` | 102 | 2.0→2.1 升档 | :6 |
-| `VersionConverter21To22.cs` | 248 | 2.1→2.2 升档（11 页:129 范例：SourceVersion/TargetVersion :6-9 + Transform :11-30） | :7 |
-| `VersionConverter22To23.cs` | 86 | 2.2→2.3 升档（05 页:119 点名：TS22 读→TS23 写） | :6 |
-| `VersionConverter23To24.cs` | 37 | 2.3→2.4 升档 | :6 |
-| `VersionConverter112To113.cs` | 43 | 1.1.2→1.1.3 升档 | :6 |
-| `VersionConverter113To114.cs` | 43 | 1.1.3→1.1.4 升档 | :6 |
-| `VersionConverter120To121.cs` | 53 | 1.2.0→1.2.1 升档 | :6 |
-| `VersionConverter121To122.cs` | 43 | 1.2.1→1.2.2 升档 | :6 |
-| `VersionConverter126To127.cs` | 114 | 1.2.6→1.2.7 升档 | :6 |
-| `VersionConverter128To129.cs` | 246 | 1.2.8→1.2.9 升档 | :7 |
+| `VersionConverter.cs` | 186 | ★ 抽象基类：SourceVersion/TargetVersion 抽象(:7-9)；ConvertProjectXml 默认仅改 Version 属性(:12-14)；ConvertWorld 默认=读 Project.xml→ConvertProjectXml→写回(:16-26)；文件尾另含 21 个"空转"升档器（只改版本号零改值，补全链空档：14To15:62/111To112:104/114To115:110/119To120:140/122To123:146/125To126:164/127To128:170/129To130:176/130To20:182 等），全链 1.0→2.4 无断档；GenericVersionConverter 已整段注释弃用(:29-61) | :6 |
+| `VersionConverter10To14.cs` | 70 | ★ 1.0→1.4：Chunks/ 逐块散文件合并为单文件 Chunks.dat——预写 65537 条空 TOC(:20-22)，逐文件拆名得 cx/cz(:30-32)，TerrainSerializer14.WriteChunkHeader+块体+回填 TOC 偏移(:41-44)，上限 65536 块抛异常(:27-29)，单块失败 Log.Error 跳过(:48-50)；Project.xml 改版本(:55-63)；最后删全部旧块文件与 Chunks 目录(:64-68) | :7 |
+| `VersionConverter20To21.cs` | 102 | ★ 2.0→2.1：TerrainGenerationMode "Normal"→"Continent"(:20-22)；从 GameInfo 抠 CharacterSkinName 缺省 "$Male1"(:24-33)；Player 子系统→改名 Players 并重排 Values/Players/1 三层+注入 CharacterSkinName(:34-56)+NextPlayerIndex=2(:57-59)；PlayerStats 旧 Values 套入新 Stats 容器并更名"1"(:61-75)；Name 以 Player 开头的实体统一改 MalePlayer+固定 Guid(:76-81)；删全部实体的 SpawnPool 值(:82-88) | :6 |
+| `VersionConverter21To22.cs` | 248 | ★ 2.1→2.2（11 页:129 范例）：TerrainGenerationMode "Flat"→"FlatContinent"(:21-23)；Pickables/Projectiles/CollapsingBlockBehavior 的 Value(:26-73)、6 容器(Inventory/CreativeInventory/CraftingTable/Chest/Furnace/Dispenser :93) 的 Contents(:94-111)、实体 Clothing 分号串(:74-92)全走 ConvertValue(:214-220：10 位 contents/4 位 light 重排 data<<14)；ConvertContentsLightData(:222-247)：contents 30/32/33/34/35→29（旧元件归并）、170→169；ConvertChunks(:153-212)：Chunks32.dat(129 格式 132112B/块)→Chunks32h.dat.new(22 格式 262144B 块体，l>127 层写 0 :183-203)，空间预检 2×文件+50MB(:156-159)；事务化 ConvertWorld(.new 落盘→.old 清理，失败回滚还原再 rethrow :114-138) | :7 |
+| `VersionConverter22To23.cs` | 86 | ★ 2.2→2.3（05 页:119 点名：TS22 读→TS23 写）：Project.xml 仅改版本号(:11-13)；ConvertChunks(:70-85)=TerrainSerializer22(null,dir) 逐块 LoadChunk→空 TerrainChunk→TerrainSerializer23(dir,".new").SaveChunkData（IStorage 抽象直读写），空间预检 文件/10+50MB(:71-74)；事务化(:15-55)且自本档起 .new/.old 同时覆盖文件与目录两形态(:24-34, :42-52) | :6 |
+| `VersionConverter23To24.cs` | 37 | ★ 2.3→2.4：GameInfo 注入四季系统两新值——AreSeasonsChanging=false(:16-19)、TimeOfYear=IntervalUtils.Midpoint(SubsystemSeasons.SummerStart,AutumnStart)(:20-23) | :6 |
+| `VersionConverter112To113.cs` | 43 | ★ 1.12→1.13（Source/Target 实为 "1.12"/"1.13"，主.次协议）：ProcessNode 全树递归属性(:28-35)，把任意 Value="Dangerous" 改 "Normal"(:37-42)（移除危险等级选项） | :6 |
+| `VersionConverter113To114.cs` | 43 | ★ 1.13→1.14：与 112To113 完全同构——全树 Value="Dangerous"→"Normal"(:28-42) | :6 |
+| `VersionConverter120To121.cs` | 53 | ★ 1.20→1.21：全实体 Body/Frame 值组的 LocalMatrix 经 Matrix.Decompose 拆成 Position(Vector3)+Rotation(Quaternion) 两值(:13-39，Decompose :23-24)并删原矩阵(:35) | :6 |
+| `VersionConverter121To122.cs` | 43 | ★ 1.21→1.22：CreatureSpawn 值组改名 Spawn(:17)，其下 CreaturesData→SpawnsData(:21)、CreaturesGenerated→IsSpawned(:26) | :6 |
+| `VersionConverter126To127.cs` | 114 | ★ 1.26→1.27：全树 Value 的 Type 命名空间迁移 Microsoft.Xna.Framework.*→Engine.*（Vector2/3/4、Quaternion、Matrix、Point→Point2、Color、Game.Point3→Engine.Point3 共 8 种 :62-92）；另附 1.26 旧数据迁移工具 MigrateDataFromIsolatedStorageWithDialog(:28-60，!ANDROID)：app:/.config/.isolated-storage 递归 MigrateFolder 复制到 data:(:94-107)，完成后重载 SettingsManager.LoadSettings(:51) | :6 |
+| `VersionConverter128To129.cs` | 246 | ★ 1.28→1.29：同 21To22 五处目标(Pickables/Projectiles/CollapsingBlockBehavior :14-61、Clothing :62-80、6 容器 Contents :81-99)全走 ConvertValue(:177-183：旧 8 位 contents+light<<8 → 新 10 位 contents+light<<10+data<<14)；ConvertContentsLightData(:185-245)：133-136 归并为 133 且子型挪 data 高 4 位、152/182/185 data 位重排、139 湿度入 data、旧 id 归并 128→21/163→3/164→73/165→67（data<<1|1）；ConvertChunks(:119-175)：Chunks.dat(14 格式 2B/格 65536)→Chunks32.dat(129 格式 4B/格 131072)，l<127 且本格 id 18/92 与上格不同置 0x40000 标记(:149-157) | :7 |
 
 ## 渲染/网格/着色器（24：Shader/接口 → 06 页；TextureAtlas 族 → 20/22 页；BlockColorsMap → 04a；GlowPoint → 15/03a；ICustomModelWidgetRenderer → 09 页；其余 14 文件本页深读）
 
