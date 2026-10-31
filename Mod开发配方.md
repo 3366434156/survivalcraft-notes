@@ -81,6 +81,7 @@
 | 跟随实体特效全套 | `OnFireParticleSystem.cs:26-77`+`ComponentOnFire.cs:60-83` |
 | 入水溅花+限流 | `ComponentBody.cs:591-603`（TryBeginInstantiation 100次/帧） |
 | 3D 漂浮文字粒子 | `HitValueParticleSystem.cs:55-111`（FontBatch3D/VectorFontSink3D 双路；可 SetHitValueParticleSystem 整体替换） |
+| 端到端：自定义粒子环+位置音效 | [Mod示例-自定义特效](Mod示例-自定义特效.md)（OnBlockDug 挂点+一次性粒子系统自毁契约+PlaySound 位置系） |
 
 ## 音频
 

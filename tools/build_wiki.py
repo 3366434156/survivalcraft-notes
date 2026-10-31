@@ -50,6 +50,7 @@ def collect_sources():
         ("Mod开发", "Mod示例-电力元件.md", 9),
         ("Mod开发", "Mod示例-自定义生物.md", 10),
         ("Mod开发", "Mod示例-自定义界面.md", 11),
+        ("Mod开发", "Mod示例-自定义特效.md", 12),
     ]
     for sec, name, k in moddev:
         p = SC_ROOT / name
@@ -102,7 +103,10 @@ def rewrite_link_target(href, src_file, reg):
         return ("keep", href)
     abs_target = os.path.normcase(str((src_file.parent / target).resolve()))
     if abs_target in reg:
-        return ("ok", reg[abs_target] + frag)
+        # reg 值是站点根相对路径；子页引用须按自身深度补 ../ 前缀（根页 relpath='.' → 无前缀）
+        depth = os.path.relpath(SC_ROOT, src_file.parent)
+        prefix = "" if depth == "." else depth.replace(os.sep, "/") + "/"
+        return ("ok", prefix + reg[abs_target] + frag)
     return ("dead", None)  # 不在站点内 → 置灰不可点
 
 def inline(text, src_file, reg):
@@ -540,7 +544,9 @@ def main():
         out_path = OUT / p["out"]
         out_path.parent.mkdir(parents=True, exist_ok=True)
         root_prefix = "../" * p["out"].count("/")
-        out_path.write_text(page_shell(title, body, nav_html, root_prefix, toc_html, aside_extra), encoding="utf-8")
+        # 侧栏导航是全站共用一份（相对站点根），子页必须按深度补 ../ 前缀，否则子页侧栏全 404
+        page_nav = nav_html.replace('<a href="', '<a href="%s"' % root_prefix) if root_prefix else nav_html
+        out_path.write_text(page_shell(title, body, page_nav, root_prefix, toc_html, aside_extra), encoding="utf-8")
         text_sample = re.sub(r"[`#>*|\-\[\]()]", "", md)[:26000]
         index_data.append({"t": title, "u": p["out"], "b": text_sample.lower()})
         print("OK", p["out"])
