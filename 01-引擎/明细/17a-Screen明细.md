@@ -1,6 +1,6 @@
 # Screen 明细（71 文件全量一行表）
 
-> 域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(〔深〕全文深读64、〔节〕节选深读7)
+> 域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(71/71，全文实读)
 >
 > 父页: 17-Screen屏幕族.md。每行 = 一个 .cs 文件。路径前缀统一为 `E:\SurvivalcraftAPIProject\Survivalcraft\Screen\`（表中只写相对路径）；行号以 2026-10-31 源码为准。
 
@@ -83,8 +83,8 @@
 | 〔深〕ExternalContentScreen.cs(343) | Screen | 外部内容浏览器(本地盘/登录网盘)：SetPath 归一(:213-229)；UpdateList 异步列举(:231-258)；DownloadEntry→`PrepareExternalContent` 冲突检测+覆盖/改名确认(:260-309)；ImportPrepared 后 RequiresRestart 弹重启确认(:311-340)；换提供者若带专属屏名直接跳屏(:115-134) | busy 弹窗必须每分支 Hide(:276-278 注释)，残留锁输入 |
 | 〔深〕ManageContentScreen.cs(422) | Screen | 本机材质/皮肤/家具/字体管理：ItemFactory 按 ExternalContentType 五分支(:54-158)；UseCount=被世界/槽位引用数(:313-377)；删除确认文案按类型(:207-259)；Mod 项删除转跳 ModsManageContent(:220-222) | Leave 清双缓存(:185-188) |
 | 〔深〕ModsManageContentScreen.cs(405) | partial | 模组管理：Enter 订阅 ModListRescanned+`RescanModsAsync`(:133-140)；Leave 取消在途网络+作废 TaskSlot(:142-151)；启停=DisabledMods 增删+需重启标记(:230-260)；上移/下移维护 LoadAfter 链且依赖者禁越过(:351-393)；返回时需重启弹三选(重启/稍后)(:186-220)；状态标签优先级 FileDeleted>PendingRestart>Disabled>Update(:263-306) | ModEntity 重写 Equals→列表定位必须 ReferenceEquals(:352) |
-| 〔节〕ModsManageContentScreen.Community.cs(859) | partial | 模组管理社区侧：自动更新扫描(签名门闩:78-108)+六路 TaskSlot 消费(扫描/检查更新/版本列表/依赖/已发布/评分,主文件 Update:222-227 调)；动作入口 CheckModUpdate/OpenModVersions/LookupModDependencies/OpenModReview(:186-307)；结果落 LocalModStateStore 缓存(:124-164) | 深读 1-320+签名级其余 |
-| 〔节〕ModpacksManageContentScreen.cs(939) | CommunityScreenBase | 整合包管理屏：列表+启用/补装/详情三钮(:28-54)；图标 loader 静态共享(:20)；选中代次计数防陈旧回写(:38-42)；动作 ToggleEnabled/DownloadMissingItems/TryDelete 等(:281-936 签名级) | 静态缓存注明"屏随换语言重建"(:20-26) |
+| 〔深〕ModsManageContentScreen.Community.cs(859) | partial | 模组管理社区侧：静态门闩 s_autoUpdateScanLaunched 发起时置位失败不重扫(:83-84)；EntityReferenceComparer 引用比较器(:21-24，ModEntity 重写 Equals 的一一映射前提)；六动作入口 CheckModUpdate:186/OpenModVersions:222/LookupModDependencies:239/LookupSingleModDependency:266/OpenModReview:307/HasMissingDependencies:228(静态)；TryGuardLocalModNetworkStart:314 同任务在跑弹「请稍候」；EnsurePublishedPostThen:648 放行门(reviewKey 命中 PostId>0 直回调:651)；评分统一提交入口 StartLocalScore:829；GetChinesePublishPostUrl:291 截 WebsiteUrl authority 重拼 `/#/publish/post` | 结果落地三缓存 LocalModStateStore:145-156+陈旧 key 清理:159；发布检查 TaskSlot onFaulted 记日志不冒泡 Update:733-741 |
+| 〔深〕ModpacksManageContentScreen.cs(939) | CommunityScreenBase | 整合包管理屏：静态共享 s_iconLoader:15/s_fileInfoManager:26（屏随换语言重建，缓存不丢）；选中代次计数 m_selectionVersion 防陈旧回写(:38-39)；启用链四段 ModpackDecision 门：忙:306/他包激活:310/文件信息在途:324/无管理 mod:328→缺嵌入列表框:350→缺下载确认:367→ImportEmbeddedItemsAndEnable:510(customFileBackupPreparer=ModpackDataFiles.PrepareForActivation:523，失败 TryRestoreBackups:535)；停用链三失败分支:597-611；TryDeleteModpack:651 激活中禁删+返回 true=点击已处理；补装 mod 默认禁用:729；GetModpackItemDisplayName:710 文件名→fileId→目录→路径→包名 | Leave 顺序不可换 DisposeRetired 在 ClearItems 后(:80-85)+ClearPending 兜底；Dispose 确定性退订静态事件(:89-95)；下载完成回调查缓存未命中同步重读防空列表误清选中:195；RestartConfirmDialog 回调内不得再调 Window.Restart:631 |
 
 ### 杂项单屏（6）
 
@@ -116,11 +116,11 @@
 
 | 文件(行) | 级 | 职责/关键行号 | 备注 |
 |---|---|---|---|
-| 〔节〕PostTreePresenter.cs(757) | —(Shared/) | 单棵帖子树 presenter：节点创建/行刷新/分页状态机/懒加载占位(LazyTag)；ctor 订阅进程级图标事件，宿主屏 Dispose→Detach 退订(:12-23,61)；ApplyPostsResult/ApplyUploadFilesResult(:207,271)；CreatePost/Version/File/UploadFileNode(:373-524) | 深读头 45 行+全签名；依赖注入控件引用，Find 顺序错=翻页永久失效(CommunityScreen.cs:85-87 注释) |
-| 〔节〕PostIconLoader.cs(311) | static | 帖子图标进程级加载：128 容量缓存+在途去重(:14-15)+IconUpdated/IconCleared 广播；反射写 TreeViewNode.m_subtexture(:17-21)；DisposeRetired 由列表 Clear 调(:26) | 深读头 60 行+签名 |
+| 〔深〕PostTreePresenter.cs(757) | —(Shared/) | 单棵帖子树 presenter：LazyTag 占位(:30)点击展开拉详情(:112)；LoadPostDetail:128 TryStart 防重；ApplyPostDetailResult:149 成功回填版本子树、空落"无资源"终态:182、失败重挂懒加载占位可重试:190；ApplyPostsResult:207 目录按来源服务器绑定:211+ref-snapshot 整表共享一次本地快照:222；节点工厂 CreatePostNode:379/CreateVersionNode:436/CreateFileNode:498/CreateUploadFileNode:524；分页状态机 HandlePaginationClicks:333 跳页钳 1..TotalPages；服务端脏数据防线：null version 返回 null:437、null file 跳过:483、数组全 null 落占位:411 | 分页协议坑：/user/posts total=页数 count=条数、/post/list 无 count(:234)；total 谎报弃用回退已加载口径 ResolveListTotals:743；ClearChildren(false) 不 Dispose 共享纹理:159；Detach:61 幂等退订防静态事件钉死 |
+| 〔深〕PostIconLoader.cs(311) | static | 帖子图标进程级加载：EvictableTextureCache(128)+在途去重 s_iconRequests(:14-15)+IconUpdated/IconCleared 广播(:22,24)；反射写 TreeViewNode.m_subtexture(:17-21)；ApplyPostNodeIcon:30 先贴类型图标:246 再异步远程；GetPostIconUrl:75 只认服务器图标，不为缺图下载整包 .scmod(:76-77)；LoadNodeIconAsync:151 下载→512KB 上限:166→Task.Run 解码:178→Dispatcher 回主线；覆写先 IconCleared 摘旧引用再 IconUpdated:197-202、容量驱逐逐 key 广播:203 | 全树匹配按 Tag 重算 URL，事件低频不做节点级备忘(:104)；CropSubtextureToSquare:291 居中正方形 UV 裁剪(图集 UV 约定注释:285-290)；DisposeRetired:26 由列表 Clear 调 |
 | 〔深〕EvictableTextureCache.cs(50) | — | 容量上限纹理缓存：被驱逐/覆写不立即 Dispose，入退休队列待 DisposeRetired(:24-49) | 防可见节点引用悬空 |
-| 〔节〕ModpackIconLoader.cs(173) | — | 整合包图标加载(内嵌/远程两路)：EvictableTextureCache(64)+缺失集合+在途任务表(:20-27) | 深读头 40 行+签名 |
-| 〔节〕ModpackIconManager.cs(193) | — | 图标协调：等待 widget 名册，嵌入优先防双 key 注册(:33-50) | 深读头 50 行+签名 |
+| 〔深〕ModpackIconLoader.cs(173) | — | 整合包图标加载：EvictableTextureCache(64)(:19)+缺失集合 m_missing:20+在途任务表 m_tasks:21；TryStartEmbedded:39 内嵌字节解码；TryStartRemote:50 远程下载 2MB 上限(:66)；TryTakeCompleted:74 每帧只取一个完成 key，失败/解码异常落 missing，Texture2D.Load 在游戏线程执行:100 | ClearPending:116 未完成任务挂 ContinueWith Dispose 防 Image 滞留进程退出；Decode 复用本体 PostIconDecoder.Decode(:146-151)；MakeEmbeddedKey:132 `embedded:{包路径}\|{图标路径}` |
+| 〔深〕ModpackIconManager.cs(193) | — | 图标协调：m_waiters 等待名册(:12)；StartIconRequests:37 嵌入优先防同 widget 双 key 双注册(:33-36)；缓存命中即贴/missing 放行远程/注册 waiter(:62-73)；Update:105 TryTakeCompleted+ApplyReadyTexturesToWaiters:149 兜底扫描补同帧第二 key；ApplyReadyTexture:135 分离 widget 也先贴(Subtexture 纯字段赋值，滚回重挂即显示) | ResolveRemoteIconUrl:168 相对图标按 SourceUrl 解析、zip 包不给远程(:176)；MakeCacheKey:184 `路径\|图标\|最后写时间Ticks`；Clear:113 只清名册，loader 生命周期仍由屏驱动 |
 | 〔深〕HtmlTextUtils.cs(128) | static | 帖子 HTML 纯函数：可见文本探测(:8-35)/纯文本列表行拆分(:39-58)/列表标记(type 属性+字母/罗马序号:62-127) | HtmlAgilityPack |
 | 〔深〕PostDetailsHeaderBuilder.cs(164) | static | 详情弹窗 header 直产 widget(不经 HTML)：更新元信息(:22-55)/发布统计+30 天趋势+版本下载量(:58-134) | 不进自动翻译载荷(注释:6-8) |
 | 〔深〕CommunityTimeFormatter.cs(26) | static | API 时间戳→本地文本唯一入口：解析固定 InvariantCulture+RoundtripKind 防波斯历劫持(:11-25) | 发送侧不用此类 |
@@ -134,7 +134,7 @@
 | 文件(行) | 级 | 职责/关键行号 | 备注 |
 |---|---|---|---|
 | 〔深〕OriginalCommunityContentScreen.cs(380) | Screen | 原版(官方)社区浏览：排序 6 档(:6-13)/过滤(类型|用户|URL)/搜索即时 PopulateList(:91-94)；列表 120s 缓存(:229-267)；长按顶部 2s 强刷(留 Task.Delay(250).Wait() 阻塞:198-203)；下载/删除/评分经 Manager | 被 GameLoadingScreen.Enter 清缓存(GameLoadingScreen.cs:103-108) |
-| 〔节〕OriginalCommunityContentManager.cs(481) | static | 原版社区服务：List/Download(:108)/Publish(:207)/Delete(:262)/Rate(:291)/Report(:306)/SendPlayTime(:320)；id↔地址映射随删档事件维护(:17-31)；SHA1 内容哈希(:423) | 深读头 55 行+签名 |
+| 〔深〕OriginalCommunityContentManager.cs(481) | static | 原版社区服务：XML 协议 POST {original ApiUrl}，List:42(Action=list，Cursor/Type/Moderation/Search/SortOrder 等 9 参数，响应 NextCursor+条目属性:76)；Download:108 GET→SHA1 内容哈希:126,423→PrepareExternalContent publiclyVisible 零拷贝:134→覆盖确认 CommunityImportOverwriteDialog:144；Publish:207 试玩禁发:215+VerifyLinkContent:340 先试导入 __Temp 再删；Feedback:370 统一反馈(Action=feedback+Success/ImportFailure/DownloadFailure/Rating/Report/PlayTime)，m_feedbackCache TryAdd 防重复、重复延迟 1.5s 报错:385-391 | id↔地址映射随四类 Deleted 事件清:19-28、Window.Deactivated 落盘:29；用户取消导入不计 Success 也不计 ImportFailure:153；Load/Save:429,457 XML 缓存 OriginalCommunityContentCachePath |
 | 〔深〕OriginalCommunityContentEntry.cs(16) | — | 条目 DTO：Type/Name/Url/Version/Size/RatingsAverage | |
 | 〔深〕OriginalExternalContentType.cs(9) | enum | 原版社区类型：Unknown/Directory/World/BlocksTexture/CharacterSkin/FurniturePack | 与 ExternalContentType 平行的一套 |
 
