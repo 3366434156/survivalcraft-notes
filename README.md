@@ -1,14 +1,11 @@
 # SC 源码笔记
 
-> 🌐 **在线阅读（GitHub Pages）**：https://3366434156.github.io/survivalcraft-notes/  
-> 📦 **引擎源码仓库（公开，大陆可直连克隆）**：https://gitee.com/SC-SPM/SurvivalcraftApi  
-> Survivalcraft 引擎行号级学习库：23 个引擎域 + 20 张逐文件档案，全部实读校准。  
-> 更新：改 md → `python tools/build_wiki.py` 重生成 docs/ → git push 自动上线。
+> 🌐 **在线阅读**：https://3366434156.github.io/survivalcraft-notes/  
+> 📦 **引擎源码仓库**：https://gitee.com/SC-SPM/SurvivalcraftApi （公开，大陆可直连克隆）
 
-> 🤖 **AI agent 入口**：[AGENTS.md](AGENTS.md) —— 一页纸速览：引擎心智模型 + mod 开发快速通道 + 查库协议。
+Survivalcraft 引擎的行号级学习笔记：**23 个引擎域主题页 + 20 张逐文件明细**，全部逐文件实读校准。机制讲解、表格、代码摘录都写在页内，**无需克隆源码也能完整阅读**——页内行号即源码出处标注。只含引擎/游戏层事实，不含任何 mod 项目内容。
 
-> 独立知识库：只含 Survivalcraft 引擎/游戏层的学习笔记，**不含任何 mod 项目内容**。
-> **页面自足可读**：机制讲解、表格、代码摘录都写在页内，无需克隆源码也能完整阅读；页内行号是源码引用坐标（出处标注，对应上方仓库）。
+> 🤖 **AI agent 从这里进**：[AGENTS.md](AGENTS.md) —— 一页纸速览：引擎心智模型 + mod 开发快速通道 + 查库协议。
 
 ## 站点预览
 
@@ -21,10 +18,11 @@
 | 位置 | 内容 |
 |---|---|
 | `01-引擎\` | 23 个主题页（引擎各域，全部全读）+ `明细\` 20 张逐文件档案 |
-| `AGENTS.md` | AI agent 一页纸速览（引擎心智模型/mod 快速通道/查库协议） |
 | `Mod开发配方.md` | 写 mod 想做 X → 抄哪段原版代码（附"为什么抄它"），最快照抄入口 |
-| `tools\build_wiki.py` | 零依赖静态站生成器（纯 stdlib）；`tools\coverage_audit.py` 源码↔笔记覆盖对账 |
-| `docs\` | 生成的 GitHub Pages 站点（勿手改，重生成即覆盖） |
+| `AGENTS.md` | AI agent 一页纸速览（引擎心智模型/mod 快速通道/查库协议） |
+| `media\` | 站点预览截图 |
+| `tools\` | `build_wiki.py` 站点生成器 · `coverage_audit.py` 源码↔笔记覆盖对账 |
+| `docs\` | 生成的 GitHub Pages 站点（重生成即覆盖） |
 
 ## 页面地图（01-引擎\）
 
@@ -32,7 +30,7 @@
 |---|---|---|
 | [01-程序入口与主循环](01-引擎/01-程序入口与主循环.md) | Program/Window/ScreensManager/GameScreen 一帧全序 | — |
 | [02-Subsystem体系](01-引擎/02-Subsystem体系.md) | Subsystem/Project/加载保存/更新驱动 + 40 业务子系统 | 111/111 · [02a](01-引擎/明细/02a-子系统明细.md) |
-| [03-实体与组件体系](01-引擎/03-实体与组件体系.md) | Entity/Component 契约 + 91 组件族 | 91/91 · [03a](01-引擎/明细/03a-组件明细.md) |
+| [03-实体与组件体系](01-引擎/03-实体与组件体系.md) | Entity/Component 契约 + 91 组件族 + EntitySystem | 91/91 · [03a](01-引擎/明细/03a-组件明细.md) |
 | [04-方块系统](01-引擎/04-方块系统.md) | Block 116 虚方法/BlocksManager/304 方块 | 304/304 · [04a](01-引擎/明细/04a-方块明细.md) |
 | [05-世界与地形生成](01-引擎/05-世界与地形生成.md) | 区块十态/五代TCG/TS23持久化 | 全读 · [05a](01-引擎/明细/05a-地形生成明细.md) |
 | [06-渲染管线与着色器](01-引擎/06-渲染管线与着色器.md) | Graphics/语义头/预乘alpha/批次 | 71/71 · [06a](01-引擎/明细/06a-渲染管线明细.md) |
@@ -56,9 +54,9 @@
 
 ## 快速开始
 
-1. 页面地图选页 → 页内"快查路由"直达小节；站点内按 `/` 搜索。
-2. 写 mod：先看 [Mod开发配方](Mod开发配方.md)（任务 → 照抄哪里），配合 [AGENTS.md](AGENTS.md) 的引擎心智模型。
-3. 克隆引擎源码仓库（https://gitee.com/SC-SPM/SurvivalcraftApi）到本机后，页内"目录地图"的绝对路径+实读行号可直接 `file:line` 跳转核对；页面没覆盖的可以 Grep 源码并把发现回写进对应页面（库越用越准）。
+1. **读**：页面地图选页 → 页内"快查路由"直达小节；站点内按 `/` 搜索。
+2. **写 mod**：先看 [Mod开发配方](Mod开发配方.md)（任务 → 照抄哪里），配合 [AGENTS.md](AGENTS.md) 的引擎心智模型。
+3. **对照源码**：克隆上方 Gitee 仓库到本机，页内"目录地图"的绝对路径+实读行号可直接 `file:line` 跳转核对；页面没覆盖的可以 Grep 源码并把发现回写进对应页面（库越用越准）。
 
 ## 对 mod 开发者的提示
 
