@@ -74,7 +74,7 @@ Content/Assets 下约 20 族纯数据文件把原版大半设计(1132 个模板�
 - **配方成分写错只有 Log.Error 不中断**：CraftingRecipesManager.cs:59 LoadData 整段 try/catch，坏配方静默消失——配方问题先看日志 Error。
 - **[DisplayName:N] 令牌没有对应 Lang 键**：显示为原始令牌串；增实体模板必须同步补 Lang 的 Database 节。
 - **bool 大小写**：BlocksData 的 TRUE/FALSE 合法(BooleanHumanReadableConverter.cs:8 OrdinalIgnoreCase)；但**枚举严格大小写**(EnumHumanReadableConverter.cs:8 `Enum.Parse(...,false)`)——04 页"bool 只认 true/false"表述过严，以本页为准。
-- **跨页事实**：04 页称 BlocksData "79 列"以 awk NF 实测为准(79)；04 页"304 个方块文件"是代码文件数，数据行是 258，两者不是一回事。
+- **跨页事实**：BlocksData "79 列"已统一口径——79 token=类名+78 具名列+行尾空 token，**表头字段名驱动反射（列序无关）**，逐列语义最新版=根目录 数据格式参考.md；04 页"304 个方块文件"是代码文件数，数据行是 258，两者不是一回事。
 
 ## 原版范例
 
@@ -98,7 +98,7 @@ Content/Assets 下约 20 族纯数据文件把原版大半设计(1132 个模板�
 | 查 Database.xml 某模板在哪个 Folder/行 | 22a 明细"Database.xml 分族清单"；或 grep `Name="模板名"` Database.xml |
 | 查某 GUID 指向谁 | grep 该 GUID 于 Database.xml(全文件唯一)；族图谱见 22a |
 | 加/改实体模板后如何生效 | 本页机制 1 装载链；mod 侧走 CombineDataBase(ModsManager.cs:1079) |
-| 查 BlocksData 某列语义 | 22a"79 列契约表"；字段定义回源 Block.cs:8-181 |
+| 查 BlocksData 某列语义 | 22a 78 具名契约表；逐列语义最新版=根目录 数据格式参考.md；字段定义回源 Block.cs:8-181 |
 | 配方语法(数量/数据/返桶) | CraftingRecipesManager.cs:85-138 解码器+22a 配方节 |
 | 世界里默认有哪些子系统 | Database.xml:4343-4453(Project 模板 109 个 MemberSubsystemTemplate) |
 | 文本令牌 [DisplayName:N] 怎么解析 | ComponentCreature.cs:50-56+LanguageControl.cs:367；Lang 的 Database 节 |

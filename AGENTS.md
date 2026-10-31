@@ -4,8 +4,9 @@
 
 ## 0. 这个库是什么
 
-- **Survivalcraft 引擎源码（1644 个 .cs）的行号级学习笔记**，全部逐文件实读校准；23 个主题页 + 20 张逐文件明细。
-- **引擎源码仓库（公开）**：https://gitee.com/SC-SPM/SurvivalcraftApi —— 大陆可直连克隆。本库所有 `E:\SurvivalcraftAPIProject\...:行号` 引用 = 该仓库克隆到本机后的路径（行号 2026-10-31 快照）；改源码后行号以实际为准。
+- **本仓库优先为 AI agent 开发 Survivalcraft mod 服务**；给人类看的内容（站点预览/页面地图）在 [README](README.md)。
+- **Survivalcraft 引擎源码（1644 个 .cs）的行号级学习笔记**，全部逐文件实读校准；23 个主题页 + 20 张逐文件明细是知识底座，其上是专为 agent 编的 8 份参考（§4 查库协议按序使用）：Mod开发配方 → 钩子总表/明细 → 数据格式参考×2 → 排错手册×2 → 端到端示例×3。
+- **引擎源码仓库（公开）**：https://gitee.com/SC-SPM/SurvivalcraftApi —— 大陆可直连克隆。本库所有 `E:\SurvivalcraftAPIProject\...:行号` 引用 = 该仓库克隆到本机后的路径（行号 2026-10-31/11-01 快照）；改源码后行号以实际为准。
 - **在线阅读**：https://3366434156.github.io/survivalcraft-notes/ （github.io 大陆可能超时，仓库内 `docs/` 即整站）。
 - **改笔记流程**：改 md → `python tools/build_wiki.py` 重生成 docs/ → commit/push。
 - **覆盖对账**：`python tools/coverage_audit.py`（源码文件名反查笔记提名，零提名=遗漏，当前 0）。
@@ -18,7 +19,7 @@
 4. **实体 = 组件袋**：Entity 挂 91 个 Component；物理全在 `ComponentBody`，交互伤害在 `ComponentMiner:636-715`（绕过会丢全套管线）。
 5. **方块 = int 值**：contents 位 + data 位编码家族；304 个 Block 类多为止于数据表，异形方块用"预烘变体表"范式（`DoorBlock.cs:21-62`）；行为在 71 个 `SubsystemBlockBehavior`。
 6. **存档双轨**：`ValuesDictionary` 硬拆箱（类型不符会崩）+ XML `ApplyOverrides` 静默降级；**Count>0 才落盘**，读端必须给默认值。
-7. **数据优先**：`BlocksData.txt`(79 列)/`CraftingRecipes.xml`/`Database.xml`(Creature 模板继承树)/`Clothes.xml`——改数值大多不用写代码。
+7. **数据优先**：`BlocksData.txt`(78 具名列，表头字段名驱动)/`CraftingRecipes.xml`/`Database.xml`(Creature 模板继承树)/`Clothes.xml`——改数值大多不用写代码。
 8. **电力独立 tick**：0.01s 固定步进（100 步/秒）；Simulate 抛异常 = 全电路死。
 
 ## 2. Mod 开发快速通道
@@ -58,7 +59,7 @@ public class MyModLoader : ModLoader {          // public 无参构造必须
 
 - `.xdb` 实体合并：`ModsManager.cs:1083-1152`；15 个受保护 GUID 触发人工裁决谈判（`ModsManager.cs:1056-1077`）。
 - `.cr` 配方：按"属性全等+文本一致"找同款改写；`.clo` 衣物：按 `Index` 匹配。
-- 方块数值：模组 `.csv` 复用原版 79 列解析（`BlocksData.txt` 表头）；多语言：Lang 包 en-US 基表+回退。
+- 方块数值：模组 `.csv` 复用表头字段名驱动解析（BlocksManager.cs:1037-1094；列名=Block 子类 public 字段名，可只写要覆盖的列，见 数据格式参考.md）；多语言：Lang 包 en-US 基表+回退。
 - 模组设置：modinfo `Settings` 树（页面/项 JSON，Id 禁 `/`），读值 `ModSettingsManager.Get<T>(包名,页面Id,项Id)`。
 
 ### 平台红线
@@ -86,9 +87,15 @@ public class MyModLoader : ModLoader {          // public 无参构造必须
 
 ## 4. 查库协议（agent 工作流）
 
-1. 本文件 → 2. 按域读对应主题页（页面地图见 [README](README.md)）→ 3. 页内"快查路由"+"原版范例"表 → 4. 没覆盖 → Grep 源码仓库（https://gitee.com/SC-SPM/SurvivalcraftApi），**把发现回写进对应页面**。
+1. 本文件（心智模型 + 高频坑）。
+2. **"我想做 X"** → 查 [Mod开发配方](Mod开发配方.md)（任务 → 照抄哪里）。
+3. **钩子问题** → [Mod钩子总表](Mod钩子总表.md)（高频精选 + 最小骨架 + 例外清单）→ 全量 236 条查 [Mod钩子明细](Mod钩子明细.md)。
+4. **写数据文件**（csv/配方/衣物/实体参数）→ [数据格式参考](数据格式参考.md) + [数据格式参考2](数据格式参考2.md)（78 具名列/属性 schema，按列名写、可只写覆盖列）。
+5. **出问题了** → [Mod排错手册](Mod排错手册.md) + [Mod排错手册2](Mod排错手册2.md)（250 条按症状：加载失败/不生效/崩溃/存档/渲染…）。
+6. **要完整样例模仿** → [Mod示例-数据驱动](Mod示例-数据驱动.md) / [Mod示例-代码方块](Mod示例-代码方块.md) / [Mod示例-电力元件](Mod示例-电力元件.md)（端到端，逐行注明出处）。
+7. 仍没覆盖 → 按域读主题页 → Grep 源码仓库（https://gitee.com/SC-SPM/SurvivalcraftApi）→ **回写进对应页面**（库越用越准）。
+8. 关键代码落笔前，打开对应源码片段核对签名/行号（快照 2026-10-31/11-01；源码更新后以实际为准）。
 - 各域的坑：每页"坑与对策"节；跨页高频坑已收进下节。
-- 页面行号快照日 2026-10-31；源码变更后以实际为准，改完记得回写。
 
 ## 5. 高频坑 Top（跨域精选）
 
@@ -104,6 +111,8 @@ public class MyModLoader : ModLoader {          // public 无参构造必须
 | Simulate 抛异常 | 全电路死——电力元件必须 try/catch 或保证不抛 |
 | 存档数据丢了 | Count==0 不落盘；读端没给默认值 + 硬拆箱崩 |
 | 改 dll 重启没变化 | Reboot 不卸载程序集，必须重启进程 |
+
+以上仅 10 条精选；**250 条按症状全量查 [Mod排错手册](Mod排错手册.md)/[Mod排错手册2](Mod排错手册2.md)**。注意 3 处"注册名≠成员名"钩子与 7 个截断型钩子等协议细节，以 [Mod钩子总表](Mod钩子总表.md) 为准。
 
 ## 6. 改这个库的规则（agent 必读）
 

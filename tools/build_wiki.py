@@ -20,7 +20,7 @@ OUT = SC_ROOT / "docs"  # GitHub Pages 从 /docs 目录部署
 SITE_NAME = "SC 源码笔记"
 SITE_SUB = "SURVIVALCRAFT · 行号级引擎笔记"
 SITE_REPO = "https://github.com/3366434156/survivalcraft-notes"
-SEC_LABELS = {"总览": "总览", "SC引擎": "引擎主线", "SC引擎·明细": "逐文件明细"}
+SEC_LABELS = {"总览": "总览", "Mod开发": "Mod开发", "SC引擎": "引擎主线", "SC引擎·明细": "逐文件明细"}
 
 # ---------- 收集源文件 ----------
 def collect_sources():
@@ -31,11 +31,27 @@ def collect_sources():
     overview = [
         ("总览", SC_ROOT / "README.md", "index.html", 0),
         ("总览", SC_ROOT / "AGENTS.md", "AGENTS.html", 1),
-        ("总览", SC_ROOT / "02-Mod开发配方.md", "02-Mod开发配方.html", 2),
     ]
     for sec, p, o, k in overview:
         if p.exists():
             add(sec, p, o, k)
+
+    moddev = [
+        ("Mod开发", "Mod开发配方.md", 0),
+        ("Mod开发", "Mod钩子总表.md", 1),
+        ("Mod开发", "Mod钩子明细.md", 2),
+        ("Mod开发", "数据格式参考.md", 3),
+        ("Mod开发", "数据格式参考2.md", 4),
+        ("Mod开发", "Mod排错手册.md", 5),
+        ("Mod开发", "Mod排错手册2.md", 6),
+        ("Mod开发", "Mod示例-数据驱动.md", 7),
+        ("Mod开发", "Mod示例-代码方块.md", 8),
+        ("Mod开发", "Mod示例-电力元件.md", 9),
+    ]
+    for sec, name, k in moddev:
+        p = SC_ROOT / name
+        if p.exists():
+            add(sec, p, name.replace(".md", ".html"), k)
 
     if ENGINE.exists():
         mains = sorted(p for p in ENGINE.glob("*.md") if p.is_file())
@@ -360,7 +376,7 @@ def main():
     counts = {}
     for p in pages:
         counts[p["section"]] = counts.get(p["section"], 0) + 1
-    for p in sorted(pages, key=lambda x: (["总览", "SC引擎", "SC引擎·明细"].index(x["section"]), x["order"])):
+    for p in sorted(pages, key=lambda x: (["总览", "Mod开发", "SC引擎", "SC引擎·明细"].index(x["section"]), x["order"])):
         if p["section"] != cur_sec:
             cur_sec = p["section"]
             nav.append('<div class=sec>%s · %d</div>' % (SEC_LABELS[cur_sec], counts[cur_sec]))

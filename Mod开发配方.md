@@ -191,7 +191,7 @@
 |---|---|
 | 加一种生物换色变体 | `Content\Assets\Database.xml:707`（Horse_White 只继承 Horse 改贴图/参数） |
 | 调生物数值(血/攻击/掉落) | `Database.xml:46-110`（Cow 的 Health/Miner/Loot/EatPickableBehavior；ParameterSet 掉落行 `Block;min;max` 语法） |
-| 加一种方块的数据表 | `BlocksData.txt:6`（DirtBlock 行，含 # 自引用掉落；79 列标准填法与留空默认） |
+| 加一种方块的数据表 | `BlocksData.txt:6`（DirtBlock 行，含 # 自引用掉落；78 具名列（表头字段名驱动、可只写覆盖列，见 数据格式参考.md）） |
 | 加合成配方 | `CraftingRecipes.xml:64-139`（Materials 节，含 Remains=EmptyBucketBlock 返桶样例） |
 | 加防具 | `Clothes.xml:2-47`（43 条 ClothingData；Slot/Insulation/Layer 全属性面） |
 | 动画分层(走/持/骼/步) | `AnimationTemplates\Human.template.json`+`Animations\Human.json`（layer blendMode+boneMask+驱动器参数三级） |

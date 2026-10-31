@@ -1,0 +1,140 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>数据格式参考 · BlocksData.txt · SC 源码笔记</title><style>
+:root{--paper:#f6f1e4;--sheet:#fdfaf2;--side-bg:#efe8d5;--ink:#2f2a20;--ink-soft:#5c5340;--ink-faint:#948a74;
+--acc:#a05a1c;--acc-strong:#7c440e;--acc-soft:#f4e8cd;--line:#e2d8bd;--line-strong:#cdbf9c;
+--header-h:56px;--side-w:264px;
+--serif:Georgia,"Times New Roman","Source Han Serif SC","Noto Serif SC",SimSun,serif;
+--sans:"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+--mono:Consolas,"Cascadia Mono","Courier New",monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 18px)}
+body{margin:0;font-family:var(--sans);color:var(--ink);font-size:15.5px;line-height:1.85;
+background:radial-gradient(1100px 500px at 50% -8%,rgba(160,122,60,.07),transparent 60%),
+repeating-linear-gradient(0deg,rgba(140,105,50,.014) 0 1px,transparent 1px 4px),var(--paper)}
+/* 顶栏：纸条 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
+background:rgba(246,241,228,.94);backdrop-filter:blur(8px);border-bottom:3px double var(--line-strong)}
+#burger{display:none;border:1px solid var(--line-strong);background:var(--sheet);border-radius:8px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-family:var(--serif);font-size:19px;color:var(--ink);letter-spacing:1px}
+#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:2px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,40vw)}
+#search{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--line-strong);border-radius:8px;background:var(--sheet);color:var(--ink);font-size:13.5px;outline:none;transition:border-color .15s,box-shadow .15s}
+#search:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap::before{content:"⌕";position:absolute;left:11px;top:50%;transform:translateY(-54%);color:var(--ink-faint);font-size:15px;pointer-events:none}
+#sres{position:absolute;top:calc(100% + 6px);left:0;right:0;display:none;background:var(--sheet);border:1px solid var(--line-strong);border-radius:10px;box-shadow:0 12px 32px rgba(90,66,20,.18);max-height:62vh;overflow:auto;padding:6px;z-index:30}
+#sres a{display:block;padding:8px 10px;border-radius:8px;font-size:13.5px;color:var(--ink);text-decoration:none}
+#sres a:hover{background:var(--acc-soft)}
+#sres .snip{display:block;font-size:12px;color:var(--ink-faint);margin-top:1px}
+#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap}
+#top .gh:hover{color:var(--acc)}
+/* 布局 */
+#layout{display:flex;min-height:calc(100vh - var(--header-h))}
+#backdrop{display:none}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line-strong);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-family:var(--serif);font-size:11.5px;font-weight:600;color:var(--acc-strong);letter-spacing:3px}
+#side .sec:first-child{margin-top:4px}
+#nav a{display:block;padding:6px 10px;margin:1px 0;border-radius:8px;color:#4a4334;text-decoration:none;font-size:13.5px;line-height:1.55;border-left:2px solid transparent}
+#nav a:hover{background:rgba(160,90,28,.08);color:var(--ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-strong);border-left-color:var(--acc);font-weight:600}
+/* 正文：纸页 */
+#main{flex:1;min-width:0;padding:34px clamp(18px,4vw,52px) 80px}
+article{max-width:900px;margin:0 auto;background:var(--sheet);border:1px solid var(--line);border-top:3px solid var(--acc);
+border-radius:6px;padding:clamp(24px,4vw,48px) clamp(22px,4.5vw,52px);
+box-shadow:0 1px 2px rgba(90,66,20,.05),0 10px 30px rgba(90,66,20,.08)}
+h1,h2,h3{font-family:var(--serif);color:var(--ink)}
+h1{font-size:clamp(23px,3vw,28px);font-weight:700;margin:0 0 12px;letter-spacing:.5px}
+h2{font-size:clamp(18px,2.2vw,21px);margin:40px 0 14px;padding-bottom:9px;border-bottom:3px double var(--line-strong)}
+h3{font-size:16.5px;margin:26px 0 10px}
+p{margin:10px 0}
+a{color:var(--acc-strong);text-decoration:none}
+a:hover{text-decoration:underline;color:var(--acc)}
+blockquote{margin:18px 0;padding:12px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;color:#57452a;font-size:14.5px}
+blockquote p{margin:4px 0}
+code{background:#f2ead6;border:1px solid #e0d4b6;border-radius:5px;padding:1px 6px;font-family:var(--mono);font-size:.86em;color:#7c4a12;overflow-wrap:anywhere}
+pre.code{background:#f7f2e3;color:#3a3122;border:1px solid var(--line);border-radius:10px;padding:15px 18px;overflow-x:auto;box-shadow:inset 0 0 0 1px rgba(160,122,60,.06)}
+pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
+th{background:rgba(160,122,60,.07);color:#4a3d26;font-weight:600;text-align:left;font-family:var(--serif)}
+th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:anywhere}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:rgba(160,122,60,.035)}
+hr{border:none;border-top:3px double var(--line-strong);margin:30px 0}
+ul,ol{padding-left:1.5em;margin:10px 0}
+li{margin:4px 0}
+#foot{max-width:900px;margin:40px auto 0;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.5px}
+.deadlink{color:var(--ink-faint);border-bottom:1px dotted #b8ab8b}
+/* 窄屏 */
+@media(max-width:1200px){:root{--side-w:232px}}
+@media(max-width:1024px){
+#burger{display:block}
+#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(70,52,20,.35);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
+#backdrop.show{opacity:1;pointer-events:auto}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:10px 0 28px rgba(90,66,20,.15)}
+#side.open{left:0}
+#top .gh{display:none}
+#top .brand small{display:none}
+.searchwrap{width:min(240px,52vw)}
+}
+@media print{
+#top,#side,#backdrop,#foot,#burger,.searchwrap{display:none!important}
+body{background:#fff}
+#main{padding:0}
+article{box-shadow:none;border:none;border-top:none;max-width:100%}
+a{color:inherit}
+}
+</style></head><body><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 2</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><div class=sec>Mod开发 · 10</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><div class=sec>引擎主线 · 23</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><article><h1 id="数据格式参考-blocksdata-txt">数据格式参考 · BlocksData.txt</h1>
+<blockquote>域: SC引擎 · 更新: 2026-11-01 · 状态: 全读（解析器+表头+字段定义逐列实读）</blockquote>
+<h2 id="一句话定位">一句话定位</h2>
+<p>方块数据表（分号分隔 78 列）的逐列语义与值语法，AI 写 <code>.csv</code>/<code>BlocksData.txt</code> 前先查本页，不用回翻解析源码。</p>
+<h2 id="怎么用-ai-视角">怎么用（AI 视角）</h2>
+<ol><li>写方块数据文件前：先在此表找到列名与值语法 → 照"最小可用示例"抄格式；列名即 Block 子类字段名，写错=整行报错。</li><li>查"为什么这个值不生效"：看"读取方"列跳源码消费点；跨配方/衣物/实体格式见 <a href="数据格式参考2.html">数据格式参考2</a>。</li></ol>
+<h2 id="目录地图">目录地图</h2>
+<div class=tablewrap><table><thead><tr><th>符号(类/文件)</th><th>绝对路径</th><th>职责</th></tr></thead><tbody><tr><td>BlocksManager.LoadBlocksData</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\BlocksManager.cs</td><td>解析器（表头驱动，反射赋字段）</td></tr><tr><td>Block（字段定义 8-181）</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Block\Block.cs</td><td>列名对应的字段本体</td></tr><tr><td>BlocksData.txt（原版表）</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Content\Assets\BlocksData.txt</td><td>271 行：表头+分隔行+269 数据行</td></tr><tr><td>HumanReadableConverter</td><td>E:\SurvivalcraftAPIProject\Engine\Engine.Serialization\HumanReadableConverter.cs</td><td>值字符串→类型的统一转换器</td></tr></tbody></table></div>
+<h2 id="解析规则-blocksmanager-cs-1037-1094-实读">解析规则（BlocksManager.cs:1037-1094 实读）</h2>
+<ul><li><b>表头驱动，非固定列</b>：第 1 行=<code>Class Name;字段名;字段名;…</code>；解析器按列名反射匹配 Block 子类的 <b>public 非静态实例字段</b>（BlocksManager.cs:1061-1069），列顺序无所谓，列名必须一字不差（未知列名=抛异常 BlocksManager.cs:1074-1076）。</li><li><b>第 1 列是类型选择器</b>：值=Block 子类简单名，按 <code>GetType().Name</code> 匹配；匹配失败仅告警跳整行（:1052-1058）。</li><li><b>空单元格=保留字段默认值</b>（:1073），不写覆盖。</li><li><b>每行列数必须=表头 token 数</b>（:1047-1051）；原版表头 78 个具名列+行尾 <code>;</code>（split 出第 79 个空 token），数据行必须同样 79 token。CRLF 兼容（:1038 先剥 <code>\r</code>）。</li><li><b><code>#</code> 引用语法</b>（:1078-1085）：<code>#</code>=自身 BlockIndex，<code>#类名</code>=指定方块的 BlockIndex（用于掉落/邻块等 int 方块引用列）。</li><li><b>值语法</b>（HumanReadableConverter 各转换器实读）：bool=<code>True</code>/<code>False</code>（大小写不敏感）；float=不变文化小数点 <code>.</code>（SingleHumanReadableConverter.cs）；Vector3=<code>x,y,z</code>（逗号分隔，空格容忍）；枚举=枚举成员名，<b>大小写敏感</b>（EnumHumanReadableConverter.cs 用 <code>Enum.Parse(type,data,false)</code>）。</li><li><b>载入时机</b>：原版表随 Content.zip 由 SurvivalCraftModEntity.LoadBlocksData 载入（SurvivalCraftModEntity.cs:72-76）；模组同格式文件扩展名 <code>.csv</code>（ModEntity.cs:303-315），在全部方块注册后、Initialize 前执行（BlocksManager.cs:407-418）。</li></ul>
+<h2 id="78-列逐列语义-列序-原版表头-blocksdata-txt-1-实读顺序-读取方-block">78 列逐列语义（列序=原版表头 BlocksData.txt:1 实读顺序；读取方=Block.cs 字段/消费点，2026-11-01 实读）</h2>
+<div class=tablewrap><table><thead><tr><th>列序</th><th>列名</th><th>类型</th><th>语义（含缺省默认）</th><th>读取方:行号</th></tr></thead><tbody><tr><td>1</td><td>Class Name</td><td>特殊</td><td>Block 子类简单名，行主键</td><td>BlocksManager.cs:1052-1056</td></tr><tr><td>2</td><td>DefaultDisplayName</td><td>string</td><td>显示名，空=用 Lang；经 <code>Lang→Blocks</code> 本地化</td><td>Block.cs:8</td></tr><tr><td>3</td><td>DefaultCategory</td><td>string</td><td>创造栏分类（Terrain/Minerals/…）</td><td>Block.cs:12</td></tr><tr><td>4</td><td>Behaviors</td><td>string</td><td>挂 BlockBehavior，逗号分隔（名=Subsystem 名），自动 Trim</td><td>Block.cs:45；SubsystemBlockBehaviors.cs:21-25</td></tr><tr><td>5</td><td>DisplayOrder</td><td>int</td><td>创造栏内排序</td><td>Block.cs:14</td></tr><tr><td>6</td><td>DefaultIconBlockOffset</td><td>Vector3</td><td>物品图标：方块偏移</td><td>Block.cs:16</td></tr><tr><td>7</td><td>DefaultIconViewOffset</td><td>Vector3</td><td>物品图标：视角偏移</td><td>Block.cs:18</td></tr><tr><td>8</td><td>DefaultIconViewScale</td><td>float(1)</td><td>物品图标：缩放</td><td>Block.cs:20</td></tr><tr><td>9</td><td>FirstPersonScale</td><td>float(1)</td><td>第一人称模型缩放</td><td>Block.cs:22</td></tr><tr><td>10</td><td>FirstPersonOffset</td><td>Vector3</td><td>第一人称模型偏移</td><td>Block.cs:24</td></tr><tr><td>11</td><td>FirstPersonRotation</td><td>Vector3</td><td>第一人称模型旋转（度）</td><td>Block.cs:36</td></tr><tr><td>12</td><td>InHandScale</td><td>float(1)</td><td>手持模型缩放</td><td>Block.cs:38</td></tr><tr><td>13</td><td>InHandOffset</td><td>Vector3</td><td>手持模型偏移</td><td>Block.cs:40</td></tr><tr><td>14</td><td>InHandRotation</td><td>Vector3</td><td>手持模型旋转（度）</td><td>Block.cs:42</td></tr><tr><td>15</td><td>CraftingId</td><td>string</td><td>合成成分标识（如 <code>dirt</code>），空=无；配方成分用它索引</td><td>Block.cs:47；BlocksManager.cs:448-455</td></tr><tr><td>16</td><td>DefaultCreativeData</td><td>int</td><td>创造栏数据（-1=不进创造栏；data 位编码变体）</td><td>Block.cs:49；Block.cs:317-318</td></tr><tr><td>17</td><td>IsCollidable</td><td>bool(True)</td><td>是否有碰撞</td><td>Block.cs:51</td></tr><tr><td>18</td><td>IsPlaceable</td><td>bool(True)</td><td>是否可放置</td><td>Block.cs:53</td></tr><tr><td>19</td><td>IsDiggingTransparent</td><td>bool(False)</td><td>挖掘透视（相邻面剔除判断）</td><td>Block.cs:55</td></tr><tr><td>20</td><td>IsPlacementTransparent</td><td>bool(False)</td><td>放置透视</td><td>Block.cs:57</td></tr><tr><td>21</td><td>DefaultIsInteractive</td><td>bool(False)</td><td>可交互（准星提示）</td><td>Block.cs:59</td></tr><tr><td>22</td><td>IsEditable</td><td>bool(False)</td><td>可编辑（编辑对话框/可编辑物品行为）</td><td>Block.cs:63</td></tr><tr><td>23</td><td>IsNonDuplicable</td><td>bool(False)</td><td>禁止复制</td><td>Block.cs:65</td></tr><tr><td>24</td><td>IsGatherable</td><td>bool(False)</td><td>可收集（耙/采集）</td><td>Block.cs:67</td></tr><tr><td>25</td><td>HasCollisionBehavior</td><td>bool(False)</td><td>有碰撞行为（踩踏类）</td><td>Block.cs:69</td></tr><tr><td>26</td><td>KillsWhenStuck</td><td>bool(False)</td><td>卡住即死（仙人掌/尖刺类）</td><td>Block.cs:71</td></tr><tr><td>27</td><td>IsFluidBlocker</td><td>bool(True)</td><td>挡水</td><td>Block.cs:73</td></tr><tr><td>28</td><td>IsTransparent</td><td>bool(False)</td><td>渲染透明（不遮挡邻面）</td><td>Block.cs:75</td></tr><tr><td>29</td><td>GenerateFacesForSameNeighbors</td><td>bool(False)</td><td>相同邻居间也生成面</td><td>Block.cs:77</td></tr><tr><td>30</td><td>DefaultShadowStrength</td><td>int(0)</td><td>方块投影强度</td><td>Block.cs:79</td></tr><tr><td>31</td><td>LightAttenuation</td><td>int(0)</td><td>光衰减（0=透光）</td><td>Block.cs:81</td></tr><tr><td>32</td><td>DefaultEmittedLightAmount</td><td>int(0)</td><td>自发光量</td><td>Block.cs:83</td></tr><tr><td>33</td><td>ObjectShadowStrength</td><td>float(0)</td><td>实体投影强度</td><td>Block.cs:85</td></tr><tr><td>34</td><td>DefaultDropContent</td><td>int(0)</td><td>挖掉掉落方块值；<code>#</code>=<code>#类名</code> 引用语法</td><td>Block.cs:87；BlocksManager.cs:1078-1085</td></tr><tr><td>35</td><td>DefaultDropCount</td><td>float(1)</td><td>掉落数量</td><td>Block.cs:89</td></tr><tr><td>36</td><td>DefaultExperienceCount</td><td>float(0)</td><td>掉落经验</td><td>Block.cs:91</td></tr><tr><td>37</td><td>RequiredToolLevel</td><td>int(0)</td><td>掉落所需工具等级</td><td>Block.cs:93</td></tr><tr><td>38</td><td>MaxStacking</td><td>int(40)</td><td>堆叠上限</td><td>Block.cs:95</td></tr><tr><td>39</td><td>SleepSuitability</td><td>float(0)</td><td>睡眠适性（床上/地上）</td><td>Block.cs:97</td></tr><tr><td>40</td><td>FrictionFactor</td><td>float(1)</td><td>摩擦系数</td><td>Block.cs:99</td></tr><tr><td>41</td><td>Density</td><td>float(4)</td><td>密度（浮沉/推挤）</td><td>Block.cs:101</td></tr><tr><td>42</td><td>NoAutoJump</td><td>bool(False)</td><td>禁自动跳</td><td>Block.cs:103</td></tr><tr><td>43</td><td>NoSmoothRise</td><td>bool(False)</td><td>禁平滑上台阶</td><td>Block.cs:105</td></tr><tr><td>44</td><td>FuelHeatLevel</td><td>float(0)</td><td>作燃料的热级</td><td>Block.cs:111</td></tr><tr><td>45</td><td>FuelFireDuration</td><td>float(0)</td><td>作燃料的燃烧秒数</td><td>Block.cs:113</td></tr><tr><td>46</td><td>DefaultSoundMaterialName</td><td>string</td><td>脚步/挖掘声材质（Stone/Wood/Dirt/Sand/Soft/Glass/Metal/Leaves/Plant/Snow）</td><td>Block.cs:115</td></tr><tr><td>47</td><td>ShovelPower</td><td>float(1)</td><td>铲速倍率（作工具）</td><td>Block.cs:117</td></tr><tr><td>48</td><td>QuarryPower</td><td>float(1)</td><td>镐速倍率</td><td>Block.cs:119</td></tr><tr><td>49</td><td>HackPower</td><td>float(1)</td><td>斧速倍率</td><td>Block.cs:121</td></tr><tr><td>50</td><td>DefaultMeleePower</td><td>float(1)</td><td>近战攻击力（作武器）</td><td>Block.cs:123</td></tr><tr><td>51</td><td>DefaultMeleeHitProbability</td><td>float(0.66)</td><td>近战命中概率</td><td>Block.cs:125</td></tr><tr><td>52</td><td>DefaultProjectilePower</td><td>float(1)</td><td>投射物攻击力</td><td>Block.cs:127</td></tr><tr><td>53</td><td>ToolLevel</td><td>int(0)</td><td>工具等级</td><td>Block.cs:129</td></tr><tr><td>54</td><td>PlayerLevelRequired</td><td>int(1)</td><td>使用所需玩家等级</td><td>Block.cs:131</td></tr><tr><td>55</td><td>Durability</td><td>int(-1)</td><td>耐久（-1=无损耗）</td><td>Block.cs:133</td></tr><tr><td>56</td><td>IsAimable</td><td>bool(False)</td><td>可瞄准（持弹姿势）</td><td>Block.cs:141</td></tr><tr><td>57</td><td>IsStickable</td><td>bool(False)</td><td>可黏附</td><td>Block.cs:143</td></tr><tr><td>58</td><td>AlignToVelocity</td><td>bool(False)</td><td>投射物按速度对齐朝向</td><td>Block.cs:145</td></tr><tr><td>59</td><td>ProjectileSpeed</td><td>float(15)</td><td>投射物初速</td><td>Block.cs:147</td></tr><tr><td>60</td><td>ProjectileDamping</td><td>float(0.8)</td><td>投射物阻尼</td><td>Block.cs:149</td></tr><tr><td>61</td><td>ProjectileTipOffset</td><td>float(0)</td><td>投射物尖端偏移（命中判定点前移）</td><td>Block.cs:151</td></tr><tr><td>62</td><td>DisintegratesOnHit</td><td>bool(False)</td><td>命中即碎</td><td>Block.cs:153</td></tr><tr><td>63</td><td>ProjectileStickProbability</td><td>float(0)</td><td>命中后黏附概率</td><td>Block.cs:155</td></tr><tr><td>64</td><td>DefaultHeat</td><td>float(0)</td><td>热源温度</td><td>Block.cs:157</td></tr><tr><td>65</td><td>FireDuration</td><td>float(0)</td><td>燃烧持续秒数</td><td>Block.cs:159</td></tr><tr><td>66</td><td>ExplosionResilience</td><td>float(0)</td><td>爆炸抗性（越大越耐炸）</td><td>Block.cs:161</td></tr><tr><td>67</td><td>DefaultExplosionPressure</td><td>float(0)</td><td>被引爆时的爆炸压力</td><td>Block.cs:163</td></tr><tr><td>68</td><td>DefaultExplosionIncendiary</td><td>bool(False)</td><td>爆炸带燃烧</td><td>Block.cs:165</td></tr><tr><td>69</td><td>ExplosionKeepsPickables</td><td>bool(False)</td><td>爆炸不掉落物品</td><td>Block.cs:167</td></tr><tr><td>70</td><td>DigMethod</td><td>enum(None/Shovel/Quarry/Hack)</td><td>有效挖掘方式（大小写敏感）</td><td>Block.cs:135；Game\BlockDigMethod.cs:2-8</td></tr><tr><td>71</td><td>DigResilience</td><td>float(1)</td><td>挖掘韧性（越大越难挖）</td><td>Block.cs:137</td></tr><tr><td>72</td><td>ProjectileResilience</td><td>float(1)</td><td>投射物韧性</td><td>Block.cs:139</td></tr><tr><td>73</td><td>DefaultNutritionalValue</td><td>float(0)</td><td>食用营养值</td><td>Block.cs:169</td></tr><tr><td>74</td><td>DefaultSicknessProbability</td><td>float(0)</td><td>食物中毒概率</td><td>Block.cs:175</td></tr><tr><td>75</td><td>FoodType</td><td>enum(None/Meat/Fish/Fruit/Grass/Bread)</td><td>食物类型（生物 FoodFactors 按此匹配；大小写敏感）</td><td>Block.cs:171；Game\FoodType.cs:2-9</td></tr><tr><td>76</td><td>DefaultRotPeriod</td><td>int(0)</td><td>腐烂周期</td><td>Block.cs:173</td></tr><tr><td>77</td><td>DefaultTextureSlot</td><td>int(0)</td><td>默认贴图槽（0-255，槽→UV 见 BlocksManager.cs:1102-1110）</td><td>Block.cs:107</td></tr><tr><td>78</td><td>DestructionDebrisScale</td><td>float(1)</td><td>破坏碎屑规模</td><td>Block.cs:109</td></tr></tbody></table></div>
+<h2 id="最小可用示例">最小可用示例</h2>
+<p>DirtBlock（原版表第 6 行，摘录；E:\SurvivalcraftAPIProject\Survivalcraft\Content\Assets\BlocksData.txt:6）：</p>
+<pre class="code lang-csv"><code>DirtBlock;;Terrain;;6;0,0,0;1, 1, 1;1;0.4;0.5, -0.5, -0.6;0, 40, 0;0.3;0,0.12,0;0, 0, 45;dirt;0;TRUE;TRUE;FALSE;FALSE;FALSE;FALSE;FALSE;FALSE;FALSE;FALSE;TRUE;FALSE;FALSE;15;0;0;1;#;1;0.005;0;40;0.5;1;3;FALSE;FALSE;0;0;Dirt;1;1;1;1;;1;1;;-1;FALSE;FALSE;FALSE;0;;0;FALSE;0.9;;0;25;;;;Shovel;1.5;1;;;;;2;1;</code></pre>
+<p>要点：第 2 列显示名留空（走 Lang）；<code>dirt</code>=CraftingId（配方用它）；掉落列 34 填 <code>#</code>（自掉落）。引用他块见 GrassBlock 第 15 行：掉落列填 <code>#DirtBlock</code>。</p>
+<p>模组用法：<code>.scmod</code> 根放 <code>*.csv</code>（扩展名小写必须），首行表头可只写要覆盖的列（如 <code>Class Name;DefaultDisplayName</code>），其余列由字段默认值兜底——列数=表头 token 数即可，不必 78 列全写。</p>
+<h2 id="坑与对策">坑与对策</h2>
+<ul><li><b>列名≠列序</b>：解析按表头名匹配字段；照抄别列的顺序不安全——FoodType 列(75)在 DefaultSicknessProbability(74) 与 DefaultRotPeriod(76) 之间，与 Block.cs 字段声明顺序不同。</li><li><b>枚举大小写敏感</b>：<code>Shovel</code>/<code>Meat</code>/<code>Air</code> 首字母必须大写（EnumHumanReadableConverter 用 ignoreCase:false）。</li><li><b>行尾 <code>;</code> 不能少</b>：原版每行 79 token；少一个 <code>;</code> 整行抛 InvalidOperationException（BlocksManager.cs:1047-1051），但解析器逐行执行——前面行已生效，报错行丢失。</li><li><b>类名打错静默丢块</b>：只 Log.Warning 跳行（BlocksManager.cs:1058），游戏照常进——世界少了方块先查日志。</li><li><b><code>#</code> 只对 int 方块引用列</b>：非方块引用列写 <code>#</code> 会按类型转换失败抛异常。</li></ul>
+<h2 id="原版范例">原版范例</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>最简新方块数据行</td><td>BlocksData.txt:6（DirtBlock，全套默认值兜底）</td></tr><tr><td>掉落引用他块</td><td>BlocksData.txt:15（GrassBlock 掉 <code>#DirtBlock</code>）</td></tr><tr><td>矿石掉自身物品+限镐</td><td>BlocksData.txt:23（CoalOreBlock，<code>#CoalChunkBlock</code>+DigMethod=Quarry）</td></tr><tr><td>投射物方块</td><td>BlocksData.txt:21（StoneChunkBlock，ThrowableBlockBehavior+投射物三件套）</td></tr><tr><td>工具行（点火花柴）</td><td>BlocksData.txt:186（MatchBlock，CraftingId=match）</td></tr></tbody></table></div>
+<h2 id="快查路由">快查路由</h2>
+<div class=tablewrap><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某列填什么值</td><td>本页 78 列表"语义+默认"列</td></tr><tr><td>值字符串语法（bool/float/Vector3/枚举）</td><td>本页"解析规则"第 5 条</td></tr><tr><td>方块类该有哪些字段/虚方法</td><td><a href="01-引擎/04-方块系统.html">01-引擎/04-方块系统.md</a></td></tr><tr><td>配方/衣物/实体参数格式</td><td><a href="数据格式参考2.html">数据格式参考2</a></td></tr><tr><td>Database.xml 模板树与 GUID</td><td><a href="01-引擎/明细/22a-数据资产明细.html">01-引擎/明细/22a-数据资产明细.md</a></td></tr><tr><td>.scmod 包结构与 <code>.csv</code> 装载时序</td><td><a href="01-引擎/12-ModAPI与加载链.html">01-引擎/12-ModAPI与加载链.md</a></td></tr><tr><td>新增方块完整步骤</td><td><a href="Mod开发配方.html">Mod开发配方.md</a></td></tr></tbody></table></div></article><div id=foot>SC 源码笔记 · 纸上得来终觉浅 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><script>
+const $=s=>document.querySelector(s);
+const ROOT=""; // 站点根相对前缀（按页面深度注入）
+// 搜索
+let IDX=[];
+fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
+const box=$('#search'),res=$('#sres');
+box.addEventListener('input',()=>{
+  const q=box.value.trim().toLowerCase();
+  if(!q){res.style.display='none';return}
+  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
+  res.innerHTML=hits.map(p=>{
+    const i=p.b.toLowerCase().indexOf(q);
+    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
+    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
+  }).join('')||'<a>无命中</a>';
+  res.style.display='block';
+});
+document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
+  if(e.key==='Escape'){res.style.display='none'}
+});
+// 移动端侧栏抽屉
+const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
+function setSide(open){side.classList.toggle('open',open);backdrop.classList.toggle('show',open)}
+burger.addEventListener('click',e=>{e.stopPropagation();setSide(!side.classList.contains('open'))});
+document.addEventListener('click',e=>{if(window.innerWidth<=1024&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==burger)setSide(false)});
+backdrop.addEventListener('click',()=>setSide(false));
+// 高亮当前页
+const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
+document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
+</script></body></html>
