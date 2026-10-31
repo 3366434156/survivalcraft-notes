@@ -1,95 +1,132 @@
-<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>粒子系统明细（一行一文件） · SC 源码笔记</title><style>
-:root{--paper:#f6f1e4;--sheet:#fdfaf2;--side-bg:#efe8d5;--ink:#2f2a20;--ink-soft:#5c5340;--ink-faint:#948a74;
---acc:#a05a1c;--acc-strong:#7c440e;--acc-soft:#f4e8cd;--line:#e2d8bd;--line-strong:#cdbf9c;
---header-h:56px;--side-w:264px;
---serif:Georgia,"Times New Roman","Source Han Serif SC","Noto Serif SC",SimSun,serif;
---sans:"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
---mono:Consolas,"Cascadia Mono","Courier New",monospace}
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><script>(function(){try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}})()</script><title>粒子系统明细（一行一文件） · SC 源码笔记</title><style>
+:root{
+--bg:#f8fafc;--sheet:#ffffff;--surface-2:#f1f5f9;--side-bg:#f8fafc;
+--ink:#0f172a;--ink-soft:#475569;--ink-faint:#94a3b8;
+--line:#e6e9f0;--line-strong:#d5dbe5;
+--acc:#4f46e5;--acc-2:#7c3aed;--acc-ink:#4338ca;--acc-soft:#eef2ff;
+--top-bg:rgba(248,250,252,.82);--code-bg:#0f172a;--code-ink:#e2e8f0;
+--shadow:0 1px 2px rgba(2,6,23,.05),0 12px 32px -8px rgba(2,6,23,.10);
+--shadow-sm:0 1px 2px rgba(2,6,23,.06);
+--header-h:58px;--side-w:264px}
+:root[data-theme=dark]{
+--bg:#0a0d14;--sheet:#10141f;--surface-2:#161c2b;--side-bg:#0c101a;
+--ink:#e6e9f0;--ink-soft:#a6afc2;--ink-faint:#64708c;
+--line:#1e2536;--line-strong:#2b3550;
+--acc:#818cf8;--acc-2:#a78bfa;--acc-ink:#a5b4fc;--acc-soft:rgba(99,102,241,.16);
+--top-bg:rgba(10,13,20,.78);--code-bg:#0b101c;--code-ink:#d7dee8;
+--shadow:0 1px 2px rgba(0,0,0,.45),0 14px 36px -10px rgba(0,0,0,.55);
+--shadow-sm:0 1px 2px rgba(0,0,0,.4)}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 18px)}
-body{margin:0;font-family:var(--sans);color:var(--ink);font-size:15.5px;line-height:1.85;
-background:radial-gradient(1100px 500px at 50% -8%,rgba(160,122,60,.07),transparent 60%),
-repeating-linear-gradient(0deg,rgba(140,105,50,.014) 0 1px,transparent 1px 4px),var(--paper)}
-/* 顶栏：纸条 */
-#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
-background:rgba(246,241,228,.94);backdrop-filter:blur(8px);border-bottom:3px double var(--line-strong)}
-#burger{display:none;border:1px solid var(--line-strong);background:var(--sheet);border-radius:8px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
-#top .brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;white-space:nowrap;min-width:0}
-#top .brand b{font-family:var(--serif);font-size:19px;color:var(--ink);letter-spacing:1px}
-#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:2px}
-.searchwrap{position:relative;margin-left:auto;width:min(340px,40vw)}
-#search{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--line-strong);border-radius:8px;background:var(--sheet);color:var(--ink);font-size:13.5px;outline:none;transition:border-color .15s,box-shadow .15s}
-#search:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px)}
+body{margin:0;font-family:ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",-apple-system,sans-serif;
+color:var(--ink);font-size:15px;line-height:1.8;
+background:radial-gradient(1000px 460px at 78% -12%,rgba(99,102,241,.09),transparent 60%),
+radial-gradient(820px 420px at -8% -4%,rgba(124,58,237,.06),transparent 55%),var(--bg);
+transition:color .2s,background-color .2s}
+::selection{background:var(--acc-soft);color:var(--acc-ink)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+/* 顶栏：玻璃 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
+background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:flex;align-items:center;gap:9px}
+#top .brand b::before{content:"";width:22px;height:22px;border-radius:7px;flex:0 0 22px;
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
+#search{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);font-size:13.5px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s}
+#search::placeholder{color:var(--ink-faint)}
+#search:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);background:var(--sheet)}
 .searchwrap::before{content:"⌕";position:absolute;left:11px;top:50%;transform:translateY(-54%);color:var(--ink-faint);font-size:15px;pointer-events:none}
-#sres{position:absolute;top:calc(100% + 6px);left:0;right:0;display:none;background:var(--sheet);border:1px solid var(--line-strong);border-radius:10px;box-shadow:0 12px 32px rgba(90,66,20,.18);max-height:62vh;overflow:auto;padding:6px;z-index:30}
+#sres{position:absolute;top:calc(100% + 6px);left:0;right:0;display:none;background:var(--sheet);border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 44px rgba(2,6,23,.18);max-height:62vh;overflow:auto;padding:6px;z-index:30}
 #sres a{display:block;padding:8px 10px;border-radius:8px;font-size:13.5px;color:var(--ink);text-decoration:none}
 #sres a:hover{background:var(--acc-soft)}
 #sres .snip{display:block;font-size:12px;color:var(--ink-faint);margin-top:1px}
-#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap}
-#top .gh:hover{color:var(--acc)}
+#themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
+#themeBtn:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap;border:1px solid var(--line);border-radius:9px;padding:6px 11px;background:var(--surface)}
+#top .gh:hover{color:var(--acc);border-color:var(--acc)}
 /* 布局 */
 #layout{display:flex;min-height:calc(100vh - var(--header-h))}
 #backdrop{display:none}
-#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line-strong);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
-#side .sec{margin:18px 8px 6px;font-family:var(--serif);font-size:11.5px;font-weight:600;color:var(--acc-strong);letter-spacing:3px}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-size:10.5px;font-weight:700;color:var(--ink-faint);letter-spacing:2.2px;text-transform:uppercase}
 #side .sec:first-child{margin-top:4px}
-#nav a{display:block;padding:6px 10px;margin:1px 0;border-radius:8px;color:#4a4334;text-decoration:none;font-size:13.5px;line-height:1.55;border-left:2px solid transparent}
-#nav a:hover{background:rgba(160,90,28,.08);color:var(--ink)}
-#nav a.active{background:var(--acc-soft);color:var(--acc-strong);border-left-color:var(--acc);font-weight:600}
-/* 正文：纸页 */
-#main{flex:1;min-width:0;padding:34px clamp(18px,4vw,52px) 80px}
-article{max-width:900px;margin:0 auto;background:var(--sheet);border:1px solid var(--line);border-top:3px solid var(--acc);
-border-radius:6px;padding:clamp(24px,4vw,48px) clamp(22px,4.5vw,52px);
-box-shadow:0 1px 2px rgba(90,66,20,.05),0 10px 30px rgba(90,66,20,.08)}
-h1,h2,h3{font-family:var(--serif);color:var(--ink)}
-h1{font-size:clamp(23px,3vw,28px);font-weight:700;margin:0 0 12px;letter-spacing:.5px}
-h2{font-size:clamp(18px,2.2vw,21px);margin:40px 0 14px;padding-bottom:9px;border-bottom:3px double var(--line-strong)}
-h3{font-size:16.5px;margin:26px 0 10px}
+#nav a{display:block;padding:5.5px 10px;margin:1px 0;border-radius:8px;color:var(--ink-soft);text-decoration:none;font-size:13.5px;line-height:1.5;transition:background .12s,color .12s}
+#nav a:hover{background:var(--acc-soft);color:var(--acc-ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-ink);font-weight:600;box-shadow:inset 2px 0 0 var(--acc)}
+/* 正文 + 右侧目录 */
+#main{flex:1;min-width:0;padding:32px clamp(16px,3.5vw,44px) 80px}
+#contentrow{display:flex;gap:34px;align-items:flex-start;justify-content:center;max-width:1240px;margin:0 auto}
+article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow)}
+h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
+background:linear-gradient(120deg,var(--ink) 30%,var(--acc-ink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:16px;font-weight:700;margin:26px 0 10px}
 p{margin:10px 0}
-a{color:var(--acc-strong);text-decoration:none}
-a:hover{text-decoration:underline;color:var(--acc)}
-blockquote{margin:18px 0;padding:12px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;color:#57452a;font-size:14.5px}
+a{color:var(--acc-ink);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:6px 12px 12px 6px;color:var(--ink-soft);font-size:14.5px}
 blockquote p{margin:4px 0}
-code{background:#f2ead6;border:1px solid #e0d4b6;border-radius:5px;padding:1px 6px;font-family:var(--mono);font-size:.86em;color:#7c4a12;overflow-wrap:anywhere}
-pre.code{background:#f7f2e3;color:#3a3122;border:1px solid var(--line);border-radius:10px;padding:15px 18px;overflow-x:auto;box-shadow:inset 0 0 0 1px rgba(160,122,60,.06)}
+code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:anywhere}
+:root[data-theme=dark] code{color:#c7d2fe}
+pre.code{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:var(--shadow-sm)}
 pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
-.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px;background:var(--sheet)}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);box-shadow:var(--shadow-sm)}
 table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
-th{background:rgba(160,122,60,.07);color:#4a3d26;font-weight:600;text-align:left;font-family:var(--serif)}
+th{background:var(--surface-2);color:var(--ink);font-weight:600;text-align:left}
 th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:anywhere}
 tbody tr:last-child td{border-bottom:none}
-tbody tr:nth-child(even){background:rgba(160,122,60,.035)}
-hr{border:none;border-top:3px double var(--line-strong);margin:30px 0}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--acc-soft)}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
-#foot{max-width:900px;margin:40px auto 0;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.5px}
-.deadlink{color:var(--ink-faint);border-bottom:1px dotted #b8ab8b}
+#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+.deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
+/* 右侧目录 */
+#toc{flex:0 0 224px;position:sticky;top:calc(var(--header-h) + 26px);max-height:calc(100vh - var(--header-h) - 52px);overflow-y:auto;font-size:12.5px;line-height:1.5;padding:4px 0 20px}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ink-faint);margin:8px 10px 10px;text-transform:uppercase}
+#tocnav a{display:block;padding:4px 10px;border-left:2px solid var(--line);color:var(--ink-soft);text-decoration:none;border-radius:0 7px 7px 0;margin:1px 0}
+#tocnav a.lvl3{padding-left:22px;font-size:12px;color:var(--ink-faint)}
+#tocnav a:hover{color:var(--acc);text-decoration:none}
+#tocnav a.active{color:var(--acc-ink);border-left-color:var(--acc);background:var(--acc-soft);font-weight:600}
+@media(max-width:1279px){#toc{display:none}#contentrow{max-width:920px}}
 /* 窄屏 */
-@media(max-width:1200px){:root{--side-w:232px}}
 @media(max-width:1024px){
 #burger{display:block}
-#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(70,52,20,.35);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
+#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(2,6,23,.42);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
 #backdrop.show{opacity:1;pointer-events:auto}
-#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:10px 0 28px rgba(90,66,20,.15)}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:14px 0 36px rgba(2,6,23,.2)}
 #side.open{left:0}
 #top .gh{display:none}
 #top .brand small{display:none}
-.searchwrap{width:min(240px,52vw)}
+.searchwrap{width:min(230px,50vw)}
+#main{padding:22px clamp(14px,3vw,24px) 70px}
+article{padding:22px 18px 30px;border-radius:14px}
 }
 @media print{
-#top,#side,#backdrop,#foot,#burger,.searchwrap{display:none!important}
-body{background:#fff}
-#main{padding:0}
-article{box-shadow:none;border:none;border-top:none;max-width:100%}
+#top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
+body{background:#fff;color:#000}
+#main{padding:0}#contentrow{display:block}
+article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 2</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><div class=sec>Mod开发 · 10</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><div class=sec>引擎主线 · 23</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><article><h1 id="粒子系统明细-一行一文件">粒子系统明细（一行一文件）</h1>
+</style></head><body><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 2</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><div class=sec>Mod 开发 · 10</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><div class=sec>引擎主线 · 23</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="粒子系统明细-一行一文件">粒子系统明细（一行一文件）</h1>
 <blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(29/29)  主页：07-粒子系统.md。本页逐文件参数速查。 除注明外全部位于 E:\SurvivalcraftAPIProject\Survivalcraft\Game\，行号为 2026-10-31 源码。 "形态"见主页"生命周期三形态"：A=一次性自毁 / B=常驻共享池 / C=跟随型 IsStopped。</blockquote>
 <div class=tablewrap><table><thead><tr><th>文件</th><th>池容量</th><th>纹理/槽数</th><th>形态·消亡</th><th>关键参数与行为</th><th>主要注册/调用点</th></tr></thead><tbody><tr><td>ParticleSystemBase.cs</td><td>—</td><td>—</td><td>抽象基类</td><td>Draw/Simulate 抽象；GetBatchDemands 容量自报 :59-80，契约:纹理容量生命周期恒定</td><td>SubsystemParticles 记账</td></tr><tr><td>ParticleSystem.cs</td><td>构造定</td><td>构造定</td><td>通用渲染器</td><td>Simulate 恒 false :164；懒建 Additive/Alpha 两批 :48-68；UV 槽切图集 :78,145-148</td><td>全部 ParticleSystem&lt;T&gt; 子类</td></tr><tr><td>Particle.cs</td><td>—</td><td>—</td><td>数据类</td><td>12 public 字段：Position/Size/Color/TextureSlot/Rotateable/Rotation/Right/Up/FlipX/FlipY/BillboardingMode/UseAdditiveBlending</td><td>内嵌 Particle 继承它</td></tr><tr><td>ParticleBillboardingMode.cs</td><td>—</td><td>—</td><td>enum</td><td>Camera=0/Vertical=1/Horizontal=2/None=3 (:2-7)</td><td>Particle.BillboardingMode</td></tr><tr><td>ITrailParticleSystem.cs</td><td>—</td><td>—</td><td>接口</td><td>Position+IsStopped 两成员 (:4-8)；仅 SubsystemProjectiles.AddTrail 消费</td><td>SubsystemProjectiles.cs:185</td></tr><tr><td>BlockDebrisParticleSystem.cs</td><td>构造定(strength)</td><td>方块图集/32</td><td>A</td><td>六邻光照 :51-59；slot 16→32 换算 :59；重力 -9.81、撞墙反弹；16 格门控在 SubsystemTerrain.cs:460-467</td><td>Block.cs:499-503</td></tr><tr><td>BurntDebrisParticleSystem.cs</td><td>15</td><td>FireParticle/3</td><td>A</td><td>烧焦烟团；slot 从 8 随寿命推进 :86；射线反弹系数 0.1 :72-81；重力 -10</td><td>SubsystemMagmaBlockBehavior.cs:92,96、SubsystemFireBlockBehavior.cs:220</td></tr><tr><td>ExplosionParticleSystem.cs</td><td>2000</td><td>FireParticle/3</td><td>B</td><td>SetExplosionCell 按格子 Point3 键控 :26-54；池穷时随机抢弱粒子 :33-39；Strength 按 2.5s 递减 :63；上升 :66；空池跳过 Draw :79</td><td>SubsystemExplosions.cs:339</td></tr><tr><td>FireParticleSystem.cs</td><td>10</td><td>FireParticle/3</td><td>C</td><td>5/s 生成 :42；slot=min(9*Time/1.25,8) :51；Draw 门控(点积&gt;-0.5 且距离内) :79-87 反馈 m_visible</td><td>ComponentFurnace.cs:227、SubsystemFurnaceBlockBehavior.cs:74</td></tr><tr><td>FireworksParticleSystem.cs</td><td>300</td><td>FireworksParticle/2</td><td>A</td><td>7 种 Shape 参数化爆发 :37-177(Burst100/200、Circle150、Disc、Ball、短/长拖尾、FlatTrails13)；速度×LengthSquared :47；闪烁→透明 :198-201；拖尾子粒子自繁殖 :205-221</td><td>SubsystemFireworksBlockBehavior.cs:43</td></tr><tr><td>FireworksTrailParticleSystem.cs</td><td>60</td><td>FireParticle/3</td><td>C(ITrail)</td><td>120/s :28；m_lastPosition→Position 随机 Lerp 防断点 :30,49；Duration=1s</td><td>SubsystemFireworksBlockBehavior.cs:51</td></tr><tr><td>FuseParticleSystem.cs</td><td>15</td><td>FireParticle/3</td><td>特例(恒false)</td><td>15/s；初速 2.5 倍衰减到 TargetSpeed :40,52-53；尺寸从 0 涨 :42；Draw 门控 48m/1024² :68-76；由行为手动 Remove</td><td>SubsystemExplosivesBlockBehavior.cs:58-63,163-164</td></tr><tr><td>GunSmokeParticleSystem.cs</td><td>50</td><td>GunSmokeParticle/3</td><td>A(有时限)</td><td>0.5s 内速率 150→20 :47；初速 20→0 :49；浮力 (2,2,1) :50,66；光照灰度色 :41-42；!flag &amp;&amp; t≥0.5 自毁 :89-91</td><td>SubsystemMusketBlockBehavior.cs:196</td></tr><tr><td>HitValueParticleSystem.cs</td><td>1</td><td>无纹理(文字)</td><td>A(0.9s)</td><td>Draw 排 3D 文字：FontBatch3D/VectorFontSink3D 双路 :55-111；字号 0.006*√距离 :79；0.2-20m 渐显渐隐 :74-77；黑描边 :92-94</td><td>Attackment.cs:126、ComponentMiner.cs:691(已过时)</td></tr><tr><td>KillParticleSystem.cs</td><td>20</td><td>KillParticle/2</td><td>A</td><td>全向速度 1.2<i>size :38；微升力 +1</i>dt :55；slot 随寿命 0→8 :57</td><td>ComponentHealth.cs:409</td></tr><tr><td>LeavesParticleSystem.cs</td><td>构造定</td><td>LeafParticle/1</td><td>A(12s)</td><td>None billboard 手写 Right/Up 翻滚 :79-91；每帧光照采样(chunk≥InvalidVertices1) :96-100；落地转 Horizontal+触发 CreateFallenLeaves :114-128；入水即终 :111-113</td><td>LeavesBlock/Deciduous 系行为</td></tr><tr><td>MagmaSplashParticleSystem.cs</td><td>40</td><td>MagmaSplashParticle/2</td><td>A</td><td>WaterSplash 克隆；MagmaBlock 液面 sin 波漂浮 :91-101；重力 -10</td><td>ComponentBody.cs:603、Projectile.cs:564、Pickable.cs:334</td></tr><tr><td>OnFireParticleSystem.cs</td><td>25</td><td>FireParticle/3</td><td>C</td><td>20/s :34；Position/Radius 宿主注入 :55；上升 +10<i>dt :44；slot=min(9</i>t/Dur*1.2,8) :45；Draw 门控 -5..48m :79-86</td><td>ComponentOnFire.cs:60-83</td></tr><tr><td>PaintParticleSystem.cs</td><td>20</td><td>方块图集/16(slot15)</td><td>A</td><td>纹理=SubsystemBlocksTexture.BlocksTexture :25；法线切向系布点 :40-46；命中即粘附(速度0+HitPoint(0.03)) :78-85；侧面 NoGravity :82-84；粘附后极强阻尼 1e-7 :59,92</td><td>SubsystemBucketBlockBehavior.cs:196</td></tr><tr><td>PrecipitationShaftParticleSystem.cs</td><td>4/柱</td><td>Rain+Snow 双纹理</td><td>B</td><td>唯一直接继承 ParticleSystemBase；自管 TexturedBatch3D :226-234；雨=3顶点竖条 :241-263，雪=quad billboard；GetBatchDemands 双纹理恒报 :92-103；每粒子下探 RaycastParticle :292-310；溅花委托 :174-192</td><td>SubsystemWeather.cs:215(按柱)、:252-253(溅花池)</td></tr><tr><td>PukeParticleSystem.cs</td><td>80</td><td>PukeParticle/3</td><td>C</td><td>SimplexNoise 驱动 0-30/s 阵发 :53-55；TTL 3s；射线反弹 0.05 :75-83；slot=8.99*min(3-ttl) :89</td><td>ComponentSickness.cs:48</td></tr><tr><td>RainSplashParticleSystem.cs</td><td>150</td><td>RainSplashParticle/1</td><td>B</td><td>AddSplash 三形态：水面环形(0.02→0.09,Horizontal) :41-50、硬面竖弹(Camera) :51-59、其他 33% 横溅 :60-68；尺寸 Lerp :86-88</td><td>SubsystemWeather.cs:252</td></tr><tr><td>ShapeshiftParticleSystem.cs</td><td>40</td><td>ShapeshiftParticle/3</td><td>C(Stopped)</td><td>BoundingBox 内随机生成+上升 :51-58；速率 15→35 渐升 :33；Stopped 后等清空 :69-72</td><td>ComponentShapeshifter.cs:63-67,120-121</td></tr><tr><td>SmokeTrailParticleSystem.cs</td><td>构造定</td><td>FireParticle/3</td><td>C(ITrail)</td><td>速率=clamp(50/size,10,40) :49；Duration=池/速率 精确配平 :81；尺寸 0.15→0.95*size :66；slot 随机倍率+偏移 :39-40,62-65</td><td>SubsystemArrowBlockBehavior.cs:14、SubsystemBombBlockBehavior.cs:46、Pickable.cs:467、SubsystemExplosions.cs:739</td></tr><tr><td>SnowSplashParticleSystem.cs</td><td>100</td><td>SnowParticle/4</td><td>B</td><td>4x4 图集 16 槽；Horizontal 贴面淡出；水面 0.2-0.3s、硬面/雪 0.8-1.2s :34-43</td><td>SubsystemWeather.cs:253 侧、PrecipitationShaft :184</td></tr><tr><td>SoundParticleSystem.cs</td><td>15</td><td>SoundParticle/2</td><td>A</td><td>AddNote 手动逐个发 :30-53；Vertical billboard；slot 全图集随机 :51；上升 +5*dt :65；颜色由调用方注入</td><td>SoundGeneratorElectricElement.cs:73</td></tr><tr><td>WaterSplashParticleSystem.cs</td><td>60</td><td>WaterSplashParticle/2</td><td>A</td><td>静态单帧限流 TryBeginInstantiation(100/帧) :34-44；液面 sin 波漂浮+缩尺寸 :115-125；重力 -10；large=包围盒&gt;0.8</td><td>ComponentBody.cs:591-593、Projectile.cs:576-578、Pickable.cs:354-355</td></tr><tr><td>WhalePlumeParticleSystem.cs</td><td>100</td><td>WaterSplashParticle/2</td><td>C</td><td>60/s 窗口期 :40-46；喷速 4→10 渐增 :48；浮力 (0,1,2) :49,59；slot 4 档 :60</td><td>ComponentCetaceanBreatheBehavior.cs:98</td></tr><tr><td>SubsystemParticles.cs</td><td>—</td><td>—</td><td>注册表</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Subsystem\SubsystemParticles.cs；drawOrder 300 :25；Add/Remove :35-59；Update 摘除 true/异常 :90-108；绘制统一刷 :110-155</td><td>—</td></tr></tbody></table></div>
 <h2 id="通用微模式速记">通用微模式速记</h2>
-<ul><li><b>m_toGenerate 累积器</b>：<code>+= rate*dt</code>，空位且 ≥1 发一粒，帧末 <code>Remainder</code>（Fire :42,70；OnFire :34,70；SmokeTrail :50；Shapeshift :34,68；WhalePlume :42,81；GunSmoke :52,88；FireworksTrail :29,59；Puke :55）。</li><li><b>dt 钳制</b>：几乎所有 A 形态系统开头 <code>dt = Math.Clamp(dt, 0f, 0.1f)</code>，掉帧不瞬移。</li><li><b>帧动画</b>：slot = min(9f * Time / 周期, 8f)，FireParticle 3x3 图集从 0 推到 8（Fire :51、OnFire :45、SmokeTrail :62、Shapeshift :44、GunSmoke :67、BurntDebris :86、Kill :57、FireworksTrail :40、WhalePlume :60）。</li><li><b>FlipX/FlipY 随机</b>：绝大多数系统生成时随机翻转，同一纹理复用出变体。</li><li><b>Pool 取空位</b>：常驻池 AddXxx 线性扫 IsActive（RainSplash :34-69、SnowSplash :24-45、Sound :33-43）；Explosion 用 Dictionary&lt;Point3,Particle&gt; + 空闲栈 :26-54。</li></ul></article><div id=foot>SC 源码笔记 · 纸上得来终觉浅 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><script>
+<ul><li><b>m_toGenerate 累积器</b>：<code>+= rate*dt</code>，空位且 ≥1 发一粒，帧末 <code>Remainder</code>（Fire :42,70；OnFire :34,70；SmokeTrail :50；Shapeshift :34,68；WhalePlume :42,81；GunSmoke :52,88；FireworksTrail :29,59；Puke :55）。</li><li><b>dt 钳制</b>：几乎所有 A 形态系统开头 <code>dt = Math.Clamp(dt, 0f, 0.1f)</code>，掉帧不瞬移。</li><li><b>帧动画</b>：slot = min(9f * Time / 周期, 8f)，FireParticle 3x3 图集从 0 推到 8（Fire :51、OnFire :45、SmokeTrail :62、Shapeshift :44、GunSmoke :67、BurntDebris :86、Kill :57、FireworksTrail :40、WhalePlume :60）。</li><li><b>FlipX/FlipY 随机</b>：绝大多数系统生成时随机翻转，同一纹理复用出变体。</li><li><b>Pool 取空位</b>：常驻池 AddXxx 线性扫 IsActive（RainSplash :34-69、SnowSplash :24-45、Sound :33-43）；Explosion 用 Dictionary&lt;Point3,Particle&gt; + 空闲栈 :26-54。</li></ul></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#通用微模式速记">通用微模式速记</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><script>
 const $=s=>document.querySelector(s);
 const ROOT="../../"; // 站点根相对前缀（按页面深度注入）
+// 主题切换
+const tbtn=$('#themeBtn');
+function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
+applyTheme(document.documentElement.dataset.theme||'light');
+tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
 // 搜索
 let IDX=[];
 fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
@@ -119,4 +156,15 @@ backdrop.addEventListener('click',()=>setSide(false));
 // 高亮当前页
 const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
 document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
+// 右侧目录：滚动高亮
+const tocLinks=[...document.querySelectorAll('#tocnav a')];
+if(tocLinks.length){
+  const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
+  const onScroll=()=>{
+    let idx=0;
+    for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
+    tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+  };
+  document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+}
 </script></body></html>

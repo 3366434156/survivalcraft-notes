@@ -9,9 +9,9 @@
 
 ## 站点预览
 
-| 首页（分组导航 + 全文检索） | 主题页（机制 + file:line + 范例表） |
-|---|---|
-| ![站点首页](media/site-home.png) | ![主题页示例](media/site-page.png) |
+| 首页（亮色） | 首页（暗色，自动跟随系统 + 一键切换） | 主题页（右侧可跳转目录） |
+|---|---|---|
+| ![站点首页](media/site-home.png) | ![暗色模式](media/site-dark.png) | ![主题页示例](media/site-page.png) |
 
 ## 仓库结构
 
