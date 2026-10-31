@@ -39,7 +39,7 @@ def collect_sources():
     if engine_dir.exists():
         mains, details = [], []
         for f in sorted(engine_dir.glob("*.md")):
-            if "a-" in f.name and f.stem[:-1].rstrip("-").isdigit() or re.match(r"^\d+a-", f.name):
+            if re.match(r"^\d+[ab]-", f.name):
                 details.append(f)
             else:
                 mains.append(f)
