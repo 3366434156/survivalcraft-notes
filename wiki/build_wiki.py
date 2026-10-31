@@ -90,7 +90,7 @@ def inline(text, src_file, reg):
             return '<a href="%s">%s</a>' % (val, label)
         if status == "keep":
             return '<a href="%s">%s</a>' % (html.escape(href, quote=True), label)
-        return '<span class="deadlink" title="在库外私有笔记：库外私有笔记">%s ⟶库外私有笔记</span>' % label
+        return '<span class="deadlink" title="引用的材料未随本站分发">%s ⟶未收录</span>' % label
     text = LINK_RE.sub(link, text)
     text = BOLD_RE.sub(r"<b>\1</b>", text)
     text = ITAL_RE.sub(r"<i>\1</i>", text)

@@ -21,7 +21,7 @@
 | `CommunityScreenBase` | E:\SurvivalcraftAPIProject\Survivalcraft\Screen\Community\CommunityScreenBase.cs | 四社区屏公共基类：Dispose 确定性退订纪律 |
 | `RecipaediaScreen` | E:\SurvivalcraftAPIProject\Survivalcraft\Screen\RecipaediaScreen.cs | 图鉴：运行时整替 m_screens 里的描述/配方屏 |
 | `WorldOptionsScreen` | E:\SurvivalcraftAPIProject\Survivalcraft\Screen\WorldOptionsScreen.cs | 世界选项：实现 `IWorldOptionsScreen`（屏保留协议） |
-| 明细(一行一文件) | E:\数据\生存战争系列\SC完全学习笔记\10-SC引擎\17a-Screen明细.md | 71 文件全量表 |
+| 明细(一行一文件) | [17a-Screen明细](17a-Screen明细.md) | 71 文件全量表 |
 
 ## 家族概览（12 族 = 71 文件）
 
