@@ -31,8 +31,7 @@ def collect_sources():
     overview = [
         ("总览", SC_ROOT / "README.md", "index.html", 0),
         ("总览", SC_ROOT / "AGENTS.md", "AGENTS.html", 1),
-        ("总览", SC_ROOT / "00-规则.md", "00-规则.html", 2),
-        ("总览", SC_ROOT / "02-范例配方.md", "02-范例配方.html", 3),
+        ("总览", SC_ROOT / "02-Mod开发配方.md", "02-Mod开发配方.html", 2),
     ]
     for sec, p, o, k in overview:
         if p.exists():
@@ -52,6 +51,22 @@ CODE_RE = re.compile(r"`([^`]+)`")
 BOLD_RE = re.compile(r"\*\*([^*]+)\*\*")
 ITAL_RE = re.compile(r"(?<!\*)\*([^*\n]+)\*(?!\*)")
 LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
+IMG_RE = re.compile(r"!\[([^\]]*)\]\(([^)\s]+)\)")
+IMG_COPIES = []  # (绝对路径, 输出相对路径)
+
+def _stage_local_image(src_text, src_file):
+    """本地图片引用 → 登记拷贝；返回站点内相对 src（原样），不存在则 None。"""
+    if re.match(r"^https?://", src_text):
+        return src_text
+    abs_p = (src_file.parent / src_text).resolve()
+    try:
+        rel = abs_p.relative_to(SC_ROOT)
+    except ValueError:
+        return None
+    if not abs_p.is_file():
+        return None
+    IMG_COPIES.append((abs_p, rel.as_posix()))
+    return rel.as_posix()
 
 def build_registry(pages):
     reg = {}
@@ -80,6 +95,14 @@ def inline(text, src_file, reg):
         spans.append("<code>%s</code>" % html.escape(m.group(1)))
         return "\x00%d\x00" % (len(spans) - 1)
     text = CODE_RE.sub(stash, text)
+    def img(m):
+        alt, src = m.group(1), m.group(2)
+        staged = _stage_local_image(src, src_file)
+        if staged is None:
+            return '<span class="deadlink">[图片缺失: %s]</span>' % html.escape(src)
+        return '<img src="%s" alt="%s" loading=lazy style="max-width:100%%;border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 16px rgba(90,66,20,.10)">' % (
+            html.escape(staged, quote=True), html.escape(alt, quote=True))
+    text = IMG_RE.sub(img, text)
     def link(m):
         label, href = m.group(1), m.group(2)
         label = BOLD_RE.sub(r"<b>\1</b>", label)
@@ -359,7 +382,11 @@ def main():
         print("OK", p["out"])
 
     (OUT / "search.json").write_text(json.dumps(index_data, ensure_ascii=False), encoding="utf-8")
-    print("DONE pages=%d out=%s" % (len(pages), OUT))
+    for abs_p, rel in IMG_COPIES:
+        dst = OUT / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(abs_p.read_bytes())
+    print("DONE pages=%d images=%d out=%s" % (len(pages), len(IMG_COPIES), OUT))
 
 if __name__ == "__main__":
     main()

@@ -67,7 +67,7 @@ public class MyModLoader : ModLoader {          // public 无参构造必须
 - `JsonModelReader` 已下线（抛异常，`JsonModelReader.cs:98`）——模型用 `.obj`/glTF，`.obj` 必须三角面且 `vt/vn` 齐全。
 - 改 dll 必须重启进程（TypeCache 不清）；模组间 dll 引用走 `AssemblyResolve` 回退链（`ModsManager.cs:525-538`）。
 
-## 3. 任务 → 照抄路由（最常用 12 条；全量见 [02-范例配方.md](02-范例配方.md)）
+## 3. 任务 → 照抄路由（最常用 12 条；全量见 [02-Mod开发配方.md](02-Mod开发配方.md)）
 
 | 任务 | 照抄 |
 |---|---|
@@ -110,4 +110,4 @@ public class MyModLoader : ModLoader {          // public 无参构造必须
 - 五条铁律：**绝对路径+实读行号**（行号必须当日实读）；**零 mod 项目专有内容**（引擎 mod API 机制可以写，具体 mod 项目的类名/路径不行）；页面**自足可读**（无源码也能懂）；单页 ≤350 行；库内链接一律相对路径（主线→明细 `明细/X.md`，明细→主线 `../X.md`）。
 - 事实冲突时：源码 > 页面 > 推测；推测标 `[推测]`。
 - 新增发现回写对应页面 + 每页"原版范例"表补最典型一条；写完跑 `python tools/build_wiki.py`。
-- 完整模板与规则：[00-规则.md](00-规则.md)。
+- 本文件 §6 即改库所需的全部铁律；完整页面模板与写作规则存私有笔记库（不随仓库分发）。

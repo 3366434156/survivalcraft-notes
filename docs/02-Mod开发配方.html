@@ -1,0 +1,159 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Mod 开发配方（任务 → 照抄原版代码） · SC 源码笔记</title><style>
+:root{--paper:#f6f1e4;--sheet:#fdfaf2;--side-bg:#efe8d5;--ink:#2f2a20;--ink-soft:#5c5340;--ink-faint:#948a74;
+--acc:#a05a1c;--acc-strong:#7c440e;--acc-soft:#f4e8cd;--line:#e2d8bd;--line-strong:#cdbf9c;
+--header-h:56px;--side-w:264px;
+--serif:Georgia,"Times New Roman","Source Han Serif SC","Noto Serif SC",SimSun,serif;
+--sans:"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+--mono:Consolas,"Cascadia Mono","Courier New",monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 18px)}
+body{margin:0;font-family:var(--sans);color:var(--ink);font-size:15.5px;line-height:1.85;
+background:radial-gradient(1100px 500px at 50% -8%,rgba(160,122,60,.07),transparent 60%),
+repeating-linear-gradient(0deg,rgba(140,105,50,.014) 0 1px,transparent 1px 4px),var(--paper)}
+/* 顶栏：纸条 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
+background:rgba(246,241,228,.94);backdrop-filter:blur(8px);border-bottom:3px double var(--line-strong)}
+#burger{display:none;border:1px solid var(--line-strong);background:var(--sheet);border-radius:8px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-family:var(--serif);font-size:19px;color:var(--ink);letter-spacing:1px}
+#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:2px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,40vw)}
+#search{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--line-strong);border-radius:8px;background:var(--sheet);color:var(--ink);font-size:13.5px;outline:none;transition:border-color .15s,box-shadow .15s}
+#search:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap::before{content:"⌕";position:absolute;left:11px;top:50%;transform:translateY(-54%);color:var(--ink-faint);font-size:15px;pointer-events:none}
+#sres{position:absolute;top:calc(100% + 6px);left:0;right:0;display:none;background:var(--sheet);border:1px solid var(--line-strong);border-radius:10px;box-shadow:0 12px 32px rgba(90,66,20,.18);max-height:62vh;overflow:auto;padding:6px;z-index:30}
+#sres a{display:block;padding:8px 10px;border-radius:8px;font-size:13.5px;color:var(--ink);text-decoration:none}
+#sres a:hover{background:var(--acc-soft)}
+#sres .snip{display:block;font-size:12px;color:var(--ink-faint);margin-top:1px}
+#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap}
+#top .gh:hover{color:var(--acc)}
+/* 布局 */
+#layout{display:flex;min-height:calc(100vh - var(--header-h))}
+#backdrop{display:none}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line-strong);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-family:var(--serif);font-size:11.5px;font-weight:600;color:var(--acc-strong);letter-spacing:3px}
+#side .sec:first-child{margin-top:4px}
+#nav a{display:block;padding:6px 10px;margin:1px 0;border-radius:8px;color:#4a4334;text-decoration:none;font-size:13.5px;line-height:1.55;border-left:2px solid transparent}
+#nav a:hover{background:rgba(160,90,28,.08);color:var(--ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-strong);border-left-color:var(--acc);font-weight:600}
+/* 正文：纸页 */
+#main{flex:1;min-width:0;padding:34px clamp(18px,4vw,52px) 80px}
+article{max-width:900px;margin:0 auto;background:var(--sheet);border:1px solid var(--line);border-top:3px solid var(--acc);
+border-radius:6px;padding:clamp(24px,4vw,48px) clamp(22px,4.5vw,52px);
+box-shadow:0 1px 2px rgba(90,66,20,.05),0 10px 30px rgba(90,66,20,.08)}
+h1,h2,h3{font-family:var(--serif);color:var(--ink)}
+h1{font-size:clamp(23px,3vw,28px);font-weight:700;margin:0 0 12px;letter-spacing:.5px}
+h2{font-size:clamp(18px,2.2vw,21px);margin:40px 0 14px;padding-bottom:9px;border-bottom:3px double var(--line-strong)}
+h3{font-size:16.5px;margin:26px 0 10px}
+p{margin:10px 0}
+a{color:var(--acc-strong);text-decoration:none}
+a:hover{text-decoration:underline;color:var(--acc)}
+blockquote{margin:18px 0;padding:12px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;color:#57452a;font-size:14.5px}
+blockquote p{margin:4px 0}
+code{background:#f2ead6;border:1px solid #e0d4b6;border-radius:5px;padding:1px 6px;font-family:var(--mono);font-size:.86em;color:#7c4a12;overflow-wrap:anywhere}
+pre.code{background:#f7f2e3;color:#3a3122;border:1px solid var(--line);border-radius:10px;padding:15px 18px;overflow-x:auto;box-shadow:inset 0 0 0 1px rgba(160,122,60,.06)}
+pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:8px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
+th{background:rgba(160,122,60,.07);color:#4a3d26;font-weight:600;text-align:left;font-family:var(--serif)}
+th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:anywhere}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:rgba(160,122,60,.035)}
+hr{border:none;border-top:3px double var(--line-strong);margin:30px 0}
+ul,ol{padding-left:1.5em;margin:10px 0}
+li{margin:4px 0}
+#foot{max-width:900px;margin:40px auto 0;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.5px}
+.deadlink{color:var(--ink-faint);border-bottom:1px dotted #b8ab8b}
+/* 窄屏 */
+@media(max-width:1200px){:root{--side-w:232px}}
+@media(max-width:1024px){
+#burger{display:block}
+#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(70,52,20,.35);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
+#backdrop.show{opacity:1;pointer-events:auto}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:10px 0 28px rgba(90,66,20,.15)}
+#side.open{left:0}
+#top .gh{display:none}
+#top .brand small{display:none}
+.searchwrap{width:min(240px,52vw)}
+}
+@media print{
+#top,#side,#backdrop,#foot,#burger,.searchwrap{display:none!important}
+body{background:#fff}
+#main{padding:0}
+article{box-shadow:none;border:none;border-top:none;max-width:100%}
+a{color:inherit}
+}
+</style></head><body><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><a href="02-Mod开发配方.html">02-Mod开发配方</a><div class=sec>引擎主线 · 23</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><article><h1 id="mod-开发配方-任务-照抄原版代码">Mod 开发配方（任务 → 照抄原版代码）</h1>
+<blockquote>独立库 · 更新: 2026-10-31 · 状态: 23 域全量收录；后续新批次随批补最典型范例 本表只含 Survivalcraft 原版实现；mod 侧用法案例不在本库收录范围。</blockquote>
+<h2 id="这本配方怎么用">这本配方怎么用</h2>
+<p>写 mod 时遇到"我想做 X"，三步：</p>
+<ol><li><b>在下表找到你要做的事</b>，右边就是引擎里最值得照抄的原版实现（文件 + 实读行号）；</li><li><b>打开那个文件核对</b>（源码仓库：https://gitee.com/SC-SPM/SurvivalcraftApi ），看它为什么这样写；</li><li><b>照抄改造成自己的代码</b>——范例选的都是"最简/最全/唯一"的实现，抄它少踩坑。</li></ol>
+<p>例：想给方块加"按状态发光"→ 查"发光方块"行 → 抄 <code>CampfireBlock.cs:146-152</code>（<code>min(8+data/2,15)</code>，字段&gt;0 是闸门）。 想理解某段代码的完整上下文（调用链/存档/坑），去对应主题页（导航"引擎主线"）；AI agent 从 <a href="AGENTS.html">AGENTS.md</a> 进。</p>
+<h2 id="ai-与生物">AI 与生物</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>新增一个引擎级 AI 行为</td><td><code>E:\SurvivalcraftAPIProject\Survivalcraft\Component\Behavior\ComponentWalkAroundBehavior.cs:6</code>（最简 ComponentBehavior 子类：ImportanceLevel+IsActive+Update）；调度器 <code>ComponentBehaviorSelector.cs</code> 自动收集，无需注册</td></tr><tr><td>生物追逐目标并打人</td><td><code>ComponentChaseBehavior.cs:6</code>（只置 AttackOrder）；命中链 <code>ComponentChaseBehavior.cs:180</code>→<code>ComponentMiner.cs:636-715</code>（伤害/命中率/耐久/统计全在 Miner，绕过会丢全套管线）</td></tr><tr><td>伤害/死亡/掉落全链</td><td><a href="01-引擎/03-实体与组件体系.html">03页</a>"生命/伤害结算链"（Injure→Process→Die→掉落→Despawn 带行号）</td></tr><tr><td>生物骑乘</td><td><code>ComponentRider.cs:32-39</code>（ParentBody 反查+0.75s 插值）；"_Saddled" 模板尾缀开关 SteedBehavior</td></tr><tr><td>自定义 dae 生物会动</td><td>模板必须配 AnimationConfigPath（四足/鸟/鱼 AnimateCreature 全空实现，<code>ComponentFourLeggedModel.cs:188</code>）</td></tr><tr><td>属性因子/创造免伤</td><td><code>ComponentFactors.cs:199-214</code>（三段时序：先结算上帧→再重建→再放行 hook）+ <code>ComponentLevel.cs:187-189</code>（创造模式 ResilienceFactor=+∞）</td></tr></tbody></table></div>
+<h2 id="方块与地形">方块与地形</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>新增方块/中间基类</td><td><a href="01-引擎/04-方块系统.html">04页</a>（继承树概览+注册）</td></tr><tr><td>拦截所有方块变更</td><td><code>SubsystemTerrain.ChangeCell:355</code>（总闸+TerrainChangeCell 钩子）；邻居通知延后到 <code>ProcessModifiedCells:66</code>——OnBlockAdded 里读邻居是"未通知态"</td></tr><tr><td>活塞推方块写回地形</td><td><code>SubsystemMovingBlocks</code> Stopped 事件→<code>AddTerrainBlock:692</code>（BlockEntity/告示文本随迁）</td></tr><tr><td>发光方块</td><td><code>Block.DefaultEmittedLightAmount</code>(:83) 或 override <code>GetEmittedLightAmount</code>(:508)；仿 <code>CampfireBlock.cs:146</code></td></tr><tr><td>按状态分档发光</td><td><code>CampfireBlock.cs:146-152</code>（min(8+data/2,15)；字段&gt;0 是闸门）</td></tr><tr><td>零代码常亮灯</td><td><code>WickerLampBlock.cs</code>+<code>Content\Assets\BlocksData.txt</code>（数据表优先于 override）</td></tr><tr><td>最简新方块</td><td><code>IceBlock.cs</code>（4 行最小实现）；带染色仿 <code>BasaltBlock.cs:5</code></td></tr><tr><td>异形方块（门/楼梯/活塞）</td><td>预烘变体表范式：<code>DoorBlock.cs:21-62</code>(16变体)/<code>StairsBlock.cs:26-104</code>(24×2)/<code>PistonBlock.cs:12-70</code>(48)；运行期只查表</td></tr><tr><td>液体方块</td><td><code>FluidBlock.cs:23-43</code>(反射建同族表)+<code>WaterBlock.cs:12</code>；顶面 8 邻平滑(:179-192)</td></tr><tr><td>壁挂电路方块</td><td><code>MountedElectricElementBlock.cs:3-21</code>+<code>ButtonBlock.cs</code></td></tr><tr><td>模型物品方块</td><td><code>ChunkBlock.cs:16-37</code>/<code>FoodBlock.cs:18-39</code></td></tr><tr><td>多变体物品方块</td><td><code>SeedsBlock.cs</code>（尝试类型×粘性共 16 变体，预烘 TryTypeIndex）</td></tr><tr><td>AdHoc 程序化配方</td><td><code>FireworksBlock.cs:195-283</code>（配料矩阵→行；<code>CarpetBlock.cs</code> 同款）</td></tr><tr><td>自定义地形生成</td><td><a href="01-引擎/05-世界与地形生成.html">05页</a> TCG 生成器族（三版差异对照）</td></tr></tbody></table></div>
+<h2 id="子系统与存档">子系统与存档</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>新增子系统</td><td>Subsystem 基类 + xdb MemberSubsystemTemplate（<a href="01-引擎/02-Subsystem体系.html">02页</a> 全链含 XML 片段路由）</td></tr><tr><td>子系统互查/顺序</td><td><code>Project.FindSubsystem</code> + Dependencies 声明；"全体 Load 前"窗口=<code>ProjectBeforeSubsystemsAndEntitiesLoad</code></td></tr><tr><td>往存档写自定义数据</td><td>重写 Subsystem.Save/Load；<b>Count&gt;0 才落盘</b>，读端必须给默认值；类型硬拆箱规则见 <a href="01-引擎/11-存档持久化.html">11页</a></td></tr><tr><td>电路固定步进模拟</td><td><code>SubsystemElectricity</code>（0.01s 固定步进=100步/秒）；注意 Simulate 异常 rethrow 全电路死</td></tr><tr><td>卸载实体随区块重放</td><td><code>SubsystemSpawn.cs:338</code>(SpawnsData 紧凑字符串)/:174(重放)；区域计数把未生成的 SpawnsData 也算数防循环（<code>SubsystemCreatureSpawn.cs:1311</code>）</td></tr><tr><td>自定义类型进存档</td><td><code>Survivalcraft\Game\FloatCurve.cs:6-13</code>（struct 内嵌套 HumanReadableConverter，一个文件搞定注册+格式）</td></tr><tr><td>值列表打包进一个键</td><td><code>ComponentClothing.cs:290/:299</code>（ValuesListToString/FromString(';') 官方惯用法）</td></tr><tr><td>存档版本迁移转换器</td><td><code>VersionConverter21To22.cs:6-30</code>（SourceVersion/TargetVersion+按键定位改值；Version 更新应放最后防中间态）</td></tr><tr><td>注册钩子标准写法</td><td><code>SurvivalCraftModLoader.cs:15-26</code>（__ModInitialize 注册块，勿晚注册）</td></tr><tr><td>写生物生成规则类</td><td><code>StandardCreatureSpawnRule.cs:34-59</code>（继承它而非裸 CreatureType）</td></tr><tr><td>声明模组设置页面</td><td><code>ModSettingsParser.cs:23-53</code>（Id 禁 /、类型全限定名）</td></tr><tr><td>合并原版 Database</td><td><code>ModsManager.cs:1083-1152</code>（.xdb 统一 new-*/Remove 前缀，不走 Harmony 硬改）</td></tr><tr><td>后台任务+帧泵收尾</td><td><code>CommunityFramePump.cs:12-31</code>（Window.Frame 挂载+每轮 try/catch 防崩）</td></tr></tbody></table></div>
+<h2 id="渲染与特效">渲染与特效</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>新增粒子系统</td><td>ParticleSystem 基类 5 步（<a href="01-引擎/07-粒子系统.html">07页</a>）</td></tr><tr><td>画面叠加层（受伤闪红等）</td><td>ScreenOverlays 隐式协议：Reset 时序先清零，各组件帧内 Max() 叠入（<code>ComponentScreenOverlays.cs:57-71</code>）</td></tr><tr><td>天空/雾/闪电绘制</td><td><a href="01-引擎/14-光照天空与天气.html">14页</a> SubsystemSky 三 pass(-100/5/105)；SkyDrawExtra 钩子(:398)</td></tr><tr><td>新增顶点格式</td><td><code>VertexPositionColorTexture.cs:3-7</code>（最薄样板）</td></tr><tr><td>新 Batch 类型接入</td><td><code>VectorFontBatch2D.cs</code>+<code>PrimitivesRenderer2D.cs:96-130</code></td></tr><tr><td>离屏 RT/回读/Blit</td><td><code>RenderTarget2D.cs:133-185/52-78/88-123</code>（Raw GL 后置 m_framebuffer=-1）</td></tr><tr><td>骨骼纹理蒙皮</td><td><code>JointTexture.cs:32-42,93-123</code>（每关节 8 像素 RGBA32F）</td></tr><tr><td>网格级 shader 变体宏</td><td><code>ShaderDefines.cs:334-411</code>（稳定 hash 宏系统）</td></tr><tr><td>新增粒子（最薄全流程）</td><td><code>BlockDebrisParticleSystem.cs:18-59</code>+注册 <code>Block.cs:499-503</code></td></tr><tr><td>弹丸拖尾一行注册</td><td><code>SubsystemArrowBlockBehavior.cs:14</code>（AddTrail）</td></tr><tr><td>常驻共享池</td><td><code>RainSplashParticleSystem.cs:28-73</code>+<code>SubsystemWeather.cs:252-253</code></td></tr><tr><td>跟随实体特效全套</td><td><code>OnFireParticleSystem.cs:26-77</code>+<code>ComponentOnFire.cs:60-83</code></td></tr><tr><td>入水溅花+限流</td><td><code>ComponentBody.cs:591-603</code>（TryBeginInstantiation 100次/帧）</td></tr><tr><td>3D 漂浮文字粒子</td><td><code>HitValueParticleSystem.cs:55-111</code>（FontBatch3D/VectorFontSink3D 双路；可 SetHitValueParticleSystem 整体替换）</td></tr></tbody></table></div>
+<h2 id="音频">音频</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>世界内 3D 一次性音效</td><td><code>SubsystemBowBlockBehavior.cs:125</code>（走 SubsystemAudio 位置系重载，注意 minDistance 满音量半径语义）</td></tr><tr><td>循环环境音（区域声场）</td><td><code>SubsystemAmbientSounds.cs:26-79</code>+<code>ComponentOnFire.cs:68-72</code>（贡献聚合，勿每声源各开 source）</td></tr><tr><td>背景音乐</td><td><code>MusicManager.cs:61-85,131-161</code>（ogg StreamingSource 流式+交叉淡化；游戏内音乐走 hook:107）</td></tr><tr><td>声音材质（脚步/撞击）</td><td><code>SubsystemSoundMaterials.cs:17-27</code>（新方块只给 SoundMaterialName 即复用全套映射；映射表存世界存档）</td></tr><tr><td>防音效风暴</td><td><code>SubsystemPickables.cs:48-64</code>（每帧上限包装器）</td></tr><tr><td>区域雨声积分</td><td><code>SubsystemWeather.cs:249-262</code>（0.33s 对 listener 15×15 雨柱按距离积分→目标音量→Lerp(5dt)；归一因子 Load 期预积分，见 <a href="01-引擎/明细/08a-音频明细.html">08a</a>）</td></tr></tbody></table></div>
+<h2 id="电学与机构">电学与机构</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>自定义电力元件</td><td><code>ElectricElement</code> 子类（<a href="01-引擎/15-电学与机构.html">15页</a> 4 步）；<b>必须</b>补进 63 ID 硬编码表 <code>SubsystemElectricBlockBehavior.cs:8-70</code></td></tr><tr><td>电控 16 级亮度灯</td><td><code>LightbulbBlock.cs:120/:266-286</code>+<code>LightBulbElectricElement.cs:35</code>（data bit3-6 编码）</td></tr><tr><td>最小执行元件</td><td><code>GunpowderKegElectricElement.cs:5-12</code>（11 行：高电平→调行为子系统）</td></tr><tr><td>防抖机构执行状态机</td><td><code>TrapDoorElectricElement.cs:14-39</code>（上电复位+沿记步+10步节流；Door/FenceGate/SpikedPlank 同构）</td></tr><tr><td>语义方向多端口</td><td><code>CounterElectricElement.cs:34-103</code>（GetConnectorDirection 分派+边沿武装+PV 持久化）</td></tr><tr><td>轮询传感器</td><td><code>MotionDetectorElectricElement.cs:47-57</code>（周期自续+HashCode 抖动防同帧扎堆）</td></tr><tr><td>模拟量分档</td><td><code>PressurePlateElectricElement.cs:68-94</code>（8 档质量→电压阶梯表）</td></tr><tr><td>状态电控方块</td><td><code>SpikedPlankBlock.cs</code>+<code>ButtonBlock.cs</code>（data bit3-6 电压档反码，读取端 GetVoltagelevel）</td></tr></tbody></table></div>
+<h2 id="物理与碰撞">物理与碰撞</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>自定义弹道</td><td><code>Projectile.cs:190(Raycast)/300(HitBody)/525(UpdateMovement)</code>（独立体系不走 ComponentBody）</td></tr><tr><td>实体间挤压/击退</td><td><code>ComponentBody.cs:854-945</code>（HandleAxisCollision）+<code>InelasticCollision:1288</code>（非弹性碰撞系数）</td></tr><tr><td>空间查询/射线</td><td><code>SubsystemBodies.cs:18</code>(FindBodiesAroundPoint)/<code>:52</code>(Raycast)+<code>BodyRaycastResult</code></td></tr><tr><td>爆炸</td><td><code>SubsystemExplosions</code>（压力/破坏/点燃链，见 <a href="01-引擎/13-物理与碰撞.html">13页</a>）</td></tr></tbody></table></div>
+<h2 id="ui-与弹道">UI 与弹道</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>库存格子交互</td><td>原版 InventorySlotWidget（必调 base.Update 清单见 <a href="01-引擎/09-UI与Widget体系.html">09页</a>；实为 CanvasWidget+IDragTargetWidget，非 ClickableWidget）</td></tr><tr><td>组合控件（按钮+字+图）</td><td><code>BevelledButtonWidget.cs:75-86</code>（XML 模板装配+Find 改装）</td></tr><tr><td>带失效缓存的复杂自绘</td><td><code>BevelledRectangleWidget.cs:178-306</code>（批缓存+属性置脏+GlobalScale 失效）</td></tr><tr><td>拖放目标</td><td><code>DragHostWidget.cs:17-55</code>+<code>FurnitureSetItemWidget.cs:24-35</code>（IDragTargetWidget 协议，Input.Drag 消失即 DragDrop）</td></tr><tr><td>均衡断行</td><td><code>FlexPanelWidget.cs:257-320</code>（二分最小化最大行宽）</td></tr><tr><td>血条式分格值条</td><td><code>ValueBarWidget.cs:85-211</code>（BarBlending/HalfBars/Flash，别自绘）</td></tr><tr><td>两按钮确认框</td><td><code>MessageDialog.cs:18-47</code>（OnShowDialog 钩子=最小侵入替换点）</td></tr><tr><td>列表选择+定制行</td><td><code>ListSelectionDialog.cs:23-57</code>+<code>SelectGameModeDialog.cs:5-20</code>（itemWidgetFactory 继承定制）</td></tr><tr><td>全代码构建对话框</td><td><code>EditColorDialog.cs:19-136</code>（Canvas+DialogArea+Stack 结构，动态条数面板照抄）</td></tr><tr><td>可取消进度框</td><td><code>CancellableBusyDialog.cs:38-78</code>（CancellableProgress 协作取消，长任务直用）</td></tr><tr><td>滚到底才可确认</td><td><code>BulletinDialog.cs:58-63</code>（80% 阈值判定）</td></tr></tbody></table></div>
+<h2 id="screen-屏幕族">Screen 屏幕族</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>最小设置/子菜单屏（XML+滑块+返回）</td><td><code>Screen\SettingsAudioScreen.cs:5-34</code>（40 行含全部模板）</td></tr><tr><td>异步加载列表不卡帧</td><td><code>Screen\PlayScreen.cs:82-118</code>（BusyDialog+Task.Run+Dispatcher.Dispatch 回填，跨线程封送）</td></tr><tr><td>进世界流程状态机</td><td><code>Screen\GameLoadingScreen.cs:21-96</code>（Engine.StateMachine 四态+异常落日志框）</td></tr><tr><td>设置页加自定义按钮</td><td><code>Screen\SettingsScreen.cs:32-43,86-115</code>（钩子+AddSettingButton 奇偶分列）</td></tr><tr><td>屏内异步任务槽</td><td><code>Screen\Community\CommunityScreen.cs:52-55,236-254</code>（TaskSlot.Start 异步+Update.TryTake 收尾）</td></tr><tr><td>多屏共享行为基类</td><td><code>Screen\Community\CommunityScreenBase.cs:9-90</code>（ctor 订阅/Dispose 退订/单槽委托）</td></tr></tbody></table></div>
+<h2 id="输入与相机">输入与相机</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>环绕/跟随/自由飞行相机</td><td><code>OrbitCamera.cs:117-167</code>（参数化+平滑+地形钳制；继承 BasePerspectiveCamera 别重写）</td></tr><tr><td>防相机穿墙</td><td><code>TppCamera.cs:127-149</code>（6 面不透明射线+0.5 退距）</td></tr><tr><td>改 FOV/投影</td><td><code>BasePerspectiveCamera.cs:233-239</code>（RecalculateCameraProjection 钩子 ref 改参）</td></tr><tr><td>读触摸手势</td><td><code>WidgetInput.cs:939-990</code>（阈值挂 SettingsManager 可调）</td></tr><tr><td>VR 手柄射线拾取</td><td><code>ComponentInput.cs:60-69</code> CalculateVrHandRay（HMD 逆矩阵换世界系范式）</td></tr></tbody></table></div>
+<h2 id="玩法与库存">玩法与库存</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>自定义初始装备/新手包</td><td><code>PlayerData.cs:632-645</code>（ValuesDictionary overrides 注入，一处改全体）</td></tr><tr><td>护甲吸收公式</td><td><code>ClothingData.cs:122-167</code>+<code>Attackment.cs:71</code>（ArmorProtectionDivision 专用 mod 通道）</td></tr><tr><td>掉落物生成参数化</td><td><code>Pickable.cs:129-145</code>（抛物初速/StuckMatrix/归属全参数；调优挂 MaxTimeExist/IsFireProof）</td></tr><tr><td>出生状态机仿写</td><td><code>PlayerData.cs:142-343</code>（五态：FirstUpdate→PrepareSpawn→WaitForTerrain→Playing⇄PlayerDead）</td></tr><tr><td>合成表接入</td><td><code>Managers\CraftingRecipesManager.cs:141,220</code>（先 AdHoc 再静态表+镜像平移穷举）</td></tr></tbody></table></div>
+<h2 id="媒体与动画">媒体与动画</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>JSON 状态机动画控制器</td><td><code>AnimationConfigLoader.cs:334-426</code> CreateController（模板/内联双路径+校验器）</td></tr><tr><td>缺切线网格生成切线</td><td><code>GltfMeshConverter.cs:519-594</code>（w 取反对齐引擎着色器）</td></tr><tr><td>根运动冲量（跳跃/挥击）</td><td><code>AnimationController.cs:474-499</code>（三测速法+父链旋转变换）</td></tr><tr><td>1D/2D 混合空间</td><td><code>BlendSpaceSource.cs:299/:334</code>（预分配缓冲零每帧GC）</td></tr><tr><td>OpenXR 实例→会话→动作全启动链</td><td><code>OpenXrVrBackend.cs:184-426</code>（软降级+双轨 init 全序）</td></tr><tr><td>全主流头显手柄绑定表</td><td><code>OpenXrVrBackend.cs:688-945</code> SuggestBindings（9 profile 现成）</td></tr><tr><td>recenter Y 漂移补偿</td><td><code>OpenXrVrBackend.cs:1471-1480</code>+<code>1239-1257</code>（事件快照+次帧差分）</td></tr><tr><td>双眼 FBO 复用渲染</td><td><code>OpenXrVrBackend.cs:554-575</code>+<code>1100-1104</code>（acquire 后重挂颜色附件）</td></tr><tr><td>非对称 FOV 投影</td><td><code>OpenXrVrBackend.cs:1570-1592</code>（tangent 差值+GL clipZ[-1,1]）</td></tr></tbody></table></div>
+<h2 id="内容与资源">内容与资源</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>注册新资产类型读取器</td><td><code>IContentReader\JsonReader.cs:20-28</code>+<code>ContentManager.cs:201</code>（契约仅 3 成员）</td></tr><tr><td>导入外部文件标准序</td><td><code>CharacterSkinsManager.cs:109-123</code>（Verify→Validate→Position=0→CopyTo）</td></tr><tr><td>单条目白名单 zip 容器</td><td><code>FurniturePacksManager.cs:64-78,109-124</code>（恰好 1 条目+类型化失效）</td></tr><tr><td>覆盖导入带回滚</td><td><code>ExternalContentManager.Import.cs:95-119</code>（TransactionalFileReplacement 同款备份）</td></tr><tr><td>后台线程枚举主线程列表</td><td><code>ExternalContentManager.Analyze.cs:138-154</code>（先 Dispatcher 封送，竞态先例注释在此）</td></tr></tbody></table></div>
+<h2 id="数据资产">数据资产</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>加一种生物换色变体</td><td><code>Content\Assets\Database.xml:707</code>（Horse_White 只继承 Horse 改贴图/参数）</td></tr><tr><td>调生物数值(血/攻击/掉落)</td><td><code>Database.xml:46-110</code>（Cow 的 Health/Miner/Loot/EatPickableBehavior；ParameterSet 掉落行 <code>Block;min;max</code> 语法）</td></tr><tr><td>加一种方块的数据表</td><td><code>BlocksData.txt:6</code>（DirtBlock 行，含 # 自引用掉落；79 列标准填法与留空默认）</td></tr><tr><td>加合成配方</td><td><code>CraftingRecipes.xml:64-139</code>（Materials 节，含 Remains=EmptyBucketBlock 返桶样例）</td></tr><tr><td>加防具</td><td><code>Clothes.xml:2-47</code>（43 条 ClothingData；Slot/Insulation/Layer 全属性面）</td></tr><tr><td>动画分层(走/持/骼/步)</td><td><code>AnimationTemplates\Human.template.json</code>+<code>Animations\Human.json</code>（layer blendMode+boneMask+驱动器参数三级）</td></tr></tbody></table></div>
+<h2 id="engine-核心与平台">Engine 核心与平台</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>跨线程把结果交回主线程</td><td><code>Engine\Engine\Dispatcher.cs:38-64</code> Dispatch（后台线程算完 <code>Dispatch(()=&amp;gt;…)</code>，唯一正道）</td></tr><tr><td>安全写档</td><td><code>Engine\Engine\Storage.cs:204-245</code> MoveFileSafely（备份-替换-回滚三段式；JsonFileStore 即抄它）</td></tr><tr><td>玩家输入转文件名</td><td><code>Storage.cs:613-637</code> SanitizeFileNameSegment（原版三处直接调用）</td></tr><tr><td>跨平台读写用户数据文件</td><td><code>Storage.cs:324-341</code> WriteAllText/ReadAllBytes（统一 <code>data:</code> 前缀虚拟路径）</td></tr><tr><td>射线选方块/拾取</td><td><code>Engine\Engine\Ray3.cs:20-90</code> Intersection(BoundingBox)（slab 法带盒内提前返回）</td></tr><tr><td>均匀随机方向/正态分布</td><td><code>Engine\Engine\Random.cs:61-115</code> NormalFloat/Vector2()/Vector3()（粒子与生物游走都用它）</td></tr><tr><td>SIMD 批量变换</td><td><code>Vector3.cs:257-280</code>（全仓唯一带崩溃实证注释的范本；外门必须 AdvSimd\|\|Sse）</td></tr><tr><td>自定义日志落盘</td><td><code>Engine\Engine\StreamLogSink.cs:7-28</code>（实现 ILogSink 30 行完事）</td></tr><tr><td>平台入口差异（Win/Android/iOS）</td><td><a href="01-引擎/01-程序入口与主循环.html">01页</a>"平台入口与启动差异"节（三形态入口+帧链收口 Program.FrameHandler）</td></tr></tbody></table></div>
+<h2 id="内嵌浏览器-wasm">内嵌浏览器（WASM）</h2>
+<div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>高频数据 JS→C# 零拷贝传输</td><td><code>Engine.Browser\InputBridge.cs:12-36</code>+<code>main.js:115-159</code>（共享内存双缓冲+Atomics 原子翻转协议）</td></tr><tr><td>新增一种输入事件类型</td><td><code>InputEventType.cs:2-27</code>+<code>InputBridge.cs:83-110</code>+<code>main.js:121-139</code>（三处镜像逐字段同步）</td></tr><tr><td>大文件流式下载进 WASM</td><td><code>Survivalcraft.Browser\ContentFileBridge.cs:8-18</code>+<code>main.js:34-56</code>（共享内存+就绪头+忙等接收端）</td></tr><tr><td>防裁剪误删 delegate</td><td><code>Engine.Browser\TrampolineFuncs.cs:8-11</code>（DynamicDependency 锚定+UnmanagedFunctionPointer 范式）</td></tr><tr><td>浏览器宿主能力（文件选择器/全屏/下载）</td><td><code>Engine.Browser\BrowserInterop.cs:49-56</code>+<code>main.js</code>（JSImport/JSExport 低频互操作契约）</td></tr></tbody></table></div>
+<h2 id="逐文件速查索引">逐文件速查索引</h2>
+<ul><li><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a>（111 文件一行一表）、<a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a>（91+EntitySystem 20 文件）</li><li>04a-22a 共 20 张逐文件明细见各自主页链接（<code>01-引擎\明细\</code>）</li></ul>
+<h2 id="回填规则">回填规则</h2>
+<ul><li>每完成一个深读批次 → 本页对应节 + 该域页面"原版范例"表同步补最典型范例；行号必须实读。</li><li>一句话说清"为什么抄它"（最简/最全/唯一）。</li></ul></article><div id=foot>SC 源码笔记 · 纸上得来终觉浅 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><script>
+const $=s=>document.querySelector(s);
+const ROOT=""; // 站点根相对前缀（按页面深度注入）
+// 搜索
+let IDX=[];
+fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
+const box=$('#search'),res=$('#sres');
+box.addEventListener('input',()=>{
+  const q=box.value.trim().toLowerCase();
+  if(!q){res.style.display='none';return}
+  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
+  res.innerHTML=hits.map(p=>{
+    const i=p.b.toLowerCase().indexOf(q);
+    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
+    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
+  }).join('')||'<a>无命中</a>';
+  res.style.display='block';
+});
+document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
+  if(e.key==='Escape'){res.style.display='none'}
+});
+// 移动端侧栏抽屉
+const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
+function setSide(open){side.classList.toggle('open',open);backdrop.classList.toggle('show',open)}
+burger.addEventListener('click',e=>{e.stopPropagation();setSide(!side.classList.contains('open'))});
+document.addEventListener('click',e=>{if(window.innerWidth<=1024&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==burger)setSide(false)});
+backdrop.addEventListener('click',()=>setSide(false));
+// 高亮当前页
+const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
+document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
+</script></body></html>
