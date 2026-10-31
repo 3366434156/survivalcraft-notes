@@ -1,0 +1,90 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>输入与相机 · SC学习笔记</title><style>
+:root{--bg:#f7f5f0;--side:#211d18;--sidefg:#cfc8bb;--ink:#2b2620;--acc:#8a6d3b;--acc2:#4a7a6f;--codebg:#23201b;--line:#e2dccc}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75}
+#layout{display:flex;min-height:100vh}
+#side{width:300px;flex:0 0 300px;background:var(--side);color:var(--sidefg);position:sticky;top:0;height:100vh;overflow-y:auto;padding:18px 14px 40px}
+#side h1{font-size:19px;color:#f0e9da;margin:2px 6px 10px;letter-spacing:1px}
+#side h1 small{display:block;font-size:11px;color:#8d8577;font-weight:normal;letter-spacing:2px}
+#search{width:100%;padding:8px 10px;margin:6px 0 14px;border:1px solid #4a4438;border-radius:6px;background:#2d2822;color:#f0e9da;font-size:13px;outline:none}
+#search:focus{border-color:var(--acc)}
+.sec{margin:14px 6px 4px;font-size:12px;color:#8d8577;letter-spacing:3px;border-bottom:1px solid #3a342b;padding-bottom:4px}
+#nav a{display:block;padding:5px 10px;margin:1px 0;border-radius:6px;color:var(--sidefg);text-decoration:none;font-size:13.5px}
+#nav a:hover{background:#332d25;color:#fff}
+#nav a.active{background:var(--acc);color:#fff}
+#nav a .st{float:right;font-size:10px;color:#7fb8a8;opacity:.85}
+#main{flex:1;min-width:0;padding:34px 48px 90px;max-width:980px}
+#main article{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:38px 46px;box-shadow:0 2px 14px rgba(60,45,20,.06)}
+h1{font-size:26px;color:#3a3128;border-bottom:2px solid var(--acc);padding-bottom:10px;margin-top:0}
+h2{font-size:20px;color:#4a3f30;border-left:4px solid var(--acc2);padding-left:10px;margin-top:34px}
+h3{font-size:17px;color:#5a4c38;margin-top:26px}
+blockquote{margin:14px 0;padding:10px 16px;background:#f4efe2;border-left:4px solid var(--acc);border-radius:0 8px 8px 0;color:#5c5142;font-size:14px}
+code{background:#efe9da;border-radius:4px;padding:1px 6px;font-family:Consolas,monospace;font-size:13px;color:#7a4d12}
+pre.code{background:var(--codebg);color:#e8e0cf;border-radius:10px;padding:14px 18px;overflow-x:auto}
+pre.code code{background:none;color:inherit;padding:0;font-size:13px;line-height:1.6}
+.tablewrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff}
+th{background:#efe8d6;color:#4a3c28;text-align:left}
+th,td{border:1px solid var(--line);padding:7px 11px;vertical-align:top}
+tbody tr:nth-child(even){background:#faf7ee}
+a{color:#28615a;text-decoration:none}a:hover{text-decoration:underline;color:var(--acc)}
+.deadlink{color:#9a8f7c;border-bottom:1px dotted #b7ab92}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+#foot{margin-top:22px;font-size:12px;color:#9a8f7c;text-align:center}
+#sres{position:fixed;inset:80px 18% auto;display:none;background:#fffdf8;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.25);max-height:70vh;overflow:auto;z-index:9;padding:8px}
+#sres a{display:block;padding:7px 12px;border-radius:6px;font-size:14px}
+#sres a:hover{background:#f2ecdc}
+#sres .snip{font-size:12px;color:#8a7d68;margin-left:8px}
+@media(max-width:900px){#side{position:fixed;left:-320px;transition:.2s;z-index:10}#side.open{left:0}#main{padding:20px}}
+</style></head><body><div id=layout><aside id=side><h1>SC 完全学习笔记<small>SURVIVALCRAFT · 原版引擎</small></h1><input id=search placeholder='搜索…（按 / 聚焦）'><nav id=nav><div class=sec>总览</div><a href="index.html">README</a><a href="45-SC原版范例菜谱.html">45-SC原版范例菜谱</a><a href="00-页面模板与规则.html">00-页面模板与规则</a><div class=sec>SC引擎</div><a href="10-SC引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="10-SC引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="10-SC引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="10-SC引擎/04-方块系统.html">04-方块系统</a><a href="10-SC引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="10-SC引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="10-SC引擎/07-粒子系统.html">07-粒子系统</a><a href="10-SC引擎/08-音频系统.html">08-音频系统</a><a href="10-SC引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="10-SC引擎/10-输入与相机.html">10-输入与相机</a><a href="10-SC引擎/11-存档持久化.html">11-存档持久化</a><a href="10-SC引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="10-SC引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="10-SC引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="10-SC引擎/15-电学与机构.html">15-电学与机构</a><div class=sec>SC引擎·明细</div><a href="10-SC引擎/02a-子系统明细.html">02a-子系统明细</a><a href="10-SC引擎/03a-组件明细.html">03a-组件明细</a><a href="10-SC引擎/04a-方块明细.html">04a-方块明细</a><a href="10-SC引擎/05a-地形生成明细.html">05a-地形生成明细</a></nav></aside><main id=main><article><h1 id="输入与相机">输入与相机</h1>
+<blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 抽样(深读 Engine.Input 4 类 + ComponentInput/WidgetInput + Camera 类族)</blockquote>
+<h2 id="一句话定位">一句话定位</h2>
+<p>物理设备(Keyboard/Mouse/Touch/GamePad)→语义输入(WidgetInput/PlayerInput)→玩家动作的三层分发，以及 Camera 类族与切换机制。</p>
+<h2 id="目录地图">目录地图</h2>
+<div class=tablewrap><table><thead><tr><th>符号(类/文件)</th><th>绝对路径</th><th>职责</th></tr></thead><tbody><tr><td><code>Keyboard</code></td><td>E:\SurvivalcraftAPIProject\Engine\Engine.Input\Keyboard.cs</td><td>键盘静态类：按下/单帧/连发/字符事件/软键盘</td></tr><tr><td><code>Mouse</code></td><td>E:\SurvivalcraftAPIProject\Engine\Engine.Input\Mouse.cs</td><td>鼠标静态类：位置/滚轮/按键/事件</td></tr><tr><td><code>Touch</code></td><td>E:\SurvivalcraftAPIProject\Engine\Engine.Input\Touch.cs</td><td>触摸静态类：TouchLocations 状态表</td></tr><tr><td><code>GamePad</code></td><td>E:\SurvivalcraftAPIProject\Engine\Engine.Input\GamePad.cs</td><td>手柄静态类：4 槽位、扳机、修饰键</td></tr><tr><td><code>WidgetInput</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Widget\WidgetInput.cs</td><td>游戏层语义输入：Ok/Cancel/Press/Tap/Click/Drag/Hold/Scroll</td></tr><tr><td><code>ComponentInput</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Component\ComponentInput.cs</td><td>每帧把映射名读成 PlayerInput；<code>UpdateInput</code> 钩子插入点</td></tr><tr><td><code>PlayerInput</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\PlayerInput.cs</td><td>本帧玩家意图结构体</td></tr><tr><td><code>SettingsManager</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\SettingsManager.cs</td><td>键位/手柄/相机映射表的默认值与读写</td></tr><tr><td><code>ModSettingsManager</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\ModSettingsManager.cs</td><td>合并模组键位/相机注册（直接轮询，不走 HookAction）</td></tr><tr><td><code>Camera</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\Camera.cs</td><td>相机抽象基类（70 行）</td></tr><tr><td><code>BasePerspectiveCamera</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\BasePerspectiveCamera.cs</td><td>透视相机公共实现（投影矩阵/射线）</td></tr><tr><td><code>GameWidget</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Widget\GameWidget.cs</td><td>相机容器与激活切换</td></tr><tr><td><code>KeyCompatibleGroupsManager</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\KeyCompatibleGroupsManager.cs</td><td>改键冲突豁免组</td></tr></tbody></table></div>
+<h2 id="核心机制">核心机制</h2>
+<h3 id="引擎层四静态类">引擎层四静态类</h3>
+<div class=tablewrap><table><thead><tr><th>类</th><th>关键成员</th><th>锚点</th></tr></thead><tbody><tr><td><code>Keyboard</code></td><td><code>IsKeyDown/IsKeyDownOnce/IsKeyDownRepeat</code>、<code>LastKey/LastChar</code>、事件 <code>KeyDown/KeyUp/CharacterEntered</code>、<code>ShowKeyboard</code>、<code>Clear()</code></td><td>Keyboard.cs:69/71/73、:47/:49、:63-67、:78、:130</td></tr><tr><td><code>Mouse</code></td><td><code>MousePosition(Point2?)</code>、<code>MouseMovement</code>、<code>MouseWheelMovement</code>(一格=120)、<code>IsMouseButtonDown/Once</code>、事件 <code>MouseMove/MouseDown/MouseUp</code></td><td>Mouse.cs:66/:54/:59、:331/:333、:70-74</td></tr><tr><td><code>Touch</code></td><td><code>TouchLocations</code>(Id/Position/State/ReleaseQueued)、事件 <code>TouchPressed/Released/Moved</code>、<code>IsTouched</code></td><td>Touch.cs:26、:28-32、:34</td></tr><tr><td><code>GamePad</code></td><td><code>IsConnected(0..3 越界抛)</code>、<code>GetStickPosition(deadZone∈[0,1))</code>、<code>IsButtonDownOnce</code>、扳机在<b>松开帧</b>算 Once</td><td>GamePad.cs</td></tr></tbody></table></div>
+<ul><li>失焦窗口(<code>!Window.IsActive</code>)与软键盘打开期间，键盘三处理函数直接返回 false 不触发事件。</li><li>桌面端 <code>ShowKeyboard</code> 是空操作（内部只有 cancel）；文本输入走 <code>TextBoxWidget</code>/<code>WidgetInput.EnterText</code>。</li><li>同帧按下抬起会被"续命"一帧（Mouse 延迟松开数组），轮询不会漏点击；鼠标事件只在 <code>IsMouseVisible</code> 时触发，但按下状态照常更新。</li><li><code>Touch.IsTouched</code> 是<b>只置 true 永不复位</b>的锁存标记（Touch.cs:122），不能当"正被触摸"用。</li><li>帧末 <code>AfterFrame</code> 清 <code>IsKeyDownOnce</code>/<code>LastKey</code>/<code>LastChar</code>；<code>Dispatcher.Dispatch</code> 排队的动作看到的是<b>上一帧</b>输入。</li></ul>
+<h3 id="语义层-widgetinput">语义层 WidgetInput</h3>
+<p>每帧 <code>Update()</code> 先 <code>ClearInput()</code> 再按 <code>Devices</code> 位标志填值（<code>WidgetInput.cs:680-703</code>）。语义成员（<code>WidgetInput.cs:58-94</code>）：<code>Any/Ok/Cancel/Back/Left/Right/Up/Down/Press(Vector2?)/Tap(Vector2?)/Click(Segment2?)/SpecialClick/Drag/DragMode/Hold/HoldTime/Scroll/ScrollX</code>。注意：键盘侧没有 <code>Ok</code>；<code>Left/Right/Up/Down</code> 用连发节奏；<code>Click</code> 是按下→松开的<b>线段</b>不是布尔。</p>
+<ul><li><code>Widget.Input</code> 沿父链找最近挂 <code>WidgetsHierarchyInput</code> 的祖先，找不到给 <code>EmptyInput</code>（Devices=None，读啥都是空）。</li><li>按映射名读：<code>IsKeyOrMouseDown(name)</code> / <code>IsKeyOrMouseDownOnce(name)</code>（<code>WidgetInput.cs:363-395</code>）→ <code>SettingsManager.GetKeyboardMapping(name)</code>（SettingsManager.cs:943，throwIfNotFound 默认 true）→ 按 <code>MouseButton</code>/<code>Key</code> 分派。</li></ul>
+<h3 id="键位绑定表与注册链">键位绑定表与注册链</h3>
+<p>原版默认键位：<code>SettingsManager.InitializeKeyboardMappingSettings</code>（SettingsManager.cs:752-780）——<code>MoveLeft=A MoveRight=D MoveFront=W MoveBack=S MoveUp=Space MoveDown=Shift Jump=Space Dig/Hit=鼠标左键 Interact/Aim=鼠标右键 ToggleCrouch=Shift ToggleMount=R ToggleFly=F PickBlockType=中键 ToggleInventory=E ToggleClothing=C TakeScreenshot=P SwitchCameraMode=V TimeOfDay=T Lightning=L Precipitation=K Fog=J Drop=Q EditItem=G KeyboardHelp=H</code>。手柄默认在 <code>:782</code>。</p>
+<p>模组注册（<b>唯一正道</b>）：重写 <code>ModLoader.GetKeyboardMappings()</code> / <code>GetGamepadMappings()</code>，yield <code>KeyValuePair&amp;lt;string,object&amp;gt;</code>（值=<code>Key</code>/<code>MouseButton</code>，手柄可加 <code>GamePadButton</code>/<code>GamePadTrigger</code>/组合键 ValuesDictionary）。<b>不需要 RegisterHook</b>——<code>ModSettingsManager.LoadModSettings</code> 用 <code>Loaders.SelectMany(item =&amp;gt; item.GetKeyboardMappings())</code> 直接轮询（ModSettingsManager.cs:119）。链路：注册→<code>ModKeyboardMapSettings[包名]</code>→<code>CombinedKeyboardMappingSettings</code>（TryAdd 先到先得，重名被原版遮蔽）→改键界面→<code>ModSettings.xml</code> 落盘。手柄组合键只在 <code>IsGamepadDownOnce</code> 里解析；兼容组 <code>InitKeyCompatibleGroups</code> 是<b>真钩子</b>，必须 <code>RegisterHook</code>（KeyCompatibleGroupsManager.cs）。</p>
+<h3 id="每帧消费-componentinput-playerinput">每帧消费：ComponentInput → PlayerInput</h3>
+<p>顺序（<code>ComponentInput.cs:72-76</code>）：<code>m_playerInput = default</code> → MouseAndKeyboard → Gamepad → VrControllers → Widgets。<code>UpdateInput</code> 钩子插在键鼠阶段末尾（<code>ComponentInput.cs:234-240</code>，<code>ModLoader.UpdateInput(ComponentInput, WidgetInput)</code>，需 RegisterHook）。</p>
+<p><code>PlayerInput</code>（PlayerInput.cs:5-72）：<code>Look</code>(Vector2,已乘灵敏度夹±15)、<code>Move</code>(Vector3,&gt;1 归一化)、<code>Jump</code>、<code>Dig/Hit/Aim/Interact</code>(Ray3?，前两者按住、后两者点按)、<code>ToggleInventory</code> 等 bool 开关、<code>SelectInventorySlot</code>(数字键硬编码不走映射)、<code>ValuesDictionaryForMods</code>。三道闸门（<code>ComponentInput.cs:89-117</code>）：窗口失焦/未就绪→整结构体清零；血量0/睡觉/相机禁控→只保留 8 个环境字段；相机无移动权限→移动字段清零。<b><code>ValuesDictionaryForMods</code> 因 <code>default</code> 每帧变 null，用前判空重建；别当持久状态</b>。</p>
+<h3 id="camera-类族与模式">Camera 类族与模式</h3>
+<p>基类 <code>Camera</code>（Game\Camera.cs:5-56，70 行）：抽象 <code>ViewPosition/ViewDirection/ViewMatrix/ProjectionMatrix/ViewFrustum/UsesMovementControls/IsEntityControlEnabled</code> + <code>WorldToScreen/ScreenToWorld</code> + <code>Activate(previousCamera)</code> + <code>Update(dt)</code> + <code>PrepareForDrawing</code>。透视公共实现在 <code>BasePerspectiveCamera.cs</code>（投影/屏幕矩阵缓存 :68-121）。</p>
+<div class=tablewrap><table><thead><tr><th>类</th><th>文件(同目录)</th><th>用途</th></tr></thead><tbody><tr><td>FppCamera / TppCamera</td><td>Game\FppCamera.cs / TppCamera.cs</td><td>第一/第三人称</td></tr><tr><td>DeathCamera / IntroCamera / LoadingCamera</td><td>同目录</td><td>死亡/入场/加载</td></tr><tr><td>OrbitCamera / FixedCamera / FlyCamera</td><td>同目录</td><td>环绕/固定/飞行（调试）</td></tr><tr><td>DebugCamera / StraightFlightCamera / RandomJumpCamera</td><td>同目录</td><td>调试/快速移动</td></tr></tbody></table></div>
+<ul><li>装配：<code>GameWidget</code> 构造固定 Add 7 个相机（Fpp/Death/Intro/Tpp/Orbit/Fixed/Loading，<code>GameWidget.cs:70-76</code>）→ 派 <code>ManageCameras</code> 钩子（<code>:77-84</code>，模组在此 <code>AddCamera</code>）→ 按 <code>CombinedCameraManageSettings</code> 排序重编 0..n-1（值&lt;0=禁用，<code>:85-95</code>）→ 初始激活 LoadingCamera。</li><li>切换：<code>GameWidget.ActiveCamera</code> setter 校验 <code>IsCameraAllowed</code>、非法回退 FppCamera（<code>:43-58</code>）；玩家按 V（映射 <code>SwitchCameraMode</code>）走 <code>ComponentGui</code> 的切换逻辑；原版默认表在 <code>SettingsManager.InitializeCameraManageSettings</code>（SettingsManager.cs:809-814：Fpp=0 Tpp=1 Orbit=2 Fixed=3）。模组注册相机：重写 <code>GetCameraList()</code> yield <code>(&quot;Game.DebugCamera&quot;, 4)</code>（默认排序提示，不是持久索引），注册名<b>是类型全名</b>。</li><li>射线：拾取用 <code>Camera.ScreenToWorld</code>/<code>BasePerspectiveCamera</code> 的逆矩阵；<code>PlayerInput.Dig/Hit</code> 里已是算好的 <code>Ray3?</code>。</li></ul>
+<h2 id="坑与对策">坑与对策</h2>
+<ul><li><b>键位注册了但不生效/界面没有</b>：没重写 <code>GetKeyboardMappings()</code>，或两个 Loader 返回同名键（ValuesDictionary.Add 抛，后半模组键位全丢）→ 映射名加模组前缀。</li><li><b><code>IsKeyOrMouseDownOnce</code> 永远 false</b>：值类型不是 Key/MouseButton 直接 return false；<code>Key.Null</code>（=禁用）也 false。</li><li><b>UpdateInput 不跑</b>：没 <code>RegisterHook(&quot;UpdateInput&quot;, this)</code>；异常只报第一次后静默。</li><li><b>写 ValuesDictionaryForMods 抛 NRE</b>：<code>m_playerInput = default</code> 把字段清 null（PlayerInput.cs:72 初始化器对 default 不生效）→ 每帧判空。</li><li><b>死亡/睡觉时输入被抹</b>：闸门整体换结构体（ComponentInput.cs:93-106）→ 自定义数据每帧重写。</li><li><b>组合键误触/不触发</b>：修饰键按住时普通按钮被闸门拦（手柄 LB/RB/扳机既是动作又是修饰键）；扳机 Once 在松开帧。</li><li><b>长按方向连发太快/没有</b>：键盘 0.3s 起 0.04s 一次、手柄 0.2s 起（AfterFrame 推进）。</li><li><b>注册相机切不过去</b>：没在 <code>ManageCameras</code> 里 <code>AddCamera</code>，或 <code>GetCameraList</code> 值写成负数被禁用；注册名必须是类型全名 <code>Game.XxxCamera</code>。</li></ul>
+<h2 id="快查路由">快查路由</h2>
+<div class=tablewrap><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>给模组加一个按键</td><td>重写 <code>ModLoader.GetKeyboardMappings()</code>；读用 <code>WidgetInput.IsKeyOrMouseDownOnce(&quot;名字&quot;)</code>（WidgetInput.cs:380）</td></tr><tr><td>查某个动作默认是哪个键</td><td><code>SettingsManager.InitializeKeyboardMappingSettings</code>（SettingsManager.cs:752-780）</td></tr><tr><td>每帧响应玩家输入</td><td><code>UpdateInput</code> 钩子（ComponentInput.cs:234）+ <code>PlayerInput</code> 字段表（PlayerInput.cs:5）</td></tr><tr><td>读原始设备状态（绕过映射）</td><td>Engine.Input 四静态类（Keyboard.cs/Mouse.cs/Touch.cs/GamePad.cs）</td></tr><tr><td>加自定义相机/调试视角</td><td><code>GetCameraList()</code> + <code>ManageCameras</code> 钩子（GameWidget.cs:77）；切换语义见 Camera.cs 的 <code>UsesMovementControls/IsEntityControlEnabled</code></td></tr><tr><td>界面里接输入（按钮/拖动）</td><td>另见 09-UI与Widget体系.md 的 ClickableWidget/命中测试</td></tr><tr><td>手柄组合键/兼容组</td><td><code>GetGamepadMappings()</code>（值可为 ValuesDictionary）+ <code>KeyCompatibleGroupsManager.cs</code></td></tr><tr><td>输入事件全部没反应</td><td>先查 <code>Window.IsActive</code>、软键盘 <code>IsKeyboardVisible</code>、<code>Widget.Input</code> 是否落到 EmptyInput</td></tr></tbody></table></div></article><div id=foot>由 wiki/build_wiki.py 生成 · 零依赖静态站 · 重新生成：python wiki/build_wiki.py</div></main></div><div id=sres></div><script>
+const $=s=>document.querySelector(s);
+// 搜索
+let IDX=[];
+fetch('search.json').then(r=>r.json()).then(d=>{IDX=d});
+const box=$('#search'),res=$('#sres');
+box.addEventListener('input',()=>{
+  const q=box.value.trim().toLowerCase();
+  if(!q){res.style.display='none';return}
+  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
+  res.innerHTML=hits.map(p=>{
+    const i=p.b.toLowerCase().indexOf(q);
+    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
+    return `<a href="${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
+  }).join('')||'<a>无命中</a>';
+  res.style.display='block';
+});
+document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
+  if(e.key==='Escape'){res.style.display='none'}
+});
+// 高亮当前页
+const here=location.pathname.split('/').pop();
+document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href').endsWith(here))a.classList.add('active')});
+</script></body></html>

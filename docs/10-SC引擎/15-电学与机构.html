@@ -1,0 +1,97 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>电学与机构 · SC学习笔记</title><style>
+:root{--bg:#f7f5f0;--side:#211d18;--sidefg:#cfc8bb;--ink:#2b2620;--acc:#8a6d3b;--acc2:#4a7a6f;--codebg:#23201b;--line:#e2dccc}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75}
+#layout{display:flex;min-height:100vh}
+#side{width:300px;flex:0 0 300px;background:var(--side);color:var(--sidefg);position:sticky;top:0;height:100vh;overflow-y:auto;padding:18px 14px 40px}
+#side h1{font-size:19px;color:#f0e9da;margin:2px 6px 10px;letter-spacing:1px}
+#side h1 small{display:block;font-size:11px;color:#8d8577;font-weight:normal;letter-spacing:2px}
+#search{width:100%;padding:8px 10px;margin:6px 0 14px;border:1px solid #4a4438;border-radius:6px;background:#2d2822;color:#f0e9da;font-size:13px;outline:none}
+#search:focus{border-color:var(--acc)}
+.sec{margin:14px 6px 4px;font-size:12px;color:#8d8577;letter-spacing:3px;border-bottom:1px solid #3a342b;padding-bottom:4px}
+#nav a{display:block;padding:5px 10px;margin:1px 0;border-radius:6px;color:var(--sidefg);text-decoration:none;font-size:13.5px}
+#nav a:hover{background:#332d25;color:#fff}
+#nav a.active{background:var(--acc);color:#fff}
+#nav a .st{float:right;font-size:10px;color:#7fb8a8;opacity:.85}
+#main{flex:1;min-width:0;padding:34px 48px 90px;max-width:980px}
+#main article{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:38px 46px;box-shadow:0 2px 14px rgba(60,45,20,.06)}
+h1{font-size:26px;color:#3a3128;border-bottom:2px solid var(--acc);padding-bottom:10px;margin-top:0}
+h2{font-size:20px;color:#4a3f30;border-left:4px solid var(--acc2);padding-left:10px;margin-top:34px}
+h3{font-size:17px;color:#5a4c38;margin-top:26px}
+blockquote{margin:14px 0;padding:10px 16px;background:#f4efe2;border-left:4px solid var(--acc);border-radius:0 8px 8px 0;color:#5c5142;font-size:14px}
+code{background:#efe9da;border-radius:4px;padding:1px 6px;font-family:Consolas,monospace;font-size:13px;color:#7a4d12}
+pre.code{background:var(--codebg);color:#e8e0cf;border-radius:10px;padding:14px 18px;overflow-x:auto}
+pre.code code{background:none;color:inherit;padding:0;font-size:13px;line-height:1.6}
+.tablewrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff}
+th{background:#efe8d6;color:#4a3c28;text-align:left}
+th,td{border:1px solid var(--line);padding:7px 11px;vertical-align:top}
+tbody tr:nth-child(even){background:#faf7ee}
+a{color:#28615a;text-decoration:none}a:hover{text-decoration:underline;color:var(--acc)}
+.deadlink{color:#9a8f7c;border-bottom:1px dotted #b7ab92}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+#foot{margin-top:22px;font-size:12px;color:#9a8f7c;text-align:center}
+#sres{position:fixed;inset:80px 18% auto;display:none;background:#fffdf8;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.25);max-height:70vh;overflow:auto;z-index:9;padding:8px}
+#sres a{display:block;padding:7px 12px;border-radius:6px;font-size:14px}
+#sres a:hover{background:#f2ecdc}
+#sres .snip{font-size:12px;color:#8a7d68;margin-left:8px}
+@media(max-width:900px){#side{position:fixed;left:-320px;transition:.2s;z-index:10}#side.open{left:0}#main{padding:20px}}
+</style></head><body><div id=layout><aside id=side><h1>SC 完全学习笔记<small>SURVIVALCRAFT · 原版引擎</small></h1><input id=search placeholder='搜索…（按 / 聚焦）'><nav id=nav><div class=sec>总览</div><a href="index.html">README</a><a href="45-SC原版范例菜谱.html">45-SC原版范例菜谱</a><a href="00-页面模板与规则.html">00-页面模板与规则</a><div class=sec>SC引擎</div><a href="10-SC引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="10-SC引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="10-SC引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="10-SC引擎/04-方块系统.html">04-方块系统</a><a href="10-SC引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="10-SC引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="10-SC引擎/07-粒子系统.html">07-粒子系统</a><a href="10-SC引擎/08-音频系统.html">08-音频系统</a><a href="10-SC引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="10-SC引擎/10-输入与相机.html">10-输入与相机</a><a href="10-SC引擎/11-存档持久化.html">11-存档持久化</a><a href="10-SC引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="10-SC引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="10-SC引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="10-SC引擎/15-电学与机构.html">15-电学与机构</a><div class=sec>SC引擎·明细</div><a href="10-SC引擎/02a-子系统明细.html">02a-子系统明细</a><a href="10-SC引擎/03a-组件明细.html">03a-组件明细</a><a href="10-SC引擎/04a-方块明细.html">04a-方块明细</a><a href="10-SC引擎/05a-地形生成明细.html">05a-地形生成明细</a></nav></aside><main id=main><article><h1 id="电学与机构">电学与机构</h1>
+<blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(SubsystemElectricity.cs 747行、ElectricElement.cs、SubsystemElectricBlockBehavior.cs 164行、HandledBlocks 61项核对) + 抽样(ElectricElement 目录 51 文件深读 4 个：WireDomain/Piston/Door 基类；机构子系统深读 3 个，其余列表)</blockquote>
+<h2 id="一句话定位">一句话定位</h2>
+<p>电路 = 单一 SubsystemElectricity 每 10 ms 游戏时间推一步的事件排队模拟；机构 = 活塞/门/发射器等 BlockBehavior 子系统被元件 Simulate 调用后改地形或移动方块。</p>
+<h2 id="目录地图">目录地图</h2>
+<div class=tablewrap><table><thead><tr><th>符号(类/文件)</th><th>绝对路径</th><th>职责</th></tr></thead><tbody><tr><td><code>SubsystemElectricity</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Subsystem\SubsystemElectricity.cs</td><td>全局唯一电路子系统，IUpdateable，步进与排队</td></tr><tr><td><code>ElectricElement</code> 基类</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\ElectricElement\ElectricElement.cs</td><td>元件契约：3 字段 + 9 虚方法(:22-38)+IsSignalHigh(:40)</td></tr><tr><td>ElectricElement 目录(51 文件)</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\ElectricElement\</td><td>基类 1+抽象中层 4(Mounted/Rotateable/BaseDelayGate/Furniture)+具体元件 46</td></tr><tr><td><code>IElectricElementBlock</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Block\IElectricElementBlock.cs</td><td>方块侧工厂接口：CreateElectricElement(:3)/GetConnectorType(:5)/GetConnectionMask(:13)</td></tr><tr><td><code>SubsystemElectricBlockBehavior</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Subsystem\BlockBehavior\SubsystemElectricBlockBehavior.cs</td><td>HandledBlocks 硬编码 61 编号(:8-70)，把方块事件转发给电路</td></tr><tr><td><code>WireDomainElectricElement</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\ElectricElement\WireDomainElectricElement.cs</td><td>一片连通导线洪泛成的单一元件，输入按位或(:17-23)</td></tr><tr><td>连线/端口枚举</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\ElectricConnectorType.cs、ElectricConnectorDirection.cs、ElectricConnection.cs、ElectricConnectionPath.cs</td><td>端口三值闭集/本地方向/边/路径</td></tr><tr><td><code>SubsystemPistonBlockBehavior</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Subsystem\BlockBehavior\SubsystemPistonBlockBehavior.cs</td><td>活塞：排队→推方块→移交移动系统</td></tr><tr><td><code>SubsystemMovingBlocks</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Subsystem\SubsystemMovingBlocks.cs</td><td>移动方块组容器(IUpdateable+IDrawable)</td></tr><tr><td>门/活板门/栅栏门行为</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Subsystem\BlockBehavior\SubsystemDoorBlockBehavior.cs、SubsystemTrapdoorBlockBehavior.cs、SubsystemFenceGateBlockBehavior.cs</td><td>OpenClose* 方法被对应 ElectricElement 调</td></tr><tr><td>百科 4 篇(打底)</td><td>E:\数据\生存战争系列\生存战争插件版模组百科\content\19-electric\</td><td>element-model/current-flow/add-an-element/element-catalog</td></tr></tbody></table></div>
+<h2 id="核心机制">核心机制</h2>
+<h3 id="电路一次-tick-的传播调用链">电路一次 tick 的传播调用链</h3>
+<p><b>帧驱动</b>：SubsystemUpdate 逐个调 IUpdateable(见 <a href="10-SC引擎/02-Subsystem体系.html">02-Subsystem体系</a> 更新体系) → <code>SubsystemElectricity.Update(dt)</code>(SubsystemElectricity.cs:394)：</p>
+<ol><li>累加器 <code>m_remainingSimulationTime = Min(+dt, 0.1f)</code>(:398) ⇒ <b>单帧最多 10 步</b>；<code>CircuitStepDuration = 0.01f</code>(:237)。</li><li>while(≥0.01f)(:399)：<b>先</b> <code>UpdateElectricElements()</code>(:400)、<code>++CircuitStep</code>(:401)，<b>后</b>取本步队列 <code>m_futureSimulateLists.Remove(CircuitStep)</code>(:404) ⇒ 本步新建的元件同一步就会被 Simulate 一次。</li><li>逐个 <code>SimulateElectricElement(key)</code>(:414) → <code>element.Simulate()</code>(SubsystemElectricity.cs:523)；返回 <code>true</code> 才 <code>QueueElectricElementConnectionsForSimulation(element, CircuitStep+1)</code>(:525→:375-382)，把"非 Output 端口上的邻居"排到下一步 ⇒ <b>信号一跳 = 1 步 = 10 ms 游戏时间</b>。</li></ol>
+<p><b>排队规则</b> <code>QueueElectricElementForSimulation</code>(:357-373)：<code>==CircuitStep+1</code> 进 nextStep 缓存；<code>&amp;gt;+1</code> 进 future 字典(键=步号，跨帧存活)；<code>&amp;lt;=CircuitStep</code> <b>静默丢弃</b>。</p>
+<p><b>连接建立链</b>(方块变化如何变成元件与边)： SubsystemElectricBlockBehavior.OnBlockGenerated/Added/Removed/Modified(:72-90) → OnElectricElementBlock\* → 塞 <code>m_pointsToUpdate</code>(SubsystemElectricity.cs:255-269，value=false=生成/卸载) → 下一 step 开头 <code>UpdateElectricElements()</code>(:611-654)：</p>
+<ul><li>查该点 6 面旧元件：线域标脏(:618-620)、其余进移除表(:622)；真实改动删本格持久电压(:627-629)。</li><li>按接口判型(:630 <code>IElectricWireElementBlock</code>→标脏线；:634 <code>IElectricElementBlock</code>→<code>CreateElectricElement</code>，非 null 才登记)。</li><li>固定顺序：<code>RemoveWireDomains</code>(:676)→逐个 <code>RemoveElectricElement</code>(:596)→<code>AddWireDomains</code>(:656，ScanWireDomain 洪泛 :668-669)→逐个 <code>AddElectricElement</code>(:529：双向写两边 Connections(:532/:542-587)→自身排 <code>CircuitStep+1</code>(:591)、邻居排 <code>CircuitStep+2</code>(:592)→最后一行 <code>OnAdded()</code>(:593))。</li></ul>
+<p><b>电压模型</b>(数字要背)：无电流/电阻/短路，唯一量是 16 档 <code>level/15f</code>；<code>IsSignalHigh(v)=&amp;gt;v&amp;gt;=0.5f</code>(ElectricElement.cs:40)；多源汇入线域按 4 bit <b>按位或</b>(WireDomainElectricElement.cs:20)；LED/灯泡/活塞等显示执行类取 <b>Max</b>(PistonElectricElement.cs:24)；端口配对 Output↔Output、Input↔Input 不连(SubsystemElectricity.cs:339-341)；颜色掩码 <code>(mask&amp;amp;mask2)!=0</code>(:344)。</p>
+<h3 id="导线不是元件-线域洪泛">导线不是元件：线域洪泛</h3>
+<p><code>WireBlock.CreateElectricElement =&amp;gt; null</code>(Block\WireBlock.cs:50)，每格线不建元件；引擎把连通线洪泛成<b>一个</b> WireDomainElectricElement(AddWireDomains :656-674)。后果：导线任意长，传播延迟仍恒 1 步；导线颜色是 data 第 7..10 位，是唯一隔离手段。</p>
+<h3 id="元件状态的三条存档归宿">元件状态的三条存档归宿</h3>
+<ol><li><b>方块 data 位</b>(原版主力)：开关 1 bit、电压档 4 bit、电池 4 bit、灯泡亮度 4 bit、可调延迟门 8 bit。</li><li><b><code>WritePersistentVoltage</code></b>(:391→VoltagesByCell)：Save 串格式 <code>x,y,z,v;…</code>(InvariantCulture)，<code>num&amp;gt;500</code> break(:483-485) ⇒ 上限 501 条且取舍顺序不定；仅计数器/随机源/SR 触发器用。</li><li><b>自己的 BlockBehavior 子系统存</b>：原版存储组、真值表电路这样干(MemoryBankElectricElement)。</li></ol>
+<p>元件对象本身<b>不入档</b>、<b>按点变动销毁重建</b>——C# 字段不跨"方块被改动"存活。</p>
+<h3 id="模组自定义电路元件-4-步">模组自定义电路元件 4 步</h3>
+<p>元件类型不是闭集(无注册表无 switch，子系统只判接口 :634)：</p>
+<ol><li><b>方块类</b>：<code>class MyBlock : CubeBlock, IElectricElementBlock</code>，实现 3 成员(IElectricElementBlock.cs:3/:5/:13)。想要贴墙+旋转就继承 MountedElectricElementBlock(但必须带模型资产)。</li><li><b>元件类</b>：<code>class MyElement : ElectricElement</code>，至少 override <code>Simulate</code>(基类 :24 恒 false)和 <code>GetOutputVoltage</code>(:22 恒 0f)。<b>只在值变化时 return true</b>，自续排队会 CPU 炸。</li><li><b>挂接(二选一)</b>：</li></ol>
+<ul><li>路 A(推荐)：方块表 csv 第 4 列 Behaviors 写 <code>ElectricBlockBehavior</code>——零 C# 注册，Project 模板里已有该名字(Database.xml:3488-3489)；代价是与 61 个原版电方块共用 behavior 实例。</li><li>路 B：自己写 SubsystemBlockBehavior 子类，把 OnBlock\* 手工转发给 <code>OnElectricElementBlock*</code>(:255-269 全 public)，并作为 MemberSubsystemTemplate 挂 Project(注册方式见 <a href="10-SC引擎/02-Subsystem体系.html">02-Subsystem体系</a>)。</li><li>两条路的底线：方块编号不在 HandledBlocks(SubsystemElectricBlockBehavior.cs:8-70，61 项)又没挂行为列 ⇒ <code>m_pointsToUpdate</code> 永远为空，<b>元件一次都不创建、不报错</b>。</li></ul>
+<ol><li><b>改值后唤醒</b>：<code>ChangeCell</code> 只保证元件重建(+2 步叫醒邻居)，对话框改完电压要补 <code>QueueElectricElementForSimulation(GetElectricElement(...), CircuitStep+1)</code>(范式 SubsystemBatteryBlockBehavior.cs:42-49)。</li></ol>
+<p>硬边界：<b>无法替换 SubsystemElectricity 实例</b>——FindSubsystem 返回第一个类型兼容的(Project.cs:110-116)，插桩只能 Harmony。</p>
+<h3 id="机构类子系统清单">机构类子系统清单</h3>
+<p>电驱动机构的统一模式：<code>XxxElectricElement.Simulate</code> → <code>Project.FindSubsystem&amp;lt;SubsystemXxxBlockBehavior&amp;gt;</code> → 改地形/排队。</p>
+<div class=tablewrap><table><thead><tr><th>子系统</th><th>挂接方块(编号)</th><th>电信号入口</th><th>动作与关键行</th></tr></thead><tbody><tr><td>SubsystemPistonBlockBehavior</td><td>PistonBlock(237)</td><td>PistonElectricElement.Simulate→<code>AdjustPiston</code>(:44，排队 m_actions)</td><td>Update(:52)每 0.125s 游戏时间 <code>ProcessQueuedActions</code>→<code>UpdateMovableBlocks</code>(:253)判 <code>IsMovableByPiston</code>(:553)/<code>IsBlockingPiston</code>(:556)→<code>SubsystemMovingBlocks.AddMovingBlockSet</code>(:368/:435)；UpdateOrder=移动系统+1(:40)</td></tr><tr><td>SubsystemMovingBlocks</td><td>无(通用容器)</td><td>公开 API</td><td><code>AddMovingBlockSet(position,target,speed,accel,drag,smoothness,blocks,id,tag)</code>(:152)、<code>RemoveMovingBlockSet</code>(:204)、Update(:304)、UpdateOrder.Default(:142)；仅两个调用方：活塞(:368/:435)与塌方 SubsystemCollapsingBlockBehavior(:85)</td></tr><tr><td>SubsystemDoorBlockBehavior</td><td>木/铁/细胞门(56/57/58)</td><td>DoorElectricElement.Simulate(:14，10 步节流+m_needsReset)</td><td><code>OpenCloseDoor(x,y,z,open)</code>(:12)</td></tr><tr><td>SubsystemTrapdoorBlockBehavior</td><td>活板门(83/84)</td><td>TrapDoorElectricElement</td><td><code>OpenCloseTrapdoor</code>(:26)</td></tr><tr><td>SubsystemFenceGateBlockBehavior</td><td>HandledBlocks=[](空)</td><td>FenceGateElectricElement 直调</td><td><code>OpenCloseGate</code>(:12)</td></tr><tr><td>SubsystemDispenserBlockBehavior</td><td>发射器(216)</td><td>DispenserElectricElement(:23-37，≥0.1s 间隔)</td><td>触发 ComponentDispenser.Dispense</td></tr><tr><td>SubsystemMagnetBlockBehavior</td><td>磁铁块(167)</td><td>无(非电学)</td><td>收集磁铁坐标(上限 8)作<b>指南针目标</b>：FindNearestCompassTarget(:16)</td></tr><tr><td>SubsystemItemsScanner</td><td>无</td><td>无(60s 自动轮询，周期 :8)</td><td>Update(:86)扫描全部 IInventory；消费方=存储方块/家具/腐坏食物的垃圾回收(EditableItemBehavior:113、FurnitureBlockBehavior:500、RotBlockBehavior:28)</td></tr><tr><td>SubsystemFurnaceBlockBehavior</td><td>熔炉(64/65)</td><td>无(手动)</td><td>熔炼状态机</td></tr></tbody></table></div>
+<p><b>负事实</b>：传送带、轨道车、铁轨在源码 grep 零命中(conveyor/minecart/rail 全无)——原版没有这两种机构；完美世界 2.4 若有属 mod 自建，查 20-完美世界2.4 域。</p>
+<h2 id="坑与对策">坑与对策</h2>
+<ul><li><b>Simulate 里抛异常 = 整局崩</b>：catch 后紧接 <code>throw;</code>，仅 DEBUG 打一行(:415-423)。对策：自写元件内部 try 住。</li><li><b>排队了却不跑</b>：传 <code>circuitStep &amp;lt;= CircuitStep</code> 被静默丢弃(:357-373)。对策：一律 <code>CircuitStep + n</code>。</li><li><b>元件每 10ms 都跑、CPU 炸</b>：Simulate 无条件自续。对策：只在值变化时 return true(原版惯例)。</li><li><b>一改方块 data，元件字段全没</b>：UpdateElectricElements 按点销毁重建(:611-654)且删本格持久电压(:627-629)。对策：状态写 data 或自己的 behavior。</li><li><b>与门/与非门输出恒 0</b>：要求恰好 2 个输入连接(AndGateElectricElement.cs:21)。</li><li><b>两根不同色线不通、两 Output 挨着不连</b>：设计如此(:339-344)，不是 bug。</li><li><b>几十个轮询元件同时跑掉帧</b>：轮询要抄相位抖动 <code>period*(0.9f+0.0002f*(GetHashCode()%1000))</code>(ThermometerElectricElement.cs:20)。</li><li><b>按 MC 思路找传送带/矿车</b>：源码没有(见负事实)，别在引擎层浪费检索时间。</li></ul>
+<h2 id="快查路由">快查路由</h2>
+<div class=tablewrap><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某原版电方块对应哪个元件类/端口/编号</td><td>百科 E:\数据\生存战争系列\生存战争插件版模组百科\content\19-electric\04-element-catalog.md(61 编号反查表)；或 SubsystemElectricBlockBehavior.cs:8-70</td></tr><tr><td>查电路一拍为什么没动</td><td>本页"传播调用链"；排队静默丢弃 SubsystemElectricity.cs:357-373；Update 异常吞掉另见 02-Subsystem体系.md 坑表</td></tr><tr><td>模组加一种电路元件</td><td>本页"4 步"+百科 03-add-an-element.md(含最小脉冲源示例)</td></tr><tr><td>查活塞能推什么/推不动什么</td><td>SubsystemPistonBlockBehavior.cs:553/:556；Block 虚方法 <code>IsMovableByPiston</code>/<code>IsBlockingPiston</code> 见 <a href="10-SC引擎/04-方块系统.html">04-方块系统</a> 虚方法表</td></tr><tr><td>查门/活板门/栅栏门开合</td><td>SubsystemDoorBlockBehavior.cs:12、SubsystemTrapdoorBlockBehavior.cs:26、SubsystemFenceGateBlockBehavior.cs:12；电气侧 DoorElectricElement.cs:14-40</td></tr><tr><td>查电压档/端口方向/连线判定细节</td><td>百科 02-current-flow.md(连接路径表 m_connectionPathsTable :10-131)</td></tr><tr><td>查子系统注册/IUpdateable 驱动</td><td><a href="10-SC引擎/02-Subsystem体系.html">02-Subsystem体系</a></td></tr><tr><td>查方块 value 位打包(contents/data)</td><td><a href="10-SC引擎/04-方块系统.html">04-方块系统</a> + Terrain.cs:64-72</td></tr></tbody></table></div>
+<p>另见：<a href="10-SC引擎/02-Subsystem体系.html">02-Subsystem体系</a>(tick 驱动链、FindSubsystem、Dependencies)、<a href="10-SC引擎/04-方块系统.html">04-方块系统</a>(Block 虚方法表、csv 第 4 列 Behaviors、value 编码)。</p></article><div id=foot>由 wiki/build_wiki.py 生成 · 零依赖静态站 · 重新生成：python wiki/build_wiki.py</div></main></div><div id=sres></div><script>
+const $=s=>document.querySelector(s);
+// 搜索
+let IDX=[];
+fetch('search.json').then(r=>r.json()).then(d=>{IDX=d});
+const box=$('#search'),res=$('#sres');
+box.addEventListener('input',()=>{
+  const q=box.value.trim().toLowerCase();
+  if(!q){res.style.display='none';return}
+  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
+  res.innerHTML=hits.map(p=>{
+    const i=p.b.toLowerCase().indexOf(q);
+    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
+    return `<a href="${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
+  }).join('')||'<a>无命中</a>';
+  res.style.display='block';
+});
+document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
+  if(e.key==='Escape'){res.style.display='none'}
+});
+// 高亮当前页
+const here=location.pathname.split('/').pop();
+document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href').endsWith(here))a.classList.add('active')});
+</script></body></html>

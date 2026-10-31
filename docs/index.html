@@ -1,0 +1,76 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Survivalcraft (SC) 完全学习笔记 · SC学习笔记</title><style>
+:root{--bg:#f7f5f0;--side:#211d18;--sidefg:#cfc8bb;--ink:#2b2620;--acc:#8a6d3b;--acc2:#4a7a6f;--codebg:#23201b;--line:#e2dccc}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:"Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75}
+#layout{display:flex;min-height:100vh}
+#side{width:300px;flex:0 0 300px;background:var(--side);color:var(--sidefg);position:sticky;top:0;height:100vh;overflow-y:auto;padding:18px 14px 40px}
+#side h1{font-size:19px;color:#f0e9da;margin:2px 6px 10px;letter-spacing:1px}
+#side h1 small{display:block;font-size:11px;color:#8d8577;font-weight:normal;letter-spacing:2px}
+#search{width:100%;padding:8px 10px;margin:6px 0 14px;border:1px solid #4a4438;border-radius:6px;background:#2d2822;color:#f0e9da;font-size:13px;outline:none}
+#search:focus{border-color:var(--acc)}
+.sec{margin:14px 6px 4px;font-size:12px;color:#8d8577;letter-spacing:3px;border-bottom:1px solid #3a342b;padding-bottom:4px}
+#nav a{display:block;padding:5px 10px;margin:1px 0;border-radius:6px;color:var(--sidefg);text-decoration:none;font-size:13.5px}
+#nav a:hover{background:#332d25;color:#fff}
+#nav a.active{background:var(--acc);color:#fff}
+#nav a .st{float:right;font-size:10px;color:#7fb8a8;opacity:.85}
+#main{flex:1;min-width:0;padding:34px 48px 90px;max-width:980px}
+#main article{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:38px 46px;box-shadow:0 2px 14px rgba(60,45,20,.06)}
+h1{font-size:26px;color:#3a3128;border-bottom:2px solid var(--acc);padding-bottom:10px;margin-top:0}
+h2{font-size:20px;color:#4a3f30;border-left:4px solid var(--acc2);padding-left:10px;margin-top:34px}
+h3{font-size:17px;color:#5a4c38;margin-top:26px}
+blockquote{margin:14px 0;padding:10px 16px;background:#f4efe2;border-left:4px solid var(--acc);border-radius:0 8px 8px 0;color:#5c5142;font-size:14px}
+code{background:#efe9da;border-radius:4px;padding:1px 6px;font-family:Consolas,monospace;font-size:13px;color:#7a4d12}
+pre.code{background:var(--codebg);color:#e8e0cf;border-radius:10px;padding:14px 18px;overflow-x:auto}
+pre.code code{background:none;color:inherit;padding:0;font-size:13px;line-height:1.6}
+.tablewrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff}
+th{background:#efe8d6;color:#4a3c28;text-align:left}
+th,td{border:1px solid var(--line);padding:7px 11px;vertical-align:top}
+tbody tr:nth-child(even){background:#faf7ee}
+a{color:#28615a;text-decoration:none}a:hover{text-decoration:underline;color:var(--acc)}
+.deadlink{color:#9a8f7c;border-bottom:1px dotted #b7ab92}
+hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
+#foot{margin-top:22px;font-size:12px;color:#9a8f7c;text-align:center}
+#sres{position:fixed;inset:80px 18% auto;display:none;background:#fffdf8;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.25);max-height:70vh;overflow:auto;z-index:9;padding:8px}
+#sres a{display:block;padding:7px 12px;border-radius:6px;font-size:14px}
+#sres a:hover{background:#f2ecdc}
+#sres .snip{font-size:12px;color:#8a7d68;margin-left:8px}
+@media(max-width:900px){#side{position:fixed;left:-320px;transition:.2s;z-index:10}#side.open{left:0}#main{padding:20px}}
+</style></head><body><div id=layout><aside id=side><h1>SC 完全学习笔记<small>SURVIVALCRAFT · 原版引擎</small></h1><input id=search placeholder='搜索…（按 / 聚焦）'><nav id=nav><div class=sec>总览</div><a href="index.html">README</a><a href="45-SC原版范例菜谱.html">45-SC原版范例菜谱</a><a href="00-页面模板与规则.html">00-页面模板与规则</a><div class=sec>SC引擎</div><a href="10-SC引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="10-SC引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="10-SC引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="10-SC引擎/04-方块系统.html">04-方块系统</a><a href="10-SC引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="10-SC引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="10-SC引擎/07-粒子系统.html">07-粒子系统</a><a href="10-SC引擎/08-音频系统.html">08-音频系统</a><a href="10-SC引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="10-SC引擎/10-输入与相机.html">10-输入与相机</a><a href="10-SC引擎/11-存档持久化.html">11-存档持久化</a><a href="10-SC引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="10-SC引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="10-SC引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="10-SC引擎/15-电学与机构.html">15-电学与机构</a><div class=sec>SC引擎·明细</div><a href="10-SC引擎/02a-子系统明细.html">02a-子系统明细</a><a href="10-SC引擎/03a-组件明细.html">03a-组件明细</a><a href="10-SC引擎/04a-方块明细.html">04a-方块明细</a><a href="10-SC引擎/05a-地形生成明细.html">05a-地形生成明细</a></nav></aside><main id=main><article><h1 id="survivalcraft-sc-完全学习笔记">Survivalcraft (SC) 完全学习笔记</h1>
+<blockquote>独立知识库：只含 Survivalcraft 引擎/游戏层（源码 E:\SurvivalcraftAPIProject）的学习笔记，<b>不含任何 mod 项目内容</b>。 姊妹库：完美世界2.4 项目笔记在 <code>E:\数据\生存战争系列\SC与完美世界完全学习笔记\</code>（本项目侧查证走那边；两库互相以绝对路径引用）。 页面行号为 2026-10-31 实读所得；行号跳转依赖本机存在 E:\SurvivalcraftAPIProject 源码树。</blockquote>
+<h2 id="快速开始-三跳查找协议">快速开始（三跳查找协议）</h2>
+<ol><li>先看下方"页面地图"选页 → 页内"快查路由"→"目录地图"拿绝对路径 → 直接跳源码 <code>file:line</code>。</li><li>页面没覆盖 → Grep <code>E:\SurvivalcraftAPIProject</code> → <b>把发现回写进对应页面</b>（库越用越准）。</li><li>抄范例先看 <a href="45-SC原版范例菜谱.html">45-SC原版范例菜谱</a>；坑在各页"坑与对策"节。</li></ol>
+<h2 id="页面地图-10-sc引擎">页面地图（10-SC引擎\）</h2>
+<div class=tablewrap><table><thead><tr><th>页</th><th>覆盖</th><th>状态</th></tr></thead><tbody><tr><td><a href="10-SC引擎/01-程序入口与主循环.html">01-程序入口与主循环</a></td><td>Program/Window/ScreensManager/GameScreen 一帧全序</td><td>全读</td></tr><tr><td><a href="10-SC引擎/02-Subsystem体系.html">02-Subsystem体系</a></td><td>Subsystem/Project/加载保存/更新驱动 + 40 业务子系统</td><td>全读111/111 · <a href="10-SC引擎/02a-子系统明细.html">02a 逐文件明细</a></td></tr><tr><td><a href="10-SC引擎/03-实体与组件体系.html">03-实体与组件体系</a></td><td>Entity/Component 契约 + 91 组件族</td><td>全读91/91 · <a href="10-SC引擎/03a-组件明细.html">03a 逐文件明细</a></td></tr><tr><td><a href="10-SC引擎/04-方块系统.html">04-方块系统</a></td><td>Block 116 虚方法/BlocksManager/304 方块</td><td>见页首状态 · <a href="10-SC引擎/04a-方块明细.html">04a 逐文件明细</a></td></tr><tr><td><a href="10-SC引擎/05-世界与地形生成.html">05-世界与地形生成</a></td><td>区块十态/TCG 生成器族</td><td>见页首状态 · <a href="10-SC引擎/05a-地形生成明细.html">05a 明细</a></td></tr><tr><td><a href="10-SC引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a></td><td>Graphics/语义头/预乘alpha/批次</td><td>抽样→待波次</td></tr><tr><td><a href="10-SC引擎/07-粒子系统.html">07-粒子系统</a></td><td>ParticleSystem 基类与新增 5 步</td><td>抽样→待波次</td></tr><tr><td><a href="10-SC引擎/08-音频系统.html">08-音频系统</a></td><td>OpenAL/播放链/格式嗅探</td><td>Engine.Audio 全读</td></tr><tr><td><a href="10-SC引擎/09-UI与Widget体系.html">09-UI与Widget体系</a></td><td>布局/命中/Update必调base/XML解析</td><td>抽样→待波次</td></tr><tr><td><a href="10-SC引擎/10-输入与相机.html">10-输入与相机</a></td><td>输入分发/键位/相机类族</td><td>抽样→待波次</td></tr><tr><td><a href="10-SC引擎/11-存档持久化.html">11-存档持久化</a></td><td>存档 6+9 步/ValuesDictionary 硬拆箱</td><td>核心全读</td></tr><tr><td><a href="10-SC引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a></td><td>modinfo 13键/加载 20 步/HarmonyX</td><td>关键段全读</td></tr><tr><td><a href="10-SC引擎/13-物理与碰撞.html">13-物理与碰撞</a></td><td>ComponentBody 全链/碰撞对O(n²)/弹道/爆炸</td><td>全读</td></tr><tr><td><a href="10-SC引擎/14-光照天空与天气.html">14-光照天空与天气</a></td><td>光照0-15/昼夜曲线/天气状态机</td><td>全读</td></tr><tr><td><a href="10-SC引擎/15-电学与机构.html">15-电学与机构</a></td><td>电路 tick 链/自定义元件 4 步</td><td>主链全读</td></tr></tbody></table></div>
+<p>（"抽样→待波次"= 该页仍在按深学计划逐批推进到全读，见姊妹库 <code>50-深学台账.md</code> A 区进度。）</p>
+<h2 id="原版范例-最快照抄入口">原版范例（最快照抄入口）</h2>
+<p><a href="45-SC原版范例菜谱.html">45-SC原版范例菜谱.md</a> —— 任务 → 最快照抄的原版实现（AI行为/方块/子系统/存档/粒子/弹道/电力…）。</p>
+<h2 id="写作规则">写作规则</h2>
+<p>见 <a href="00-页面模板与规则.html">00-页面模板与规则.md</a>。核心铁律：绝对路径+实读行号、零空话、单页≤350行、每页必有"原版范例"表、<b>本库零 mod 内容（域隔离）</b>。</p>
+<h2 id="对-mod-开发者的提示">对 mod 开发者的提示</h2>
+<ul><li>本库页首状态行的"全读(N/M)"= 该目录源码文件实读覆盖数。</li><li>mod 挂点（UpdateComponentBody、OnLightningStrike、GenerateChunkLightSources 等）在各页"原版范例/快查路由"中有引擎侧位置；实际用法案例在姊妹库。</li></ul></article><div id=foot>由 wiki/build_wiki.py 生成 · 零依赖静态站 · 重新生成：python wiki/build_wiki.py</div></main></div><div id=sres></div><script>
+const $=s=>document.querySelector(s);
+// 搜索
+let IDX=[];
+fetch('search.json').then(r=>r.json()).then(d=>{IDX=d});
+const box=$('#search'),res=$('#sres');
+box.addEventListener('input',()=>{
+  const q=box.value.trim().toLowerCase();
+  if(!q){res.style.display='none';return}
+  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
+  res.innerHTML=hits.map(p=>{
+    const i=p.b.toLowerCase().indexOf(q);
+    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
+    return `<a href="${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
+  }).join('')||'<a>无命中</a>';
+  res.style.display='block';
+});
+document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
+  if(e.key==='Escape'){res.style.display='none'}
+});
+// 高亮当前页
+const here=location.pathname.split('/').pop();
+document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href').endsWith(here))a.classList.add('active')});
+</script></body></html>
