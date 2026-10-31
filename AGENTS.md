@@ -5,7 +5,7 @@
 ## 0. 这个库是什么
 
 - **本仓库优先为 AI agent 开发 Survivalcraft mod 服务**；给人类看的内容（站点预览/页面地图）在 [README](README.md)。
-- **Survivalcraft 引擎源码（1644 个 .cs）的行号级学习笔记**，全部逐文件实读校准；23 个主题页 + 20 张逐文件明细是知识底座，其上是专为 agent 编的 8 份参考（§4 查库协议按序使用）：Mod开发配方 → 钩子总表/明细 → 数据格式参考×2 → 排错手册×2 → 端到端示例×3。
+- **Survivalcraft 引擎源码（1644 个 .cs）的行号级学习笔记**，全部逐文件实读校准；23 个主题页 + 20 张逐文件明细是知识底座，其上是专为 agent 编的 8 份参考（§4 查库协议按序使用）：Mod开发配方 → 钩子总表/明细 → 数据格式参考×2 → 排错手册×2 → 端到端示例×5（数据驱动/代码方块/电力元件/自定义生物/自定义界面）。人类读者入口 [学习路线.md](学习路线.md)。
 - **引擎源码仓库（公开）**：https://gitee.com/SC-SPM/SurvivalcraftApi —— 大陆可直连克隆。本库所有 `E:\SurvivalcraftAPIProject\...:行号` 引用 = 该仓库克隆到本机后的路径（行号 2026-10-31/11-01 快照）；改源码后行号以实际为准。
 - **在线阅读**：https://3366434156.github.io/survivalcraft-notes/ （github.io 大陆可能超时，仓库内 `docs/` 即整站）。
 - **改笔记流程**：改 md → `python tools/build_wiki.py` 重生成 docs/ → commit/push。
@@ -76,13 +76,13 @@ public class MyModLoader : ModLoader {          // public 无参构造必须
 | 新增方块 | `IceBlock.cs`（4 行最简）；异形=预烘变体表 `DoorBlock.cs:21-62` |
 | 自定义电力元件 | `GunpowderKegElectricElement.cs:5-12`（11 行最短）；**必须**补进 63 ID 表 `SubsystemElectricBlockBehavior.cs:8-70` |
 | 拦截方块变更 | `SubsystemTerrain.ChangeCell:355` + `TerrainChangeCell` 钩子 |
-| 加生物（数据） | `Database.xml:707`（Horse_White 继承变体）；生成规则类 `StandardCreatureSpawnRule.cs:34-59` |
+| 加生物（数据） | 端到端 [Mod示例-自定义生物](Mod示例-自定义生物.md)（纯数据 .xdb 新模板+生成规则）；变体继承 `Database.xml:707`；生成规则类 `StandardCreatureSpawnRule.cs:34-59` |
 | 加配方（数据） | `CraftingRecipes.xml:64-139`（含 Remains 返桶样例） |
 | 自定义 AI 行为 | `ComponentWalkAroundBehavior.cs:6`（最简 ComponentBehavior） |
 | 伤害/死亡/掉落全链 | `ComponentChaseBehavior.cs:180`→`ComponentMiner.cs:636-715` |
 | 自定义弹道 | `Projectile.cs:190/300/525`（独立体系） |
 | 相机 | `OrbitCamera.cs:117-167`（继承 BasePerspectiveCamera）+ 注册见 `SurvivalCraftModLoader.cs:41-61` |
-| 设置页加按钮 | `SettingsScreen.cs:32-43,86-115`（钩子+AddSettingButton） |
+| 设置页加按钮 | `SettingsScreen.cs:32-43,86-115`（钩子+AddSettingButton）；整屏端到端 [Mod示例-自定义界面](Mod示例-自定义界面.md) |
 | 世界选项屏接入 | `WorldOptionsScreen.cs:7,250-254`（实现 IWorldOptionsScreen） |
 
 ## 4. 查库协议（agent 工作流）
@@ -92,7 +92,7 @@ public class MyModLoader : ModLoader {          // public 无参构造必须
 3. **钩子问题** → [Mod钩子总表](Mod钩子总表.md)（高频精选 + 最小骨架 + 例外清单）→ 全量 236 条查 [Mod钩子明细](Mod钩子明细.md)。
 4. **写数据文件**（csv/配方/衣物/实体参数）→ [数据格式参考](数据格式参考.md) + [数据格式参考2](数据格式参考2.md)（78 具名列/属性 schema，按列名写、可只写覆盖列）。
 5. **出问题了** → [Mod排错手册](Mod排错手册.md) + [Mod排错手册2](Mod排错手册2.md)（250 条按症状：加载失败/不生效/崩溃/存档/渲染…）。
-6. **要完整样例模仿** → [Mod示例-数据驱动](Mod示例-数据驱动.md) / [Mod示例-代码方块](Mod示例-代码方块.md) / [Mod示例-电力元件](Mod示例-电力元件.md)（端到端，逐行注明出处）。
+6. **要完整样例模仿** → [Mod示例-数据驱动](Mod示例-数据驱动.md) / [Mod示例-代码方块](Mod示例-代码方块.md) / [Mod示例-电力元件](Mod示例-电力元件.md) / [Mod示例-自定义生物](Mod示例-自定义生物.md) / [Mod示例-自定义界面](Mod示例-自定义界面.md)（端到端，逐行注明出处）。
 7. 仍没覆盖 → 按域读主题页 → Grep 源码仓库（https://gitee.com/SC-SPM/SurvivalcraftApi）→ **回写进对应页面**（库越用越准）。
 8. 关键代码落笔前，打开对应源码片段核对签名/行号（快照 2026-10-31/11-01；源码更新后以实际为准）。
 - 各域的坑：每页"坑与对策"节；跨页高频坑已收进下节。

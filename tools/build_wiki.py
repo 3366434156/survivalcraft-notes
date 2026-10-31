@@ -31,6 +31,7 @@ def collect_sources():
     overview = [
         ("总览", SC_ROOT / "README.md", "index.html", 0),
         ("总览", SC_ROOT / "AGENTS.md", "AGENTS.html", 1),
+        ("总览", SC_ROOT / "学习路线.md", "学习路线.html", 2),
     ]
     for sec, p, o, k in overview:
         if p.exists():
@@ -47,6 +48,8 @@ def collect_sources():
         ("Mod开发", "Mod示例-数据驱动.md", 7),
         ("Mod开发", "Mod示例-代码方块.md", 8),
         ("Mod开发", "Mod示例-电力元件.md", 9),
+        ("Mod开发", "Mod示例-自定义生物.md", 10),
+        ("Mod开发", "Mod示例-自定义界面.md", 11),
     ]
     for sec, name, k in moddev:
         p = SC_ROOT / name

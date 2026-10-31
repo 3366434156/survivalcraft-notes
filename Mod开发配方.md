@@ -24,6 +24,7 @@
 | 生物骑乘 | `ComponentRider.cs:32-39`（ParentBody 反查+0.75s 插值）；"_Saddled" 模板尾缀开关 SteedBehavior |
 | 自定义 dae 生物会动 | 模板必须配 AnimationConfigPath（四足/鸟/鱼 AnimateCreature 全空实现，`ComponentFourLeggedModel.cs:188`） |
 | 属性因子/创造免伤 | `ComponentFactors.cs:199-214`（三段时序：先结算上帧→再重建→再放行 hook）+ `ComponentLevel.cs:187-189`（创造模式 ResilienceFactor=+∞） |
+| 端到端：加一只自然生成的生物 | [Mod示例-自定义生物](Mod示例-自定义生物.md)（纯数据 .xdb：新模板继承马+生成规则条目进 CreatureSpawnRules） |
 
 ## 方块与地形
 
@@ -140,6 +141,7 @@
 | 设置页加自定义按钮 | `Screen\SettingsScreen.cs:32-43,86-115`（钩子+AddSettingButton 奇偶分列） |
 | 屏内异步任务槽 | `Screen\Community\CommunityScreen.cs:52-55,236-254`（TaskSlot.Start 异步+Update.TryTake 收尾） |
 | 多屏共享行为基类 | `Screen\Community\CommunityScreenBase.cs:9-90`（ctor 订阅/Dispose 退订/单槽委托） |
+| 端到端：加自己的界面 | [Mod示例-自定义界面](Mod示例-自定义界面.md)（XML 模板+OnLoadingFinished 注册+OnSettingsScreenCreated 入口按钮） |
 
 ## 输入与相机
 
