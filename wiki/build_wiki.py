@@ -71,7 +71,7 @@ def rewrite_link_target(href, src_file, reg):
     abs_target = os.path.normcase(str((src_file.parent / target).resolve()))
     if abs_target in reg:
         return ("ok", reg[abs_target] + frag)
-    return ("dead", None)  # 姊妹库/不存在 → 置灰不可点
+    return ("dead", None)  # 库外私有笔记/不存在 → 置灰不可点
 
 def inline(text, src_file, reg):
     text = html.escape(text, quote=False)
@@ -90,7 +90,7 @@ def inline(text, src_file, reg):
             return '<a href="%s">%s</a>' % (val, label)
         if status == "keep":
             return '<a href="%s">%s</a>' % (html.escape(href, quote=True), label)
-        return '<span class="deadlink" title="在姊妹库：库外私有笔记">%s ⟶姊妹库</span>' % label
+        return '<span class="deadlink" title="在库外私有笔记：库外私有笔记">%s ⟶库外私有笔记</span>' % label
     text = LINK_RE.sub(link, text)
     text = BOLD_RE.sub(r"<b>\1</b>", text)
     text = ITAL_RE.sub(r"<i>\1</i>", text)
