@@ -102,4 +102,4 @@ BevelledButtonWidget/BitmapButtonWidget/CheckboxWidget/SliderWidget/LinkWidget �
 
 - 09-UI与Widget体系.md：状态行改"全读(106/106)"；目录地图补 WidgetInput/FontText/Flex/Table；新增"布局容器差异全链"（表格+Table/Flex 两小节）、"Update 覆写全景"（34 处核全）、"文本管线"、"富内容管线"、"复合控件模板模式"；命中测试节并入 WidgetInput 全链；坑表 +5；原版范例 14 条；快查路由 19 条。
 - 09a-Widget明细.md：新建，106 文件逐行（十家族），每行含继承/关键成员+行号/坑。
-- 未动文件：SC库 README.md、45-SC原版范例菜谱.md、00-页面模板与规则.md、姊妹库一切文件（合规）。
+- 未动文件：SC库 README.md、45-SC原版范例菜谱.md、00-页面模板与规则.md、库外私有笔记一切文件（合规）。
