@@ -1,6 +1,7 @@
-# Survivalcraft (SC) 完全学习笔记
+# SC 源码笔记
 
 > 🌐 **在线阅读（GitHub Pages）**：https://3366434156.github.io/survivalcraft-notes/  
+> Survivalcraft 引擎行号级学习库：22 个引擎域 + 20 张逐文件档案，全部实读校准。  
 > 更新：改 md → `python tools/build_wiki.py` 重生成 docs/ → git push 自动上线。
 
 > 独立知识库：只含 Survivalcraft 引擎/游戏层的学习笔记，**不含任何 mod 项目内容**。

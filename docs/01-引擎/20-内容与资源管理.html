@@ -1,42 +1,70 @@
-<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>内容与资源管理 · SC学习笔记</title><style>
-:root{--bg:#f7f5f0;--side:#211d18;--sidefg:#cfc8bb;--ink:#2b2620;--acc:#8a6d3b;--acc2:#4a7a6f;--codebg:#23201b;--line:#e2dccc}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font-family:"Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75}
-#layout{display:flex;min-height:100vh}
-#side{width:300px;flex:0 0 300px;background:var(--side);color:var(--sidefg);position:sticky;top:0;height:100vh;overflow-y:auto;padding:18px 14px 40px}
-#side h1{font-size:19px;color:#f0e9da;margin:2px 6px 10px;letter-spacing:1px}
-#side h1 small{display:block;font-size:11px;color:#8d8577;font-weight:normal;letter-spacing:2px}
-#search{width:100%;padding:8px 10px;margin:6px 0 14px;border:1px solid #4a4438;border-radius:6px;background:#2d2822;color:#f0e9da;font-size:13px;outline:none}
-#search:focus{border-color:var(--acc)}
-.sec{margin:14px 6px 4px;font-size:12px;color:#8d8577;letter-spacing:3px;border-bottom:1px solid #3a342b;padding-bottom:4px}
-#nav a{display:block;padding:5px 10px;margin:1px 0;border-radius:6px;color:var(--sidefg);text-decoration:none;font-size:13.5px}
-#nav a:hover{background:#332d25;color:#fff}
-#nav a.active{background:var(--acc);color:#fff}
-#nav a .st{float:right;font-size:10px;color:#7fb8a8;opacity:.85}
-#main{flex:1;min-width:0;padding:34px 48px 90px;max-width:980px}
-#main article{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:38px 46px;box-shadow:0 2px 14px rgba(60,45,20,.06)}
-h1{font-size:26px;color:#3a3128;border-bottom:2px solid var(--acc);padding-bottom:10px;margin-top:0}
-h2{font-size:20px;color:#4a3f30;border-left:4px solid var(--acc2);padding-left:10px;margin-top:34px}
-h3{font-size:17px;color:#5a4c38;margin-top:26px}
-blockquote{margin:14px 0;padding:10px 16px;background:#f4efe2;border-left:4px solid var(--acc);border-radius:0 8px 8px 0;color:#5c5142;font-size:14px}
-code{background:#efe9da;border-radius:4px;padding:1px 6px;font-family:Consolas,monospace;font-size:13px;color:#7a4d12}
-pre.code{background:var(--codebg);color:#e8e0cf;border-radius:10px;padding:14px 18px;overflow-x:auto}
-pre.code code{background:none;color:inherit;padding:0;font-size:13px;line-height:1.6}
-.tablewrap{overflow-x:auto;margin:14px 0}
-table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff}
-th{background:#efe8d6;color:#4a3c28;text-align:left}
-th,td{border:1px solid var(--line);padding:7px 11px;vertical-align:top}
-tbody tr:nth-child(even){background:#faf7ee}
-a{color:#28615a;text-decoration:none}a:hover{text-decoration:underline;color:var(--acc)}
-.deadlink{color:#9a8f7c;border-bottom:1px dotted #b7ab92}
-hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
-#foot{margin-top:22px;font-size:12px;color:#9a8f7c;text-align:center}
-#sres{position:fixed;inset:80px 18% auto;display:none;background:#fffdf8;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.25);max-height:70vh;overflow:auto;z-index:9;padding:8px}
-#sres a{display:block;padding:7px 12px;border-radius:6px;font-size:14px}
-#sres a:hover{background:#f2ecdc}
-#sres .snip{font-size:12px;color:#8a7d68;margin-left:8px}
-@media(max-width:900px){#side{position:fixed;left:-320px;transition:.2s;z-index:10}#side.open{left:0}#main{padding:20px}}
-</style></head><body><div id=layout><aside id=side><h1>SC 完全学习笔记<small>SURVIVALCRAFT · 原版引擎</small></h1><input id=search placeholder='搜索…（按 / 聚焦）'><nav id=nav><div class=sec>总览</div><a href="index.html">README</a><a href="02-范例配方.html">02-范例配方</a><a href="00-规则.html">00-规则</a><div class=sec>SC引擎</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><div class=sec>SC引擎·明细</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><article><h1 id="内容与资源管理">内容与资源管理</h1>
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>内容与资源管理SC 源码笔记</title><style>
+:root{--bg:#fff;--soft:#f6f8fa;--side:#f8f9fb;--ink:#1f2328;--muted:#57606a;--faint:#8b949e;
+--acc:#4f6ef7;--acc-ink:#3b5bdb;--acc-soft:#eef1fe;--line:#e6e8ec;--codebg:#0f172a;--codefg:#e2e8f0;
+--header-h:56px;--side-w:264px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 18px)}
+body{margin:0;font-family:"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.8}
+/* 顶栏 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;height:var(--header-h);padding:0 20px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+#burger{display:none;border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-size:17px;color:var(--ink);letter-spacing:.5px}
+#top .brand small{font-size:11px;color:var(--faint);letter-spacing:1.5px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,40vw)}
+#search{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--line);border-radius:8px;background:var(--soft);color:var(--ink);font-size:13.5px;outline:none;transition:border-color .15s,box-shadow .15s}
+#search:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);background:#fff}
+.searchwrap::before{content:"⌕";position:absolute;left:11px;top:50%;transform:translateY(-54%);color:var(--faint);font-size:15px;pointer-events:none}
+#sres{position:absolute;top:calc(100% + 6px);left:0;right:0;display:none;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(15,23,42,.12);max-height:62vh;overflow:auto;padding:6px;z-index:30}
+#sres a{display:block;padding:8px 10px;border-radius:8px;font-size:13.5px;color:var(--ink);text-decoration:none}
+#sres a:hover{background:var(--acc-soft)}
+#sres .snip{display:block;font-size:12px;color:var(--faint);margin-top:1px}
+#top .gh{color:var(--muted);font-size:12.5px;text-decoration:none;white-space:nowrap}
+#top .gh:hover{color:var(--acc)}
+/* 布局 */
+#layout{display:flex;min-height:calc(100vh - var(--header-h))}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side);border-right:1px solid var(--line);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-size:11px;font-weight:600;color:var(--faint);letter-spacing:2.5px}
+#side .sec:first-child{margin-top:4px}
+#nav a{display:block;padding:6px 10px;margin:1px 0;border-radius:8px;color:#3a4350;text-decoration:none;font-size:13.5px;line-height:1.5;border-left:2px solid transparent}
+#nav a:hover{background:#eef0f4;color:var(--ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-ink);border-left-color:var(--acc);font-weight:600}
+/* 正文 */
+#main{flex:1;min-width:0;padding:36px 44px 80px}
+article{max-width:880px;margin:0 auto}
+h1{font-size:27px;font-weight:700;margin:0 0 10px;letter-spacing:.3px}
+h2{font-size:20px;margin:38px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h3{font-size:16.5px;margin:26px 0 10px}
+p{margin:10px 0}
+a{color:var(--acc-ink);text-decoration:none}
+a:hover{text-decoration:underline}
+blockquote{margin:16px 0;padding:12px 16px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;color:#3f4a63;font-size:14px}
+blockquote p{margin:4px 0}
+code{background:#f0f2f6;border:1px solid #e4e7ee;border-radius:5px;padding:1px 6px;font-family:Consolas,"Cascadia Mono",monospace;font-size:.86em;color:#4338ca;overflow-wrap:anywhere}
+pre.code{background:var(--codebg);color:var(--codefg);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
+pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;word-break:normal}
+.tablewrap{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:10px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+th{background:var(--soft);color:#3a4350;font-weight:600;text-align:left}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:8px 12px;vertical-align:top;overflow-wrap:anywhere}
+th:last-child,td:last-child{border-right:none}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:#fbfcfe}
+hr{border:none;border-top:1px dashed var(--line);margin:30px 0}
+ul,ol{padding-left:1.5em;margin:10px 0}
+li{margin:4px 0}
+#foot{max-width:880px;margin:44px auto 0;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--faint);text-align:center}
+.deadlink{color:var(--faint);border-bottom:1px dotted #c3c9d4}
+@media(max-width:960px){
+#burger{display:block}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:10px 0 28px rgba(15,23,42,.10)}
+#side.open{left:0}
+#main{padding:24px 18px 70px}
+#top .gh{display:none}
+#top .brand small{display:none}
+.searchwrap{width:min(240px,52vw)}
+}
+</style></head><body><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="index.html">README</a><a href="02-范例配方.html">02-范例配方</a><a href="00-规则.html">00-规则</a><div class=sec>引擎主线 · 22</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><article><h1 id="内容与资源管理">内容与资源管理</h1>
 <blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(ContentManager/IContentReader 18/18/ContentProvider 6/6/ScmodArchiveReader/ModUpdateImporter/ExternalContentManager 三部曲/WorldsManager/CommunityContentManager/材料族/VersionsManager + Fonts 抽样) · 保留引用: GameManager/DatabaseManager/ScreensManager/LightingManager/CraftingRecipesManager/MusicManager/DialogsManager/BlocksManager 等(见 20a 明细表归属页)</blockquote>
 <h2 id="一句话定位">一句话定位</h2>
 <p>资产从 Content.zip/.scmod 到内存对象的装载链、外部内容(世界/皮肤/材质/家具包/mod/字体)导入管线、各内容类文件族的目录与格式契约。</p>
@@ -64,11 +92,12 @@ hr{border:none;border-top:1px dashed var(--line);margin:26px 0}
 <h2 id="原版范例">原版范例</h2>
 <div class=tablewrap><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>给引擎注册新资产类型读取器</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\IContentReader\JsonReader.cs:20-28(单文件最简实现)+注册点 ContentManager.AddContentReader(Managers\ContentManager.cs:201-203)；为什么抄：契约仅 3 成员，键=目标类型全名</td></tr><tr><td>mod 包内附带自定义数据文件</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\ModEntity.cs:162(GetAssetsFile)+ModsManager.cs:216-217(GetInPakOrStorageFile)；为什么抄：Assets/ 前缀已在装载期剥掉</td></tr><tr><td>多格式纹理自动回退(astc 优先)</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\IContentReader\Texture2DReader.cs:5-19；为什么抄：DefaultSuffix 顺序+astc 分支+特例固定 mipmap</td></tr><tr><td>双文件成对资产(vsh+psh)</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\IContentReader\ShaderReader.cs:4-16；为什么抄：contents[0]/[1] 配对+按文件名加宏</td></tr><tr><td>导入一类外部内容(校验+落盘+重名)</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\CharacterSkinsManager.cs:109-123 与 :225-235；为什么抄：VerifyExternalContentName→Validate→Position=0→CopyTo 标准序</td></tr><tr><td>自定义包格式(单条目 zip+白名单)</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\FurniturePacksManager.cs:64-78(Create)+:109-124(Load 白名单校验)；为什么抄：最小可靠容器范例</td></tr><tr><td>覆盖导入带回滚</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\ExternalContentManager.Import.cs:95-119；为什么抄：先备份失败还原+不可 seek 流缓冲</td></tr><tr><td>归档格式失效的类型化错误</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\ScmodArchiveReader.cs:10-36(枚举 Kind+本地化消息)；为什么抄：替代字符串嗅探分类</td></tr><tr><td>后台线程安全枚举主线程列表</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\ExternalContentManager.Analyze.cs:138-154；为什么抄：Dispatch(waitUntilCompleted) 封送范式与竞态注释</td></tr><tr><td>静态配置类反射存取 XML</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\SettingsManager.cs:1039-1094(Load)+:1096-1147(Save)；为什么抄：属性即配置的最少代码</td></tr><tr><td>资源打包进世界文件(嵌入外部内容)</td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Managers\WorldsManager.cs:404-439(嵌入)+:453-461(还原)；为什么抄：EmbeddedContent 子目录约定</td></tr></tbody></table></div>
 <h2 id="快查路由">快查路由</h2>
-<div class=tablewrap><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某类型资产由哪个读取器/后缀解析</td><td>20a 明细"读取器表"；注册总表 E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\SurvivalCraftModEntity.cs:14-40</td></tr><tr><td>加一种新资产类型</td><td>ContentManager.AddContentReader(ContentManager.cs:201)+IContentReader 契约(IContentReader\IContentReader.cs)</td></tr><tr><td>排查 Not Found Res 异常</td><td>ContentManager.cs:76-129(键大小写/DefaultSuffix/throwOnNotFound)</td></tr><tr><td>mod 里读写自己的包内文件</td><td>ModEntity.cs:162 GetAssetsFile；ModsManager.cs:216 GetInPakOrStorageFile</td></tr><tr><td>查所有内容目录在哪(平台差异)</td><td>ModsManager\ModsManager.cs:42-67 路径总表</td></tr><tr><td>看 .scworld/.scbtex/.scskin/.scfpack/.scmod 格式</td><td>本页核心机制 6+4 节；扩展名总表 ExternalContentManager.cs:39-62</td></tr><tr><td>做"导入外部文件"功能(类型/冲突/覆盖)</td><td>ExternalContentManager.Analyze.cs:47-102+Import.cs:15-62(决策树)</td></tr><tr><td>解析/校验 scmod 包</td><td>ScmodArchiveReader.cs:57(OpenArchive)/:99(根条目)/:137(ReadModInfo)</td></tr><tr><td>mod 更新覆盖安装流程</td><td>ModUpdateImporter.cs:13-69(校验→tmp→事务替换→Rescan)</td></tr><tr><td>加一种内容来源(Dropbox 式)</td><td>IExternalContentProvider.cs:2+ExternalContentManager.Initialize(:16-27)</td></tr><tr><td>世界导入/导出/快照</td><td>WorldsManager.cs:34-134(Import/Export/Snapshot)+:390-486(Pack/Unpack)</td></tr><tr><td>字体导入/字体链</td><td>FontManager.cs:912(ValidateAndImportFont)/:633(RebuildChainsCore)；FontLocator.Windows.cs:15(候选表)</td></tr><tr><td>设置读写/加设置项</td><td>SettingsManager.cs:1039/1096；mod 键位另见 10-输入与相机</td></tr><tr><td>社区列表/下载/发布协议</td><td>CommunityContentManager.cs:43/119/218；缓存持久化 :680-731</td></tr><tr><td>版本转换器怎么找路</td><td>VersionsManager.cs:132-159(FindTransform)；11-存档持久化 有全解</td></tr><tr><td>xdb 合并/ModEntity 加载 20 步</td><td>另见 02-Subsystem体系 与 12-ModAPI与加载链(本页不重复)</td></tr></tbody></table></div></article><div id=foot>由 tools/build_wiki.py 生成 · 零依赖静态站 · 重新生成：python tools/build_wiki.py</div></main></div><div id=sres></div><script>
+<div class=tablewrap><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某类型资产由哪个读取器/后缀解析</td><td>20a 明细"读取器表"；注册总表 E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\SurvivalCraftModEntity.cs:14-40</td></tr><tr><td>加一种新资产类型</td><td>ContentManager.AddContentReader(ContentManager.cs:201)+IContentReader 契约(IContentReader\IContentReader.cs)</td></tr><tr><td>排查 Not Found Res 异常</td><td>ContentManager.cs:76-129(键大小写/DefaultSuffix/throwOnNotFound)</td></tr><tr><td>mod 里读写自己的包内文件</td><td>ModEntity.cs:162 GetAssetsFile；ModsManager.cs:216 GetInPakOrStorageFile</td></tr><tr><td>查所有内容目录在哪(平台差异)</td><td>ModsManager\ModsManager.cs:42-67 路径总表</td></tr><tr><td>看 .scworld/.scbtex/.scskin/.scfpack/.scmod 格式</td><td>本页核心机制 6+4 节；扩展名总表 ExternalContentManager.cs:39-62</td></tr><tr><td>做"导入外部文件"功能(类型/冲突/覆盖)</td><td>ExternalContentManager.Analyze.cs:47-102+Import.cs:15-62(决策树)</td></tr><tr><td>解析/校验 scmod 包</td><td>ScmodArchiveReader.cs:57(OpenArchive)/:99(根条目)/:137(ReadModInfo)</td></tr><tr><td>mod 更新覆盖安装流程</td><td>ModUpdateImporter.cs:13-69(校验→tmp→事务替换→Rescan)</td></tr><tr><td>加一种内容来源(Dropbox 式)</td><td>IExternalContentProvider.cs:2+ExternalContentManager.Initialize(:16-27)</td></tr><tr><td>世界导入/导出/快照</td><td>WorldsManager.cs:34-134(Import/Export/Snapshot)+:390-486(Pack/Unpack)</td></tr><tr><td>字体导入/字体链</td><td>FontManager.cs:912(ValidateAndImportFont)/:633(RebuildChainsCore)；FontLocator.Windows.cs:15(候选表)</td></tr><tr><td>设置读写/加设置项</td><td>SettingsManager.cs:1039/1096；mod 键位另见 10-输入与相机</td></tr><tr><td>社区列表/下载/发布协议</td><td>CommunityContentManager.cs:43/119/218；缓存持久化 :680-731</td></tr><tr><td>版本转换器怎么找路</td><td>VersionsManager.cs:132-159(FindTransform)；11-存档持久化 有全解</td></tr><tr><td>xdb 合并/ModEntity 加载 20 步</td><td>另见 02-Subsystem体系 与 12-ModAPI与加载链(本页不重复)</td></tr></tbody></table></div></article><div id=foot>SC 源码笔记 · 零依赖静态站 · 由 tools/build_wiki.py 生成</div></main></div><script>
 const $=s=>document.querySelector(s);
+const ROOT="../"; // 站点根相对前缀（按页面深度注入）
 // 搜索
 let IDX=[];
-fetch('search.json').then(r=>r.json()).then(d=>{IDX=d});
+fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
 const box=$('#search'),res=$('#sres');
 box.addEventListener('input',()=>{
   const q=box.value.trim().toLowerCase();
@@ -77,7 +106,7 @@ box.addEventListener('input',()=>{
   res.innerHTML=hits.map(p=>{
     const i=p.b.toLowerCase().indexOf(q);
     const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
-    return `<a href="${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
+    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
   }).join('')||'<a>无命中</a>';
   res.style.display='block';
 });
@@ -86,7 +115,11 @@ document.addEventListener('keydown',e=>{
   if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
   if(e.key==='Escape'){res.style.display='none'}
 });
+// 移动端侧栏
+const burger=$('#burger'),side=$('#side');
+burger.addEventListener('click',e=>{e.stopPropagation();side.classList.toggle('open')});
+document.addEventListener('click',e=>{if(window.innerWidth<=960&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==burger)side.classList.remove('open')});
 // 高亮当前页
-const here=location.pathname.split('/').pop();
-document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href').endsWith(here))a.classList.add('active')});
+const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
+document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
 </script></body></html>
