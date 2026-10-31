@@ -139,7 +139,7 @@ DrawOrders 实测序：-10000 ModelsRenderer 准备 | -100 Sky 雾参数 | 0 Ter
 | 每帧跑逻辑(不注入 Update) | 实现 `IUpdateable`(`Survivalcraft\Game\IUpdateable.cs`)+`SubsystemUpdate.Load` 自动收；或钩子 `SubsystemUpdate` |
 | 改 dt/游戏速度/睡觉加速 | `SubsystemTime.cs:62-67` `CalculateGameTimeDalta`(Harmony 时照抄 Dalta 拼写)+钩子 `ChangeGameTimeDelta` |
 | 往存档写自定义数据 | 重写 `Subsystem.Save/Load`，键自定；注意 Count>0 才落盘；百科 07-entity/05-persistence |
-| 查某子系统的职责/关键方法行号 | [02a-子系统明细.md](明细/02a-子系统明细.md) 一行一文件；更细看 99-深读报告\A2-Subsystem报告.md |
+| 查某子系统的职责/关键方法行号 | [02a-子系统明细.md](明细/02a-子系统明细.md) 一行一文件 |
 | 加/改刷怪规则 | 本页"刷怪链"；钩子 `InitializeCreatureTypes`(`SubsystemCreatureSpawn.cs:1009`)；限额 static `:54-61` |
 | 拦截/改写方块变更 | 钩子 `TerrainChangeCell`(`SubsystemTerrain.cs:357`)；行为分派 `ChangeCellToBehavior:396` |
 | 写自定义方块行为 | 继承 `SubsystemBlockBehavior`(`BlockBehavior\SubsystemBlockBehavior.cs:6-77` 契约)或 `SubsystemPollableBlockBehavior`(轮询)；绑定见 `SubsystemBlockBehaviors.Load:16` |
@@ -148,6 +148,6 @@ DrawOrders 实测序：-10000 ModelsRenderer 准备 | -100 Sky 雾参数 | 0 Ter
 | 爆炸/伤害 AOI | `SubsystemExplosions.AddExplosion:237`/`TryExplodeBlock:225`；钩子 `OnBlockExploded`/`CalculateExplosionPower` |
 | 实体卸载后自定义数据丢失 | 钩子 `OnSaveSpawnData`/`OnReadSpawnData`(`SubsystemSpawn.cs:242/259`) 读写 SpawnEntityData.Data |
 | 查渲染顺序(DrawOrders) | 本页"绘制与资源调度全景" |
-| 查某钩子在哪 | 报告四"钩子清单"(30+)：99-深读报告\A2-Subsystem报告.md |
+| 查某钩子在哪 | Grep `ModHooks` 限定 `ModsManager\` 目录；机制与注册窗口见 [12-ModAPI与加载链](12-ModAPI与加载链.md) |
 
 另见：[01-程序入口与主循环](01-程序入口与主循环.md)(tick 在帧序中的位置、SyncDispatcher 与 Dispatcher 的区别)、[04-方块系统](04-方块系统.md)(Block 类与 behavior 的分工)。
