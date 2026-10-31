@@ -30,8 +30,9 @@ def collect_sources():
 
     overview = [
         ("总览", SC_ROOT / "README.md", "index.html", 0),
-        ("总览", SC_ROOT / "02-范例配方.md", "02-范例配方.html", 1),
-        ("总览", SC_ROOT / "00-规则.md", "00-规则.html", 2),
+        ("总览", SC_ROOT / "AGENTS.md", "AGENTS.html", 1),
+        ("总览", SC_ROOT / "02-范例配方.md", "02-范例配方.html", 2),
+        ("总览", SC_ROOT / "00-规则.md", "00-规则.html", 3),
     ]
     for sec, p, o, k in overview:
         if p.exists():
