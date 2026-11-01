@@ -30,11 +30,15 @@ transition:color .2s,background-color .2s}
 /* 顶栏：玻璃 */
 #top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
 background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.55),transparent);opacity:0;transition:opacity .35s}
+#top.scrolled::after{opacity:1}
 #burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
 #top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
 #top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
-background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4);animation:logob 4s ease-in-out infinite}
+@keyframes logob{0%,100%{box-shadow:0 4px 12px rgba(99,102,241,.4);filter:hue-rotate(0deg)}50%{box-shadow:0 4px 20px rgba(139,92,246,.65);filter:hue-rotate(20deg)}}
+@media (prefers-reduced-motion: reduce){#top .brand b::before{animation:none}}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
 #themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
@@ -87,7 +91,10 @@ tbody tr:hover{background:var(--acc-soft)}
 hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
-#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+article li::marker{color:var(--acc)}
+#foot{max-width:1240px;margin:40px auto 0;padding:16px 20px 0;border-top:none;font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px;position:relative}
+#foot::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+#foot b{color:var(--ink-soft);font-weight:600}
 /* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
 pre.code .k{color:#ff7b72}
 pre.code .t{color:#ffa657}
@@ -108,7 +115,11 @@ pre.code .t2{color:#7ee787}
 .hero{margin:24px 0 4px}
 .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
-.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard::before{content:"";position:absolute;inset:0;border-radius:13px;padding:1.5px;background:conic-gradient(from var(--flw,0deg),transparent 0 68%,var(--acc) 82%,var(--acc-2) 90%,transparent 98%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .25s;pointer-events:none}
+.hcard:hover::before{opacity:1;animation:flw 2.6s linear infinite}
+@property --flw{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes flw{to{--flw:360deg}}
+@media (prefers-reduced-motion: reduce){.hcard:hover::before{animation:none}}
 .hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
 .hcard:hover::before{opacity:1}
 .hcard .ico{font-size:21px;line-height:1}
@@ -219,7 +230,8 @@ article.spot{position:relative}
 #lbox.show{display:flex}
 #lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
 @keyframes lbIn{from{transform:scale(.94);opacity:0}}
-article img{cursor:zoom-in;transition:transform .2s}
+article img{cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+article img:hover{transform:scale(1.015);box-shadow:0 10px 30px -10px rgba(2,6,23,.35)}
 /* 代码块终端化 */
 .codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
 .codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
@@ -327,7 +339,7 @@ HardtackBlock;Food;;0.35;压缩饼干</code></pre></div>
 <h2 id="该示例踩的坑">该示例踩的坑</h2>
 <ul><li><b>食物能吃但没营养</b>：csv 列名写错或值 0——进食链判 <code>num2 &gt; 0f</code> 才吃（ComponentVitalStats.cs:128），0 直接当"不能吃"。</li><li><b>吃饱了没反应</b>：<code>Food ≥ 0.98</code> 拒吃并提示（:134-137），不是 bug。</li><li><b>营养值单位想当然</b>：它是 0~1 小数（0.5=半条，ComponentVitalStats.cs:79-82 Saturate）——写 120 这类整数会<b>一口吃满</b>（Saturate 截 1）而不是"很有营养"。</li><li><b>手持模型发白/全黑</b>：<code>Color.White</code> 是染色参数不是透明度——染色改 ctor <b>第三参</b>（<code>Color</code> 类型）；模型路径拼错在 Initialize 时抛 <code>ContentLoadException</code>，日志搜模型名。</li><li><b>想改"吃"的行为本身</b>：别改 FoodBlock——挂 <code>OnVitalStatsEat</code> 钩子（签名 ModLoader 对应项；<code>skipVanilla=true</code> 接管原版逻辑，ComponentVitalStats.cs:111-122）。</li><li><b>营养值单位</b>：0~1 小数，原版面包 0.5、熟肉更高档位见 BlocksData.txt 各行——0.35 是"零食"量级，主食给 0.5+。</li><li><b>给它腐坏</b>：行为列加 <code>RotBlockBehavior</code> 后，第四参必须填有效变体值，0 会腐成空气（<code>GetDamageDestructionValue</code> 原样返回，FoodBlock.cs:58-59）。</li></ul>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>换自己的模型</td><td><code>.obj</code>/glTF 放 <code>Assets/Models/</code>，ctor 第一参改路径（模型规范见 19 页）</td></tr><tr><td>查全部食物相关 csv 列</td><td><a href="数据格式参考.html">数据格式参考</a> 78 具名列（NutritionalValue/SicknessProbability/CarryAmount…）</td></tr><tr><td>不用炉子、徒手合成</td><td><code>RequiredHeatLevel="0"</code>（<a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a>）</td></tr><tr><td>药水/中毒类效果</td><td>进食链只有营养+生病两轨；自定义效果挂 <code>OnVitalStatsEat</code> 后自写</td></tr><tr><td>喂生物/驯服</td><td><code>EatPickableBehavior.FoodFactors</code>（<a href="Mod示例-自定义生物.html">Mod示例-自定义生物</a>同类机制）</td></tr><tr><td>进食链全貌</td><td>ComponentVitalStats.cs:106-149（钩子→营养→病检→满检→音效→饱食度）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="Mod示例-自定义特效.html"><small>上一页 · Mod开发</small><b>Mod示例-自定义特效</b></a><a class="next" href="01-引擎/01-程序入口与主循环.html"><small>下一页 · SC引擎</small><b>01-程序入口与主循环</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#目标">目标</a><a class="lvl2" href="#前置知识">前置知识</a><a class="lvl2" href="#原理-30-秒">原理 30 秒</a><a class="lvl2" href="#制品">制品</a><a class="lvl3" href="#目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</a><a class="lvl3" href="#modinfo-json-完整">modinfo.json（完整）</a><a class="lvl3" href="#examplehardtack-cs-完整-逐行注明出处">ExampleHardtack.cs（完整，逐行注明出处）</a><a class="lvl3" href="#assets-blocks-hardtack-csv-完整">Assets/Blocks/hardtack.csv（完整）</a><a class="lvl3" href="#配方-烤制-追加到包内-hardtack-cr">配方：烤制（追加到包内 hardtack.cr）</a><a class="lvl2" href="#打包清单">打包清单</a><a class="lvl2" href="#验证-日志锚点-游戏内">验证（日志锚点 + 游戏内）</a><a class="lvl2" href="#该示例踩的坑">该示例踩的坑</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>换自己的模型</td><td><code>.obj</code>/glTF 放 <code>Assets/Models/</code>，ctor 第一参改路径（模型规范见 19 页）</td></tr><tr><td>查全部食物相关 csv 列</td><td><a href="数据格式参考.html">数据格式参考</a> 78 具名列（NutritionalValue/SicknessProbability/CarryAmount…）</td></tr><tr><td>不用炉子、徒手合成</td><td><code>RequiredHeatLevel="0"</code>（<a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a>）</td></tr><tr><td>药水/中毒类效果</td><td>进食链只有营养+生病两轨；自定义效果挂 <code>OnVitalStatsEat</code> 后自写</td></tr><tr><td>喂生物/驯服</td><td><code>EatPickableBehavior.FoodFactors</code>（<a href="Mod示例-自定义生物.html">Mod示例-自定义生物</a>同类机制）</td></tr><tr><td>进食链全貌</td><td>ComponentVitalStats.cs:106-149（钩子→营养→病检→满检→音效→饱食度）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="Mod示例-自定义特效.html"><small>上一页 · Mod开发</small><b>Mod示例-自定义特效</b></a><a class="next" href="01-引擎/01-程序入口与主循环.html"><small>下一页 · SC引擎</small><b>01-程序入口与主循环</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#目标">目标</a><a class="lvl2" href="#前置知识">前置知识</a><a class="lvl2" href="#原理-30-秒">原理 30 秒</a><a class="lvl2" href="#制品">制品</a><a class="lvl3" href="#目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</a><a class="lvl3" href="#modinfo-json-完整">modinfo.json（完整）</a><a class="lvl3" href="#examplehardtack-cs-完整-逐行注明出处">ExampleHardtack.cs（完整，逐行注明出处）</a><a class="lvl3" href="#assets-blocks-hardtack-csv-完整">Assets/Blocks/hardtack.csv（完整）</a><a class="lvl3" href="#配方-烤制-追加到包内-hardtack-cr">配方：烤制（追加到包内 hardtack.cr）</a><a class="lvl2" href="#打包清单">打包清单</a><a class="lvl2" href="#验证-日志锚点-游戏内">验证（日志锚点 + 游戏内）</a><a class="lvl2" href="#该示例踩的坑">该示例踩的坑</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot><b>SC 源码笔记</b> · 70 页 · 最后更新 2026-11-02 · <a href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub</a> · <a href="https://gitee.com/SC-SPM/SurvivalcraftApi" target=_blank rel=noopener>引擎源码</a> · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT=""; // 站点根相对前缀（按页面深度注入）
 // 主题切换

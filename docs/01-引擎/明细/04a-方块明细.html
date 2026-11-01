@@ -30,11 +30,15 @@ transition:color .2s,background-color .2s}
 /* 顶栏：玻璃 */
 #top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
 background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.55),transparent);opacity:0;transition:opacity .35s}
+#top.scrolled::after{opacity:1}
 #burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
 #top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
 #top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
-background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4);animation:logob 4s ease-in-out infinite}
+@keyframes logob{0%,100%{box-shadow:0 4px 12px rgba(99,102,241,.4);filter:hue-rotate(0deg)}50%{box-shadow:0 4px 20px rgba(139,92,246,.65);filter:hue-rotate(20deg)}}
+@media (prefers-reduced-motion: reduce){#top .brand b::before{animation:none}}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
 #themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
@@ -87,7 +91,10 @@ tbody tr:hover{background:var(--acc-soft)}
 hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
-#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+article li::marker{color:var(--acc)}
+#foot{max-width:1240px;margin:40px auto 0;padding:16px 20px 0;border-top:none;font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px;position:relative}
+#foot::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+#foot b{color:var(--ink-soft);font-weight:600}
 /* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
 pre.code .k{color:#ff7b72}
 pre.code .t{color:#ffa657}
@@ -108,7 +115,11 @@ pre.code .t2{color:#7ee787}
 .hero{margin:24px 0 4px}
 .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
-.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard::before{content:"";position:absolute;inset:0;border-radius:13px;padding:1.5px;background:conic-gradient(from var(--flw,0deg),transparent 0 68%,var(--acc) 82%,var(--acc-2) 90%,transparent 98%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .25s;pointer-events:none}
+.hcard:hover::before{opacity:1;animation:flw 2.6s linear infinite}
+@property --flw{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes flw{to{--flw:360deg}}
+@media (prefers-reduced-motion: reduce){.hcard:hover::before{animation:none}}
 .hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
 .hcard:hover::before{opacity:1}
 .hcard .ico{font-size:21px;line-height:1}
@@ -219,7 +230,8 @@ article.spot{position:relative}
 #lbox.show{display:flex}
 #lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
 @keyframes lbIn{from{transform:scale(.94);opacity:0}}
-article img{cursor:zoom-in;transition:transform .2s}
+article img{cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+article img:hover{transform:scale(1.015);box-shadow:0 10px 30px -10px rgba(2,6,23,.35)}
 /* 代码块终端化 */
 .codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
 .codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
@@ -281,7 +293,7 @@ a{color:inherit}
 <h2 id="统计与读法">统计与读法</h2>
 <ul><li>总 304 文件：方块类 298（根 Block 1 + 中间基类 41 + 其余 256）+ 接口 4 + struct 1（MovingBlocksRaycastResult）+ 无基类工具类 1（MovingBlock）。</li><li>被继承最多的中间基类（直接子类数，今日实读）：CubeBlock(23) &gt; RotateableMountedElectricElementBlock(17) &gt; MountedElectricElementBlock(14) = FoodBlock(14) &gt; Stairs/Slab/PaintedCube/Flat/Chunk/Bucket(各9)。</li><li>表中"叶"= 无子类、构造函数填参即完成定制；工具/材质叶是标准做法：<code>public class X : 基类 { public static int Index = N; public X() : base(参数) { } }</code>（样例 CopperAxeBlock.cs:5）。</li><li>工具/近战武器基类七件同构（Axe/Hammer/Machete/Pickaxe/Rake/Shovel/Spear）：ctor(柄纹理槽,头纹理槽) + Models/X 的 Handle/Head 双骨烘焙 + UV 平移入 16×16 图集槽，<code>GenerateTerrainVertices</code> 恒空（地形不渲染）。</li><li>壁挂电器 data 约定：低 2-3 位=挂面（Rotateable 族 (data&gt;&gt;2)&amp;7，Button/Detonator/MotionDetector/Photodiode data&amp;7，SevenSegment/Target data&amp;3）；电压档用反码 15-x（Battery 低4位、Button bit3-6）；连接方向由 GetConnectorType 按模型面+旋转查 SubsystemElectricity.GetConnectorDirection。</li><li>IEE=IElectricElementBlock，IEWE=IElectricWireElementBlock，IPA=IPaintableBlock。</li></ul>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某方块类继承谁/覆盖了什么</td><td>本表按字母序定位；再看其基类行</td></tr><tr><td>看某形状家族的 data 位编码</td><td>门/活板门/楼梯/板/栅栏/液体/电线/原木/家具各行"覆盖"列的静态位方法</td></tr><tr><td>找一种新方块的合适基类</td><td>04-方块系统.md"继承树概览"；壁挂电器→MountedElectricElementBlock，电路→Rotateable…，植物→CrossBlock</td></tr><tr><td>抄一个最小叶类</td><td>CopperAxeBlock.cs(工具)/BasaltBlock.cs(材质)/IceBlock.cs(纯立方)</td></tr><tr><td>抄一个壁挂电器</td><td>按钮最简→ButtonBlock.cs:14-139；可旋电路→RotateableMountedElectricElementBlock 基类+任一门叶(AndGateBlock.cs:5-34)</td></tr><tr><td>抄模型物品（工具/材料/食物）</td><td>工具七基类任一+CopperAxeBlock.cs；普通模型→BoatBlock.cs:10-52；食物→FoodBlock+RawMeatBlock.cs:7</td></tr><tr><td>抄"一类多变体"（data 切换外观/种型）</td><td>SeedsBlock.cs:36-55(种下变方块)/SaplingBlock.cs:5(贴图映射)/BulletBlock.cs:86(参数表)</td></tr><tr><td>查家具数据结构</td><td>FurnitureBlock.cs:604-628 + SubsystemFurnitureBlockBehavior(FurnitureDesign)</td></tr><tr><td>查服装扩展点</td><td>ClothingBlock.cs:25(LoadClothingData)+:271-280(位编码)</td></tr><tr><td>查活塞/穿线/电线接口</td><td>IMovingBlockSet.cs/MovingBlock.cs/WireBlock.cs/WireThroughBlock.cs</td></tr><tr><td>查液体族关系</td><td>FluidBlock.cs:23-43(Initialize 反射同族判定)</td></tr><tr><td>查铭牌写字界面挂点</td><td>SignBlock.cs:5/:7 两个 abstract + AttachedSignBlock/PostedSignBlock 实现</td></tr><tr><td>查楼梯转角在哪算</td><td>SubsystemStairsBlockBehavior.cs:91/:190（不在 StairsBlock 内）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../../01-引擎/明细/03a-组件明细.html"><small>上一页 · SC引擎·明细</small><b>03a-组件明细</b></a><a class="next" href="../../01-引擎/明细/05a-地形生成明细.html"><small>下一页 · SC引擎·明细</small><b>05a-地形生成明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#逐文件明细-按字母序-覆盖-列-方法-行号-源码以写页当日为准">逐文件明细（按字母序；&quot;覆盖&quot;列=方法:行号，源码以写页当日为准）</a><a class="lvl2" href="#统计与读法">统计与读法</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某方块类继承谁/覆盖了什么</td><td>本表按字母序定位；再看其基类行</td></tr><tr><td>看某形状家族的 data 位编码</td><td>门/活板门/楼梯/板/栅栏/液体/电线/原木/家具各行"覆盖"列的静态位方法</td></tr><tr><td>找一种新方块的合适基类</td><td>04-方块系统.md"继承树概览"；壁挂电器→MountedElectricElementBlock，电路→Rotateable…，植物→CrossBlock</td></tr><tr><td>抄一个最小叶类</td><td>CopperAxeBlock.cs(工具)/BasaltBlock.cs(材质)/IceBlock.cs(纯立方)</td></tr><tr><td>抄一个壁挂电器</td><td>按钮最简→ButtonBlock.cs:14-139；可旋电路→RotateableMountedElectricElementBlock 基类+任一门叶(AndGateBlock.cs:5-34)</td></tr><tr><td>抄模型物品（工具/材料/食物）</td><td>工具七基类任一+CopperAxeBlock.cs；普通模型→BoatBlock.cs:10-52；食物→FoodBlock+RawMeatBlock.cs:7</td></tr><tr><td>抄"一类多变体"（data 切换外观/种型）</td><td>SeedsBlock.cs:36-55(种下变方块)/SaplingBlock.cs:5(贴图映射)/BulletBlock.cs:86(参数表)</td></tr><tr><td>查家具数据结构</td><td>FurnitureBlock.cs:604-628 + SubsystemFurnitureBlockBehavior(FurnitureDesign)</td></tr><tr><td>查服装扩展点</td><td>ClothingBlock.cs:25(LoadClothingData)+:271-280(位编码)</td></tr><tr><td>查活塞/穿线/电线接口</td><td>IMovingBlockSet.cs/MovingBlock.cs/WireBlock.cs/WireThroughBlock.cs</td></tr><tr><td>查液体族关系</td><td>FluidBlock.cs:23-43(Initialize 反射同族判定)</td></tr><tr><td>查铭牌写字界面挂点</td><td>SignBlock.cs:5/:7 两个 abstract + AttachedSignBlock/PostedSignBlock 实现</td></tr><tr><td>查楼梯转角在哪算</td><td>SubsystemStairsBlockBehavior.cs:91/:190（不在 StairsBlock 内）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../../01-引擎/明细/03a-组件明细.html"><small>上一页 · SC引擎·明细</small><b>03a-组件明细</b></a><a class="next" href="../../01-引擎/明细/05a-地形生成明细.html"><small>下一页 · SC引擎·明细</small><b>05a-地形生成明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#逐文件明细-按字母序-覆盖-列-方法-行号-源码以写页当日为准">逐文件明细（按字母序；&quot;覆盖&quot;列=方法:行号，源码以写页当日为准）</a><a class="lvl2" href="#统计与读法">统计与读法</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot><b>SC 源码笔记</b> · 70 页 · 最后更新 2026-11-02 · <a href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub</a> · <a href="https://gitee.com/SC-SPM/SurvivalcraftApi" target=_blank rel=noopener>引擎源码</a> · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT="../../"; // 站点根相对前缀（按页面深度注入）
 // 主题切换

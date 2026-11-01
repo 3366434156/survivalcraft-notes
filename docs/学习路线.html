@@ -30,11 +30,15 @@ transition:color .2s,background-color .2s}
 /* 顶栏：玻璃 */
 #top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
 background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.55),transparent);opacity:0;transition:opacity .35s}
+#top.scrolled::after{opacity:1}
 #burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
 #top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
 #top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
-background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4);animation:logob 4s ease-in-out infinite}
+@keyframes logob{0%,100%{box-shadow:0 4px 12px rgba(99,102,241,.4);filter:hue-rotate(0deg)}50%{box-shadow:0 4px 20px rgba(139,92,246,.65);filter:hue-rotate(20deg)}}
+@media (prefers-reduced-motion: reduce){#top .brand b::before{animation:none}}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
 #themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
@@ -87,7 +91,10 @@ tbody tr:hover{background:var(--acc-soft)}
 hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
-#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+article li::marker{color:var(--acc)}
+#foot{max-width:1240px;margin:40px auto 0;padding:16px 20px 0;border-top:none;font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px;position:relative}
+#foot::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+#foot b{color:var(--ink-soft);font-weight:600}
 /* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
 pre.code .k{color:#ff7b72}
 pre.code .t{color:#ffa657}
@@ -108,7 +115,11 @@ pre.code .t2{color:#7ee787}
 .hero{margin:24px 0 4px}
 .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
-.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard::before{content:"";position:absolute;inset:0;border-radius:13px;padding:1.5px;background:conic-gradient(from var(--flw,0deg),transparent 0 68%,var(--acc) 82%,var(--acc-2) 90%,transparent 98%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .25s;pointer-events:none}
+.hcard:hover::before{opacity:1;animation:flw 2.6s linear infinite}
+@property --flw{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes flw{to{--flw:360deg}}
+@media (prefers-reduced-motion: reduce){.hcard:hover::before{animation:none}}
 .hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
 .hcard:hover::before{opacity:1}
 .hcard .ico{font-size:21px;line-height:1}
@@ -219,7 +230,8 @@ article.spot{position:relative}
 #lbox.show{display:flex}
 #lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
 @keyframes lbIn{from{transform:scale(.94);opacity:0}}
-article img{cursor:zoom-in;transition:transform .2s}
+article img{cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+article img:hover{transform:scale(1.015);box-shadow:0 10px 30px -10px rgba(2,6,23,.35)}
 /* 代码块终端化 */
 .codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
 .codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
@@ -288,7 +300,7 @@ a{color:inherit}
 <h2 id="概念词典-20-词-每个一句话-去哪读">概念词典（20 词，每个一句话 + 去哪读）</h2>
 <div class="tablewrap"><table><thead><tr><th>术语</th><th>一句话</th><th>详见</th></tr></thead><tbody><tr><td>Engine 层</td><td>平台无关的底层：窗口/图形/音频/输入/序列化</td><td><a href="01-引擎/21-Engine核心运行时.html">21页</a></td></tr><tr><td>Survivalcraft 层</td><td>游戏本体：Game/Managers/Subsystem/Component/Block/Screen</td><td>全库</td></tr><tr><td>Program/帧链</td><td>入口→Window 渲染循环→ScreensManager→GameScreen tick</td><td><a href="01-引擎/01-程序入口与主循环.html">01页</a></td></tr><tr><td>Dispatcher</td><td>后台线程结果交回主线程的唯一正道</td><td><a href="01-引擎/21-Engine核心运行时.html">21页</a></td></tr><tr><td>Project</td><td>一个"正在运行的世界"对象，持有全部子系统和实体</td><td><a href="01-引擎/02-Subsystem体系.html">02页</a></td></tr><tr><td>Subsystem</td><td>世界级业务单元（40+ 个），<code>FindSubsystem&lt;T&gt;</code> 互查、Dependencies 定序</td><td><a href="01-引擎/02-Subsystem体系.html">02页</a></td></tr><tr><td>Entity</td><td>活动对象（玩家/生物/掉落物），本体只是个 id 容器</td><td><a href="01-引擎/03-实体与组件体系.html">03页</a></td></tr><tr><td>Component</td><td>挂在 Entity 上的功能件（91 个），物理/血量/AI 各一个</td><td><a href="01-引擎/03-实体与组件体系.html">03页</a></td></tr><tr><td>Block</td><td>方块类型（304 个类），世界里存的是 int 值不是对象</td><td><a href="01-引擎/04-方块系统.html">04页</a></td></tr><tr><td>contents/data 位</td><td>int 值的低 10 位=方块家族，高位=状态数据——一切方块行为的钥匙</td><td><a href="01-引擎/04-方块系统.html">04页</a></td></tr><tr><td>TerrainChunk</td><td>16×16×256 的区块，十态生命周期（生成/网格化/卸载）</td><td><a href="01-引擎/05-世界与地形生成.html">05页</a></td></tr><tr><td>TCG</td><td>TerrainContentsGenerator，地形生成器（五代并存）</td><td><a href="01-引擎/05-世界与地形生成.html">05页</a></td></tr><tr><td>ValuesDictionary</td><td>子系统/实体的键值存档袋；Count&gt;0 才落盘、读端给默认值</td><td><a href="01-引擎/11-存档持久化.html">11页</a></td></tr><tr><td>Database 模板</td><td>Database.xml 里的实体/子系统模板树，按 Guid 显式继承、按名隐式继承</td><td><a href="01-引擎/22-数据资产与Database.html">22页</a></td></tr><tr><td>.xdb</td><td>模组的数据合并文件：new-改/Remove删/Guid 对不上=新增</td><td><a href="01-引擎/12-ModAPI与加载链.html">12页</a></td></tr><tr><td>ModLoader 钩子</td><td>模组接引擎的 236 个 virtual 方法，必须在 __ModInitialize 注册</td><td><a href="01-引擎/12-ModAPI与加载链.html">12页</a></td></tr><tr><td>.scmod</td><td>模组包=zip：modinfo.json+Assets/**+根层 dll</td><td><a href="01-引擎/12-ModAPI与加载链.html">12页</a></td></tr><tr><td>ContentManager</td><td>资源总管：原版 Content.zip+各模组 Assets 合并查询</td><td><a href="01-引擎/20-内容与资源管理.html">20页</a></td></tr><tr><td>Screen/Widget/Dialog</td><td>全屏页面/界面控件/弹窗三层 UI，XML 模板装配</td><td><a href="01-引擎/09-UI与Widget体系.html">09</a>/<a href="01-引擎/17-Screen屏幕族.html">17</a>/<a href="01-引擎/18-Dialog对话框族.html">18页</a></td></tr><tr><td>ElectricElement</td><td>电路元件逻辑件，0.01s 固定步进模拟，异常=全电路死</td><td><a href="01-引擎/15-电学与机构.html">15页</a></td></tr></tbody></table></div>
 <h2 id="一句话总结">一句话总结</h2>
-<ul><li><b>agent</b>：<a href="AGENTS.html">AGENTS.md</a> 进 → 配方找任务 → 示例抄骨架 → 手册排错。</li><li><b>人</b>：本页选路线 → 主题页读机制 → 明细页查文件 → 源码仓库核行号。</li></ul><nav class=pn><a class="prev" href="AGENTS.html"><small>上一页 · 总览</small><b>AGENTS</b></a><a class="next" href="Mod开发配方.html"><small>下一页 · Mod开发</small><b>Mod开发配方</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#先选你的路">先选你的路</a><a class="lvl3" href="#路线一-我就想做个-mod-最快-2-小时闭环">路线一：我就想做个 mod（最快 2 小时闭环）</a><a class="lvl3" href="#路线二-我想读懂引擎-按序读-主干-5-页-自选分支">路线二：我想读懂引擎（按序读，主干 5 页 + 自选分支）</a><a class="lvl3" href="#路线三-我有问题要查-查询式">路线三：我有问题要查（查询式）</a><a class="lvl2" href="#概念词典-20-词-每个一句话-去哪读">概念词典（20 词，每个一句话 + 去哪读）</a><a class="lvl2" href="#一句话总结">一句话总结</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+<ul><li><b>agent</b>：<a href="AGENTS.html">AGENTS.md</a> 进 → 配方找任务 → 示例抄骨架 → 手册排错。</li><li><b>人</b>：本页选路线 → 主题页读机制 → 明细页查文件 → 源码仓库核行号。</li></ul><nav class=pn><a class="prev" href="AGENTS.html"><small>上一页 · 总览</small><b>AGENTS</b></a><a class="next" href="Mod开发配方.html"><small>下一页 · Mod开发</small><b>Mod开发配方</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#先选你的路">先选你的路</a><a class="lvl3" href="#路线一-我就想做个-mod-最快-2-小时闭环">路线一：我就想做个 mod（最快 2 小时闭环）</a><a class="lvl3" href="#路线二-我想读懂引擎-按序读-主干-5-页-自选分支">路线二：我想读懂引擎（按序读，主干 5 页 + 自选分支）</a><a class="lvl3" href="#路线三-我有问题要查-查询式">路线三：我有问题要查（查询式）</a><a class="lvl2" href="#概念词典-20-词-每个一句话-去哪读">概念词典（20 词，每个一句话 + 去哪读）</a><a class="lvl2" href="#一句话总结">一句话总结</a></nav></aside></div><div id=foot><b>SC 源码笔记</b> · 70 页 · 最后更新 2026-11-02 · <a href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub</a> · <a href="https://gitee.com/SC-SPM/SurvivalcraftApi" target=_blank rel=noopener>引擎源码</a> · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT=""; // 站点根相对前缀（按页面深度注入）
 // 主题切换

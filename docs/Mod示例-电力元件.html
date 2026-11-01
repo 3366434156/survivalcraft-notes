@@ -30,11 +30,15 @@ transition:color .2s,background-color .2s}
 /* 顶栏：玻璃 */
 #top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
 background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.55),transparent);opacity:0;transition:opacity .35s}
+#top.scrolled::after{opacity:1}
 #burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
 #top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
 #top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
-background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4);animation:logob 4s ease-in-out infinite}
+@keyframes logob{0%,100%{box-shadow:0 4px 12px rgba(99,102,241,.4);filter:hue-rotate(0deg)}50%{box-shadow:0 4px 20px rgba(139,92,246,.65);filter:hue-rotate(20deg)}}
+@media (prefers-reduced-motion: reduce){#top .brand b::before{animation:none}}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
 #themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
@@ -87,7 +91,10 @@ tbody tr:hover{background:var(--acc-soft)}
 hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
-#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+article li::marker{color:var(--acc)}
+#foot{max-width:1240px;margin:40px auto 0;padding:16px 20px 0;border-top:none;font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px;position:relative}
+#foot::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+#foot b{color:var(--ink-soft);font-weight:600}
 /* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
 pre.code .k{color:#ff7b72}
 pre.code .t{color:#ffa657}
@@ -108,7 +115,11 @@ pre.code .t2{color:#7ee787}
 .hero{margin:24px 0 4px}
 .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
-.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard::before{content:"";position:absolute;inset:0;border-radius:13px;padding:1.5px;background:conic-gradient(from var(--flw,0deg),transparent 0 68%,var(--acc) 82%,var(--acc-2) 90%,transparent 98%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .25s;pointer-events:none}
+.hcard:hover::before{opacity:1;animation:flw 2.6s linear infinite}
+@property --flw{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes flw{to{--flw:360deg}}
+@media (prefers-reduced-motion: reduce){.hcard:hover::before{animation:none}}
 .hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
 .hcard:hover::before{opacity:1}
 .hcard .ico{font-size:21px;line-height:1}
@@ -219,7 +230,8 @@ article.spot{position:relative}
 #lbox.show{display:flex}
 #lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
 @keyframes lbIn{from{transform:scale(.94);opacity:0}}
-article img{cursor:zoom-in;transition:transform .2s}
+article img{cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+article img:hover{transform:scale(1.015);box-shadow:0 10px 30px -10px rgba(2,6,23,.35)}
 /* 代码块终端化 */
 .codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
 .codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
@@ -383,7 +395,7 @@ MyThresholdGateBlock;Minerals;33;阈值门;ElectricBlockBehavior</code></pre></d
 <h2 id="该示例踩的坑">该示例踩的坑</h2>
 <ul><li><b>没写 Behaviors 列</b>：编号不在 63 项硬编码表（SubsystemElectricBlockBehavior.cs:8-70）又没挂行为列 ⇒ 排队表永远为空，<b>元件一次都不创建且零报错</b>（15 页"两条路的底线"）。</li><li><b>Simulate 抛异常</b>：catch 后 rethrow，整局电路全死（SubsystemElectricity.cs:415-423）——内部自 try 或保证不抛。</li><li><b>排队用 <code>CircuitStep - n</code> 或直接 <code>CircuitStep</code></b>：被静默丢弃（SubsystemElectricity.cs:357-373）；一律 <code>CircuitStep + n</code>。</li><li><b>想"改那个 63 编号表"</b>：它是原版只读代码；Harmony 补丁属另一域（升级即静默消失，12 页），本库推荐路 A/路 B。</li><li><b>设置 Type 写 <code>int</code>/简单名</b>：见上 <code>[推测]</code>；用模组枚举全限定名最稳（本例），或"Game." 前缀的原版类型（ModSettingsParser.cs:98-99）。</li><li><b>读设置用 <code>Get</code> 抛 KeyNotFound</b>：path 必须全链且少一段都不行；保险写法 <code>TryGet</code>（ModSettingsManager.cs:244-254）。</li><li><b>状态存元件字段</b>：元件对象按点销毁重建、不入档（15 页"三条存档归宿"）——阈值这类持久值要么每次从设置读（本例），要么写 data。</li><li><b>给 OnModSettingChanged 调 RegisterHook</b>：白注册，它不走钩子表（12 页例外清单）。</li></ul>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某原版电方块编号/端口</td><td>SubsystemElectricBlockBehavior.cs:8-70；15 页元件族概览</td></tr><tr><td>查排队/步进为什么不动</td><td>SubsystemElectricity.cs:357-373（静默丢弃）+ 15 页传播调用链</td></tr><tr><td>加多端口语义方向元件</td><td>CounterElectricElement.cs:34-103（GetConnectorDirection 分派，15 页）</td></tr><tr><td>防抖/节流执行类</td><td>TrapDoorElectricElement.cs:14-39（上电复位+10 步节流，15 页）</td></tr><tr><td>设置项加滑条/文本框</td><td>Widget 值类型默认表（ModSettingsParser.cs:23-29）；滑条属性 MinValue/MaxValue/Granularity（ModSettingItemWidget.cs:283-288）</td></tr><tr><td>元件状态持久化</td><td>15 页"元件状态的三条存档归宿"（data 位/WritePersistentVoltage/自建 behavior）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="Mod示例-代码方块.html"><small>上一页 · Mod开发</small><b>Mod示例-代码方块</b></a><a class="next" href="Mod示例-自定义生物.html"><small>下一页 · Mod开发</small><b>Mod示例-自定义生物</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#目标">目标</a><a class="lvl2" href="#前置知识">前置知识</a><a class="lvl2" href="#原理-30-秒">原理 30 秒</a><a class="lvl2" href="#制品">制品</a><a class="lvl3" href="#目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</a><a class="lvl3" href="#modinfo-json-完整-含-settings-数组">modinfo.json（完整，含 Settings 数组）</a><a class="lvl3" href="#examplethresholdgate-cs-完整-一个文件三个类型">ExampleThresholdGate.cs（完整，一个文件三个类型）</a><a class="lvl3" href="#assets-blocks-thresholdgate-csv-完整">Assets/Blocks/thresholdgate.csv（完整）</a><a class="lvl2" href="#打包清单">打包清单</a><a class="lvl2" href="#验证-日志锚点-游戏内">验证（日志锚点 + 游戏内）</a><a class="lvl2" href="#该示例踩的坑">该示例踩的坑</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某原版电方块编号/端口</td><td>SubsystemElectricBlockBehavior.cs:8-70；15 页元件族概览</td></tr><tr><td>查排队/步进为什么不动</td><td>SubsystemElectricity.cs:357-373（静默丢弃）+ 15 页传播调用链</td></tr><tr><td>加多端口语义方向元件</td><td>CounterElectricElement.cs:34-103（GetConnectorDirection 分派，15 页）</td></tr><tr><td>防抖/节流执行类</td><td>TrapDoorElectricElement.cs:14-39（上电复位+10 步节流，15 页）</td></tr><tr><td>设置项加滑条/文本框</td><td>Widget 值类型默认表（ModSettingsParser.cs:23-29）；滑条属性 MinValue/MaxValue/Granularity（ModSettingItemWidget.cs:283-288）</td></tr><tr><td>元件状态持久化</td><td>15 页"元件状态的三条存档归宿"（data 位/WritePersistentVoltage/自建 behavior）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="Mod示例-代码方块.html"><small>上一页 · Mod开发</small><b>Mod示例-代码方块</b></a><a class="next" href="Mod示例-自定义生物.html"><small>下一页 · Mod开发</small><b>Mod示例-自定义生物</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#目标">目标</a><a class="lvl2" href="#前置知识">前置知识</a><a class="lvl2" href="#原理-30-秒">原理 30 秒</a><a class="lvl2" href="#制品">制品</a><a class="lvl3" href="#目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</a><a class="lvl3" href="#modinfo-json-完整-含-settings-数组">modinfo.json（完整，含 Settings 数组）</a><a class="lvl3" href="#examplethresholdgate-cs-完整-一个文件三个类型">ExampleThresholdGate.cs（完整，一个文件三个类型）</a><a class="lvl3" href="#assets-blocks-thresholdgate-csv-完整">Assets/Blocks/thresholdgate.csv（完整）</a><a class="lvl2" href="#打包清单">打包清单</a><a class="lvl2" href="#验证-日志锚点-游戏内">验证（日志锚点 + 游戏内）</a><a class="lvl2" href="#该示例踩的坑">该示例踩的坑</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot><b>SC 源码笔记</b> · 70 页 · 最后更新 2026-11-02 · <a href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub</a> · <a href="https://gitee.com/SC-SPM/SurvivalcraftApi" target=_blank rel=noopener>引擎源码</a> · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT=""; // 站点根相对前缀（按页面深度注入）
 // 主题切换

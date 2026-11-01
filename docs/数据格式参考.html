@@ -30,11 +30,15 @@ transition:color .2s,background-color .2s}
 /* 顶栏：玻璃 */
 #top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
 background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.55),transparent);opacity:0;transition:opacity .35s}
+#top.scrolled::after{opacity:1}
 #burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
 #top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
 #top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
-background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4);animation:logob 4s ease-in-out infinite}
+@keyframes logob{0%,100%{box-shadow:0 4px 12px rgba(99,102,241,.4);filter:hue-rotate(0deg)}50%{box-shadow:0 4px 20px rgba(139,92,246,.65);filter:hue-rotate(20deg)}}
+@media (prefers-reduced-motion: reduce){#top .brand b::before{animation:none}}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
 #themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
@@ -87,7 +91,10 @@ tbody tr:hover{background:var(--acc-soft)}
 hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
-#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+article li::marker{color:var(--acc)}
+#foot{max-width:1240px;margin:40px auto 0;padding:16px 20px 0;border-top:none;font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px;position:relative}
+#foot::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+#foot b{color:var(--ink-soft);font-weight:600}
 /* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
 pre.code .k{color:#ff7b72}
 pre.code .t{color:#ffa657}
@@ -108,7 +115,11 @@ pre.code .t2{color:#7ee787}
 .hero{margin:24px 0 4px}
 .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
-.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard::before{content:"";position:absolute;inset:0;border-radius:13px;padding:1.5px;background:conic-gradient(from var(--flw,0deg),transparent 0 68%,var(--acc) 82%,var(--acc-2) 90%,transparent 98%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .25s;pointer-events:none}
+.hcard:hover::before{opacity:1;animation:flw 2.6s linear infinite}
+@property --flw{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes flw{to{--flw:360deg}}
+@media (prefers-reduced-motion: reduce){.hcard:hover::before{animation:none}}
 .hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
 .hcard:hover::before{opacity:1}
 .hcard .ico{font-size:21px;line-height:1}
@@ -219,7 +230,8 @@ article.spot{position:relative}
 #lbox.show{display:flex}
 #lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
 @keyframes lbIn{from{transform:scale(.94);opacity:0}}
-article img{cursor:zoom-in;transition:transform .2s}
+article img{cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+article img:hover{transform:scale(1.015);box-shadow:0 10px 30px -10px rgba(2,6,23,.35)}
 /* 代码块终端化 */
 .codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
 .codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
@@ -292,7 +304,7 @@ a{color:inherit}
 <h2 id="原版范例">原版范例</h2>
 <div class="tablewrap"><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>最简新方块数据行</td><td>BlocksData.txt:6（DirtBlock，全套默认值兜底）</td></tr><tr><td>掉落引用他块</td><td>BlocksData.txt:15（GrassBlock 掉 <code>#DirtBlock</code>）</td></tr><tr><td>矿石掉自身物品+限镐</td><td>BlocksData.txt:23（CoalOreBlock，<code>#CoalChunkBlock</code>+DigMethod=Quarry）</td></tr><tr><td>投射物方块</td><td>BlocksData.txt:21（StoneChunkBlock，ThrowableBlockBehavior+投射物三件套）</td></tr><tr><td>工具行（点火花柴）</td><td>BlocksData.txt:186（MatchBlock，CraftingId=match）</td></tr></tbody></table></div>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某列填什么值</td><td>本页 78 列表"语义+默认"列</td></tr><tr><td>值字符串语法（bool/float/Vector3/枚举）</td><td>本页"解析规则"第 5 条</td></tr><tr><td>方块类该有哪些字段/虚方法</td><td><a href="01-引擎/04-方块系统.html">01-引擎/04-方块系统.md</a></td></tr><tr><td>配方/衣物/实体参数格式</td><td><a href="数据格式参考2.html">数据格式参考2</a></td></tr><tr><td>Database.xml 模板树与 GUID</td><td><a href="01-引擎/明细/22a-数据资产明细.html">01-引擎/明细/22a-数据资产明细.md</a></td></tr><tr><td>.scmod 包结构与 <code>.csv</code> 装载时序</td><td><a href="01-引擎/12-ModAPI与加载链.html">01-引擎/12-ModAPI与加载链.md</a></td></tr><tr><td>新增方块完整步骤</td><td><a href="Mod开发配方.html">Mod开发配方.md</a></td></tr></tbody></table></div><nav class=pn><a class="prev" href="Mod钩子明细.html"><small>上一页 · Mod开发</small><b>Mod钩子明细</b></a><a class="next" href="数据格式参考2.html"><small>下一页 · Mod开发</small><b>数据格式参考2</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#怎么用-ai-视角">怎么用（AI 视角）</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#解析规则-blocksmanager-cs-1037-1094-实读">解析规则（BlocksManager.cs:1037-1094 实读）</a><a class="lvl2" href="#78-列逐列语义-列序-原版表头-blocksdata-txt-1-实读顺序-读取方-block">78 列逐列语义（列序=原版表头 BlocksData.txt:1 实读顺序；读取方=Block.cs 字段/消费点，2026-11-01 实读）</a><a class="lvl2" href="#最小可用示例">最小可用示例</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某列填什么值</td><td>本页 78 列表"语义+默认"列</td></tr><tr><td>值字符串语法（bool/float/Vector3/枚举）</td><td>本页"解析规则"第 5 条</td></tr><tr><td>方块类该有哪些字段/虚方法</td><td><a href="01-引擎/04-方块系统.html">01-引擎/04-方块系统.md</a></td></tr><tr><td>配方/衣物/实体参数格式</td><td><a href="数据格式参考2.html">数据格式参考2</a></td></tr><tr><td>Database.xml 模板树与 GUID</td><td><a href="01-引擎/明细/22a-数据资产明细.html">01-引擎/明细/22a-数据资产明细.md</a></td></tr><tr><td>.scmod 包结构与 <code>.csv</code> 装载时序</td><td><a href="01-引擎/12-ModAPI与加载链.html">01-引擎/12-ModAPI与加载链.md</a></td></tr><tr><td>新增方块完整步骤</td><td><a href="Mod开发配方.html">Mod开发配方.md</a></td></tr></tbody></table></div><nav class=pn><a class="prev" href="Mod钩子明细.html"><small>上一页 · Mod开发</small><b>Mod钩子明细</b></a><a class="next" href="数据格式参考2.html"><small>下一页 · Mod开发</small><b>数据格式参考2</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#怎么用-ai-视角">怎么用（AI 视角）</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#解析规则-blocksmanager-cs-1037-1094-实读">解析规则（BlocksManager.cs:1037-1094 实读）</a><a class="lvl2" href="#78-列逐列语义-列序-原版表头-blocksdata-txt-1-实读顺序-读取方-block">78 列逐列语义（列序=原版表头 BlocksData.txt:1 实读顺序；读取方=Block.cs 字段/消费点，2026-11-01 实读）</a><a class="lvl2" href="#最小可用示例">最小可用示例</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot><b>SC 源码笔记</b> · 70 页 · 最后更新 2026-11-02 · <a href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub</a> · <a href="https://gitee.com/SC-SPM/SurvivalcraftApi" target=_blank rel=noopener>引擎源码</a> · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT=""; // 站点根相对前缀（按页面深度注入）
 // 主题切换

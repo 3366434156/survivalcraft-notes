@@ -30,11 +30,15 @@ transition:color .2s,background-color .2s}
 /* 顶栏：玻璃 */
 #top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
 background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.55),transparent);opacity:0;transition:opacity .35s}
+#top.scrolled::after{opacity:1}
 #burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
 #top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
 #top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
-background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4);animation:logob 4s ease-in-out infinite}
+@keyframes logob{0%,100%{box-shadow:0 4px 12px rgba(99,102,241,.4);filter:hue-rotate(0deg)}50%{box-shadow:0 4px 20px rgba(139,92,246,.65);filter:hue-rotate(20deg)}}
+@media (prefers-reduced-motion: reduce){#top .brand b::before{animation:none}}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
 #themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
@@ -87,7 +91,10 @@ tbody tr:hover{background:var(--acc-soft)}
 hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
-#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+article li::marker{color:var(--acc)}
+#foot{max-width:1240px;margin:40px auto 0;padding:16px 20px 0;border-top:none;font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px;position:relative}
+#foot::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+#foot b{color:var(--ink-soft);font-weight:600}
 /* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
 pre.code .k{color:#ff7b72}
 pre.code .t{color:#ffa657}
@@ -108,7 +115,11 @@ pre.code .t2{color:#7ee787}
 .hero{margin:24px 0 4px}
 .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
-.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard::before{content:"";position:absolute;inset:0;border-radius:13px;padding:1.5px;background:conic-gradient(from var(--flw,0deg),transparent 0 68%,var(--acc) 82%,var(--acc-2) 90%,transparent 98%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .25s;pointer-events:none}
+.hcard:hover::before{opacity:1;animation:flw 2.6s linear infinite}
+@property --flw{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes flw{to{--flw:360deg}}
+@media (prefers-reduced-motion: reduce){.hcard:hover::before{animation:none}}
 .hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
 .hcard:hover::before{opacity:1}
 .hcard .ico{font-size:21px;line-height:1}
@@ -219,7 +230,8 @@ article.spot{position:relative}
 #lbox.show{display:flex}
 #lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
 @keyframes lbIn{from{transform:scale(.94);opacity:0}}
-article img{cursor:zoom-in;transition:transform .2s}
+article img{cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+article img:hover{transform:scale(1.015);box-shadow:0 10px 30px -10px rgba(2,6,23,.35)}
 /* 代码块终端化 */
 .codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
 .codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
@@ -287,7 +299,7 @@ a{color:inherit}
 <h2 id="十-数值与平衡类-含性能-内存-数学陷阱">十、数值与平衡类（含性能 / 内存 / 数学陷阱）</h2>
 <div class="tablewrap"><table><thead><tr><th>症状</th><th>根因</th><th>对策</th><th>详址</th></tr></thead><tbody><tr><td>混战越打越卡</td><td>大量活体同格 → Body 挤压 O(n²)+尸体常驻（无全局碰撞对缓存）</td><td>玩法侧限单区域活体上限+尸体填包；探针用 NewBodyCollision 分段</td><td>13页性能节</td></tr><tr><td>巨型爆炸卡顿</td><td>SimulateExplosion 同帧同步，BFS 域随压力平方级增长</td><td>控制单次 pressure</td><td>13页 · SubsystemExplosions.cs:271/:343</td></tr><tr><td>大位移技能/冲量被吃掉</td><td>Velocity setter 钳 MaxSpeed=25</td><td>大位移用 ApplyDirectMove 不受钳制</td><td>13页 · ComponentBody.cs:176-186</td></tr><tr><td>大爆炸后掉落物"没了"</td><td>抛射物数≥40 后掉落概率骤降（限流非 bug）</td><td><code>ExplosionKeepsPickables=true</code> 豁免</td><td>02页 · SubsystemExplosions.cs:707-710</td></tr><tr><td>大规模刷物场东西 60 秒就消失</td><td>掉落物寿命与场上数量挂钩：Terrain/植物类 &gt;80 个时 60s</td><td>MaxTimeExist 覆盖</td><td>16页 · Pickable.cs:174-196</td></tr><tr><td>粒子永不消失、帧率持续掉</td><td>没覆写 Simulate（基类恒 return false）</td><td>按活跃计数返回 true；跟随型按 IsStopped 协议</td><td>07页 · ParticleSystem.cs:164</td></tr><tr><td>粒子多时 CPU 线性涨</td><td>Puke/Paint/BurntDebris 每粒子每帧地形射线</td><td>压容量/寿命，或学水花只在液面判定</td><td>07页坑表</td></tr><tr><td>跟随型粒子系统永久泄漏</td><td>宿主忘了置 IsStopped/手动 Remove</td><td>照 ComponentOnFire.cs:81-83 的收尾协议</td><td>07页坑表</td></tr><tr><td>异形方块掉帧</td><td>顶点阶段现算矩阵每帧重复</td><td>学原版 Initialize 预烘全部 data 变体的 BlockMesh/碰撞盒表</td><td>04页渲染套路</td></tr><tr><td>浏览器端高刷屏卡顿</td><td>interop（JSImport/JSExport）每次跨界开销大</td><td>高频数据走共享内存（InputBridge 模式），interop 只做低频服务</td><td>23页 · main.js:66</td></tr><tr><td>Get 过的大资产常驻内存</td><td>ContentManager.Caches 不自动逐出</td><td>一次性数据 Get 后立刻 <code>ContentManager.Dispose("名字")</code></td><td>20页坑表</td></tr><tr><td>浏览器端 JS 堆被钉住</td><td>跨界的 JSObject（file/bytes）不 Dispose</td><td>照 Storage.ChooseFile 的 using/Dispose 序</td><td>23页 · Storage.cs:749-753</td></tr><tr><td>零向量 Normalize 结果不是 Zero 而是 UnitX</td><td>引擎数学库约定</td><td>先判 LengthSquared&gt;0</td><td>21页 · Vector2.cs:103-106</td></tr><tr><td>Vector4 长度算错</td><td>LengthSquared 只算 XYZ 不含 W</td><td>当 4D 用时手算 W</td><td>21页 · Vector4.cs:75</td></tr><tr><td>边界包含判断出错</td><td>Box/Rectangle 是半开区间，BoundingBox 是闭区间，两套别混</td><td>按数据类型选对判定</td><td>21页 · Box.cs:66、BoundingBox.cs:67</td></tr><tr><td>直接写内存/传 GL 的矩阵排布不对</td><td>Matrix 列主序存储+行向量语义（v*M），平移在 M41-M43</td><td>写内存前对照 Matrix.cs:20-35 字段序</td><td>21页 · Matrix.cs:20-35</td></tr><tr><td>直接扣血没有命中判定/音效/统计</td><td>AI 打人也走 Miner.Hit；绕过 Miner 直接扣血失去全链</td><td>伤害过 ComponentMiner/Attackment 结算链</td><td>03a · ComponentChaseBehavior.cs:180</td></tr><tr><td>检索不到 Attackment 类相关代码</td><td>类名错拼为 Attackment（历史错误，注释禁止改名）</td><td>照错拼名搜</td><td>16页 · Attackment.cs:7-11</td></tr><tr><td>自定义蛋行为不生效</td><td>LayEgg 蛋块 value=118 硬编码</td><td>hook OnEatPickable 级替换或重写组件</td><td>03a · ComponentLayEggBehavior.cs:61</td></tr><tr><td>A* 寻路初始化行为怪</td><td>AStar ctor 校验 ClosedStorage 的 if 复制粘贴误判 OpenStorage（引擎 bug）</td><td>使用时注意构造校验误报</td><td>16a · AStar.cs:53-55</td></tr><tr><td>SortedMultiCollection.Find 拿到的不是第一个</td><td>重复键返回最后一个匹配</td><td>需要第一个就自己遍历</td><td>16a · SortedMultiCollection.cs:164-190</td></tr></tbody></table></div>
 <h2 id="还查不到-路由">还查不到？路由</h2>
-<ol><li><b>回到主题页坑节</b>：<code>E:\数据\生存战争系列\SC完全学习笔记\01-引擎\</code> 下 23 个主线页各带"坑与对策"节，明细页（同目录 <code>明细\</code>）含逐文件坑列——本手册只收 mod 视角条目，引擎内部行为细节以原页为准。</li><li><b>加载与钩子总纲</b>：<code>E:\数据\生存战争系列\SC完全学习笔记\01-引擎\12-ModAPI与加载链.md</code>（最密集：加载 20 步、modinfo 字段表、钩子注册窗口、打包要点）。</li><li><b>实操配方</b>：<code>E:\数据\生存战争系列\SC完全学习笔记\Mod开发配方.md</code>（跨域任务路由）。</li><li><b>页面地图</b>：<code>E:\数据\生存战争系列\SC完全学习笔记\README.md</code>。</li><li><b>仍没覆盖</b>：按库规则执行查找协议——Grep `` 引擎源码定位后，回写对应主题页坑节（保持库越用越准）。</li></ol><nav class=pn><a class="prev" href="Mod排错手册.html"><small>上一页 · Mod开发</small><b>Mod排错手册</b></a><a class="next" href="Mod示例-数据驱动.html"><small>下一页 · Mod开发</small><b>Mod示例-数据驱动</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#怎么用">怎么用</a><a class="lvl2" href="#五-渲染贴图类-不显示-颜色错-顺序错-闪烁">五、渲染贴图类（不显示 / 颜色错 / 顺序错 / 闪烁）</a><a class="lvl2" href="#六-音频类-没声音-声音不对-声音风暴">六、音频类（没声音 / 声音不对 / 声音风暴）</a><a class="lvl2" href="#七-输入与-ui-类-点不动-不响应-界面错乱-相机与-vr">七、输入与 UI 类（点不动 / 不响应 / 界面错乱 / 相机与 VR）</a><a class="lvl2" href="#八-电力类-电路不动-电路炸-行为怪">八、电力类（电路不动 / 电路炸 / 行为怪）</a><a class="lvl2" href="#九-世界与地形类-地形怪-光照怪-刷怪怪">九、世界与地形类（地形怪 / 光照怪 / 刷怪怪）</a><a class="lvl2" href="#十-数值与平衡类-含性能-内存-数学陷阱">十、数值与平衡类（含性能 / 内存 / 数学陷阱）</a><a class="lvl2" href="#还查不到-路由">还查不到？路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+<ol><li><b>回到主题页坑节</b>：<code>E:\数据\生存战争系列\SC完全学习笔记\01-引擎\</code> 下 23 个主线页各带"坑与对策"节，明细页（同目录 <code>明细\</code>）含逐文件坑列——本手册只收 mod 视角条目，引擎内部行为细节以原页为准。</li><li><b>加载与钩子总纲</b>：<code>E:\数据\生存战争系列\SC完全学习笔记\01-引擎\12-ModAPI与加载链.md</code>（最密集：加载 20 步、modinfo 字段表、钩子注册窗口、打包要点）。</li><li><b>实操配方</b>：<code>E:\数据\生存战争系列\SC完全学习笔记\Mod开发配方.md</code>（跨域任务路由）。</li><li><b>页面地图</b>：<code>E:\数据\生存战争系列\SC完全学习笔记\README.md</code>。</li><li><b>仍没覆盖</b>：按库规则执行查找协议——Grep `` 引擎源码定位后，回写对应主题页坑节（保持库越用越准）。</li></ol><nav class=pn><a class="prev" href="Mod排错手册.html"><small>上一页 · Mod开发</small><b>Mod排错手册</b></a><a class="next" href="Mod示例-数据驱动.html"><small>下一页 · Mod开发</small><b>Mod示例-数据驱动</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#怎么用">怎么用</a><a class="lvl2" href="#五-渲染贴图类-不显示-颜色错-顺序错-闪烁">五、渲染贴图类（不显示 / 颜色错 / 顺序错 / 闪烁）</a><a class="lvl2" href="#六-音频类-没声音-声音不对-声音风暴">六、音频类（没声音 / 声音不对 / 声音风暴）</a><a class="lvl2" href="#七-输入与-ui-类-点不动-不响应-界面错乱-相机与-vr">七、输入与 UI 类（点不动 / 不响应 / 界面错乱 / 相机与 VR）</a><a class="lvl2" href="#八-电力类-电路不动-电路炸-行为怪">八、电力类（电路不动 / 电路炸 / 行为怪）</a><a class="lvl2" href="#九-世界与地形类-地形怪-光照怪-刷怪怪">九、世界与地形类（地形怪 / 光照怪 / 刷怪怪）</a><a class="lvl2" href="#十-数值与平衡类-含性能-内存-数学陷阱">十、数值与平衡类（含性能 / 内存 / 数学陷阱）</a><a class="lvl2" href="#还查不到-路由">还查不到？路由</a></nav></aside></div><div id=foot><b>SC 源码笔记</b> · 70 页 · 最后更新 2026-11-02 · <a href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub</a> · <a href="https://gitee.com/SC-SPM/SurvivalcraftApi" target=_blank rel=noopener>引擎源码</a> · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT=""; // 站点根相对前缀（按页面深度注入）
 // 主题切换

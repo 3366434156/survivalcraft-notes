@@ -30,11 +30,15 @@ transition:color .2s,background-color .2s}
 /* 顶栏：玻璃 */
 #top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
 background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.55),transparent);opacity:0;transition:opacity .35s}
+#top.scrolled::after{opacity:1}
 #burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
 #top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
 #top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
-background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4);animation:logob 4s ease-in-out infinite}
+@keyframes logob{0%,100%{box-shadow:0 4px 12px rgba(99,102,241,.4);filter:hue-rotate(0deg)}50%{box-shadow:0 4px 20px rgba(139,92,246,.65);filter:hue-rotate(20deg)}}
+@media (prefers-reduced-motion: reduce){#top .brand b::before{animation:none}}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
 #themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
@@ -87,7 +91,10 @@ tbody tr:hover{background:var(--acc-soft)}
 hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
-#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+article li::marker{color:var(--acc)}
+#foot{max-width:1240px;margin:40px auto 0;padding:16px 20px 0;border-top:none;font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px;position:relative}
+#foot::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+#foot b{color:var(--ink-soft);font-weight:600}
 /* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
 pre.code .k{color:#ff7b72}
 pre.code .t{color:#ffa657}
@@ -108,7 +115,11 @@ pre.code .t2{color:#7ee787}
 .hero{margin:24px 0 4px}
 .hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
-.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard::before{content:"";position:absolute;inset:0;border-radius:13px;padding:1.5px;background:conic-gradient(from var(--flw,0deg),transparent 0 68%,var(--acc) 82%,var(--acc-2) 90%,transparent 98%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .25s;pointer-events:none}
+.hcard:hover::before{opacity:1;animation:flw 2.6s linear infinite}
+@property --flw{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes flw{to{--flw:360deg}}
+@media (prefers-reduced-motion: reduce){.hcard:hover::before{animation:none}}
 .hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
 .hcard:hover::before{opacity:1}
 .hcard .ico{font-size:21px;line-height:1}
@@ -219,7 +230,8 @@ article.spot{position:relative}
 #lbox.show{display:flex}
 #lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
 @keyframes lbIn{from{transform:scale(.94);opacity:0}}
-article img{cursor:zoom-in;transition:transform .2s}
+article img{cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+article img:hover{transform:scale(1.015);box-shadow:0 10px 30px -10px rgba(2,6,23,.35)}
 /* 代码块终端化 */
 .codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
 .codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
@@ -302,7 +314,7 @@ a{color:inherit}
 <p>路径为仓库相对路径（源码树根起）。</p>
 <div class="tablewrap"><table><thead><tr><th>我要做…</th><th>照抄哪里</th><th>为什么抄它</th></tr></thead><tbody><tr><td>自定义实体碰撞箱（大小/蹲伏）</td><td><code>Survivalcraft\Component\ComponentBody.cs:370</code>（<code>BoxSize</code> 从模板 ValuesDictionary 读入）+模板示例 <code>Survivalcraft\Content\Assets\Database.xml:104</code>（牛 <code>1.3,1.4,1.3</code>）、<code>:380</code>（玩家 <code>0.5,1.77,0.5</code>）；蹲伏缩半在 <code>:122</code>（StanceBoxSize virtual）</td><td>全仓没有 ComponentBody 子类——碰撞体积就是模板数据，代码层只有 StanceBoxSize 一个虚口，别走继承</td></tr><tr><td>发射一颗弹道（从选弹到出膛）</td><td><code>Survivalcraft\Component\ComponentDispenser.cs:91-118</code>：<code>CanFireProjectile</code>（测遮挡+算出炮口位 :93）→<code>CreateProjectile</code>（初速 39~41+扰动 :92-101）→补 Creator/OwnerEntity(:102-103)→<code>OnDispenserShoot</code> 钩子(:104-110)→<code>FireProjectileFast</code>(:113)</td><td>弹种挂在物品 Value 上、发射管线五步完整，做炮台/发射器直接搬</td></tr><tr><td>引爆一个方块（电控/被弹道击中）</td><td><code>Survivalcraft\ElectricElement\DetonatorElectricElement.cs:5-16</code>：Detonate 一行 <code>TryExplodeBlock(坐标, 147 方块值)</code>(:8)；Simulate 高电平触发(:11-16)+OnHitByProjectile 引爆(:18-20)</td><td>最小爆炸触发器：炸药链、压力衰减、破坏判定全在 SubsystemExplosions 内部，触发侧 3 行</td></tr><tr><td>坐标中心纯压力爆炸波（不炸方块、可静音）</td><td><code>Survivalcraft\Subsystem\SubsystemSky.cs:258-260</code>（雷击：<code>AddExplosion(x,y+1,z, pressure, false, noExplosionSound:true)</code>，压力 39/19 随机）</td><td>AddExplosion 是"区域波"入口，与 TryExplodeBlock（从方块起爆）分工；第 6 参静音做无声冲击波</td></tr><tr><td>近战击退/后坐力</td><td><code>Survivalcraft\Game\Attackment.cs:193-198</code>（ImpulseTarget：<code>ApplyImpulse(ImpulseFactor * Normalize(HitDirection+随机0.1+0.2·Y))</code>，ImpulseFactor≤0 早退）；枪械后坐力 <code>Survivalcraft\Subsystem\BlockBehavior\SubsystemMusketBlockBehavior.cs:199</code>（<code>ApplyImpulse(-4f * 射向)</code>）</td><td>击退向量原版配方=命中方向+抖动+固定上抬（防贴地推不动）；反向乘系数即"拉人/后坐"</td></tr><tr><td>射线选实体（准星拾取带过滤器）</td><td><code>Survivalcraft\Component\ComponentMiner.cs:775-782</code>：<code>m_subsystemBodies.Raycast(start, end, 0.35f, 过滤委托)</code>——委托内限距离、排除自身与父子 body、朝向点积&gt;0.7 锥形筛选</td><td>(body,distance)=&gt;bool 过滤签名是官方姿势，选友军/选载具/选敌人只改过滤逻辑</td></tr></tbody></table></div>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>改实体重力/阻力/浮力</td><td>ComponentBody.cs:498-550 + PhysicalEffects(:11)；mod 挂点表</td></tr><tr><td>查实体间挤压/击退实现</td><td>ComponentBody.cs:854-945（HandleAxisCollision）+ InelasticCollision(:1288)</td></tr><tr><td>查混战卡顿根因</td><td>本页"性能特征"节（探针实测细节在库外 mod 项目笔记，不在本库）</td></tr><tr><td>查 Body 空间索引/射线</td><td>SubsystemBodies.cs:18(FindBodiesAroundPoint)/52(Raycast)</td></tr><tr><td>给实体加站立/踩踏判定</td><td>StandingOnValue 写点 :882-928；消费点 ComponentLocomotion.cs:429</td></tr><tr><td>做自定义弹道</td><td>Projectile.cs:190(Raycast)/300(HitBody)/525(UpdateMovement)；挂点表</td></tr><tr><td>改爆炸威力/免疫</td><td>SubsystemExplosions.cs:343(Simulate)/895(CalculateImpulseAndDamage)+CalculateExplosionPower 钩子</td></tr><tr><td>查攀爬/游泳触发条件</td><td>ComponentLocomotion.cs:254(梯子)/488(游泳闸门)</td></tr><tr><td>查方块自定义碰撞箱入口</td><td>ComponentBody.cs:1035(GetCustomCollisionBoxes 调用) → 04-方块系统.md</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/12-ModAPI与加载链.html"><small>上一页 · SC引擎</small><b>12-ModAPI与加载链</b></a><a class="next" href="../01-引擎/14-光照天空与天气.html"><small>下一页 · SC引擎</small><b>14-光照天空与天气</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#核心机制">核心机制</a><a class="lvl3" href="#一次移动的完整物理调用链-每帧-每个活动-body">一次移动的完整物理调用链（每帧、每个活动 Body）</a><a class="lvl3" href="#碰撞对如何生成与存储-本页重点">碰撞对如何生成与存储（本页重点）</a><a class="lvl3" href="#性能特征-混战瓶颈-93-的源码解释">性能特征（混战瓶颈 93% 的源码解释）</a><a class="lvl3" href="#实体与地形交互判定">实体与地形交互判定</a><a class="lvl3" href="#投掷物-弹道物理-独立体系-不走-componentbody">投掷物/弹道物理（独立体系，不走 ComponentBody）</a><a class="lvl3" href="#爆炸物理">爆炸物理</a><a class="lvl3" href="#mod-物理挂点清单-引擎侧">mod 物理挂点清单（引擎侧）</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>改实体重力/阻力/浮力</td><td>ComponentBody.cs:498-550 + PhysicalEffects(:11)；mod 挂点表</td></tr><tr><td>查实体间挤压/击退实现</td><td>ComponentBody.cs:854-945（HandleAxisCollision）+ InelasticCollision(:1288)</td></tr><tr><td>查混战卡顿根因</td><td>本页"性能特征"节（探针实测细节在库外 mod 项目笔记，不在本库）</td></tr><tr><td>查 Body 空间索引/射线</td><td>SubsystemBodies.cs:18(FindBodiesAroundPoint)/52(Raycast)</td></tr><tr><td>给实体加站立/踩踏判定</td><td>StandingOnValue 写点 :882-928；消费点 ComponentLocomotion.cs:429</td></tr><tr><td>做自定义弹道</td><td>Projectile.cs:190(Raycast)/300(HitBody)/525(UpdateMovement)；挂点表</td></tr><tr><td>改爆炸威力/免疫</td><td>SubsystemExplosions.cs:343(Simulate)/895(CalculateImpulseAndDamage)+CalculateExplosionPower 钩子</td></tr><tr><td>查攀爬/游泳触发条件</td><td>ComponentLocomotion.cs:254(梯子)/488(游泳闸门)</td></tr><tr><td>查方块自定义碰撞箱入口</td><td>ComponentBody.cs:1035(GetCustomCollisionBoxes 调用) → 04-方块系统.md</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/12-ModAPI与加载链.html"><small>上一页 · SC引擎</small><b>12-ModAPI与加载链</b></a><a class="next" href="../01-引擎/14-光照天空与天气.html"><small>下一页 · SC引擎</small><b>14-光照天空与天气</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#核心机制">核心机制</a><a class="lvl3" href="#一次移动的完整物理调用链-每帧-每个活动-body">一次移动的完整物理调用链（每帧、每个活动 Body）</a><a class="lvl3" href="#碰撞对如何生成与存储-本页重点">碰撞对如何生成与存储（本页重点）</a><a class="lvl3" href="#性能特征-混战瓶颈-93-的源码解释">性能特征（混战瓶颈 93% 的源码解释）</a><a class="lvl3" href="#实体与地形交互判定">实体与地形交互判定</a><a class="lvl3" href="#投掷物-弹道物理-独立体系-不走-componentbody">投掷物/弹道物理（独立体系，不走 ComponentBody）</a><a class="lvl3" href="#爆炸物理">爆炸物理</a><a class="lvl3" href="#mod-物理挂点清单-引擎侧">mod 物理挂点清单（引擎侧）</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot><b>SC 源码笔记</b> · 70 页 · 最后更新 2026-11-02 · <a href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub</a> · <a href="https://gitee.com/SC-SPM/SurvivalcraftApi" target=_blank rel=noopener>引擎源码</a> · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT="../"; // 站点根相对前缀（按页面深度注入）
 // 主题切换
