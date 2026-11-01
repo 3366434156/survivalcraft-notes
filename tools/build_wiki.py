@@ -20,6 +20,7 @@ OUT = SC_ROOT / "docs"  # GitHub Pages 从 /docs 目录部署
 SITE_NAME = "SC 源码笔记"
 SITE_SUB = "SURVIVALCRAFT · 行号级引擎笔记"
 SITE_REPO = "https://github.com/3366434156/survivalcraft-notes"
+SITE_URL = "https://3366434156.github.io/survivalcraft-notes/"  # 部署根（404 兜底页跳转用）
 SEC_LABELS = {"总览": "总览", "Mod开发": "Mod 开发", "SC引擎": "引擎主线", "SC引擎·明细": "逐文件明细"}
 
 # ---------- 收集源文件 ----------
@@ -544,19 +545,57 @@ def main():
         out_path = OUT / p["out"]
         out_path.parent.mkdir(parents=True, exist_ok=True)
         root_prefix = "../" * p["out"].count("/")
-        # 侧栏导航是全站共用一份（相对站点根），子页必须按深度补 ../ 前缀，否则子页侧栏全 404
-        page_nav = nav_html.replace('<a href="', '<a href="%s"' % root_prefix) if root_prefix else nav_html
+        # 侧栏导航是全站共用一份（相对站点根），子页必须按深度补 ../ 前缀，否则子页侧栏全 404。
+        # 注意替换串不带收口引号——引号要在原 href 值之后闭合
+        page_nav = nav_html.replace('<a href="', '<a href="%s' % root_prefix) if root_prefix else nav_html
         out_path.write_text(page_shell(title, body, page_nav, root_prefix, toc_html, aside_extra), encoding="utf-8")
         text_sample = re.sub(r"[`#>*|\-\[\]()]", "", md)[:26000]
         index_data.append({"t": title, "u": p["out"], "b": text_sample.lower()})
         print("OK", p["out"])
 
     (OUT / "search.json").write_text(json.dumps(index_data, ensure_ascii=False), encoding="utf-8")
+    write_404()
     for abs_p, rel in IMG_COPIES:
         dst = OUT / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_bytes(abs_p.read_bytes())
     print("DONE pages=%d images=%d out=%s" % (len(pages), len(IMG_COPIES), OUT))
+
+
+def write_404():
+    """GitHub Pages 对任意 404 路径都会伺服 /404.html：取失效 URL 的最后一段文件名，
+    在 search.json 里按输出文件名匹配，命中即跳到该页现址（页面改路径/改目录后老链接自动着陆）；
+    未命中或非 .html 请求回首页。GitHub Pages 对 404 路径不带查询串，无需处理参数。"""
+    js = """
+const BASE=%BASE%;
+const seg=decodeURIComponent(location.pathname).split('/').pop()||'';
+const box=document.getElementById('m404');
+if(seg&&seg.endsWith('.html')){
+  fetch(BASE+'search.json').then(r=>r.json()).then(list=>{
+    const hit=list.find(e=>e.u&&e.u.split('/').pop()===seg);
+    box.textContent=hit?('找到同名页面，正在跳转：'+hit.t):('没有找到「'+seg+'」，返回首页…');
+    setTimeout(()=>location.replace(hit?BASE+hit.u:BASE),1200);
+  }).catch(()=>location.replace(BASE));
+}else{box.textContent='返回首页…';setTimeout(()=>location.replace(BASE),1200);}
+""".replace("%BASE%", json.dumps(SITE_URL))
+    html404 = (
+        '<!doctype html><html lang=zh><head><meta charset=utf-8>'
+        '<meta name=viewport content="width=device-width,initial-scale=1">'
+        '<title>404 · %s</title><style>'
+        'body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;'
+        'background:#f8fafc;color:#0f172a;font:15px/1.7 system-ui,"Segoe UI","Microsoft YaHei",sans-serif}'
+        '.card{max-width:520px;padding:44px 48px;background:#fff;border:1px solid #e6e9f0;border-radius:16px;'
+        'box-shadow:0 8px 28px rgba(15,23,42,.06);text-align:center}'
+        'h1{margin:0 0 6px;font-size:44px;background:linear-gradient(90deg,#4f46e5,#7c3aed);'
+        '-webkit-background-clip:text;background-clip:text;color:transparent}'
+        'p{margin:10px 0 0;color:#475569}a{color:#4f46e5}'
+        '</style></head><body><div class=card><h1>404</h1>'
+        '<p id=m404>页面可能已搬家，正在为你定位…</p>'
+        '<p><a href="%sindex.html">手动返回首页</a></p></div>'
+        '<script>%s</script></body></html>'
+    ) % (SITE_NAME, SITE_URL, js)
+    (OUT / "404.html").write_text(html404, encoding="utf-8")
+    print("OK 404.html")
 
 if __name__ == "__main__":
     main()

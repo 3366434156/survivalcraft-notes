@@ -45,7 +45,7 @@
 
 | 文件(行) | 级 | 职责/关键行号 | 备注 |
 |---|---|---|---|
-| 〔深〕SettingsScreen.cs(116) | Screen | 设置枢纽：ctor 跑 `OnSettingsScreenCreated` 钩子收 mod 按钮(:32-43)；`AddSettingButton(button/text,action)`:86-115 奇偶分列到左右 StackPanel；Update 路由 7 个子设置屏(:47-67)+GoBack(:73-77) | m_previousScreen 字段已 [Obsolete](:6-7) |
+| 〔深〕SettingsScreen.cs(116) | Screen | 设置枢纽：ctor 跑 `OnSettingsScreenCreated` 钩子收 mod 按钮(:32-43)；`AddSettingButton(button/text,action)`:86-115 奇偶分列到左右 StackPanel；Update 路由 7 个子设置屏(:47-67)+GoBack(:73-77) | m_previousScreen 字段已 `Obsolete`(:6-7) |
 | 〔深〕SettingsPerformanceScreen.cs(229) | Screen | 性能：分辨率模式/可视距离(26 档:8-35,警告文案 7 档:147-177)/地形 mipmap/天空渲染/阴影/帧率(PresentationInterval 2/1/0:6)/FPS 显示/低帧减速(LowFPSToTimeDeceleration:133-135)/动画纹理刷新上限；Back 时若调大可视距离且>128 弹提醒(:204-227) | 记 Enter 时可视距离比对(:96-98) |
 | 〔深〕SettingsGraphicsScreen.cs(68) | Screen | 画质：亮度/视角滑块双向同步(:31-39)；VR 开关 StartVr/StopVr(:40-53) | VR 面板仅 WINDOWS |
 | 〔深〕SettingsUiScreen.cs(208) | Screen | 界面：窗口模式/语言/字体入口(:112-114)/UI 缩放(SlidingCompleted 才写:103-105)/VR GUI/倒置布局/刘海适应(联动 TopBar 边距:135-143)/截图 UI/截图尺寸+自定义宽高比(:156-173)/删世界需输 yes/原版社区模式 | Enter 按平台显隐窗口/刘海容器(:90-93) |
