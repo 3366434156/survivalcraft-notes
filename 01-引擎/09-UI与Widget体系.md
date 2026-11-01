@@ -8,7 +8,7 @@
 
 ## 目录地图
 
-| 符号(类/文件) | 绝对路径 | 职责 |
+| 符号(类/文件) | 仓库路径 | 职责 |
 |---|---|---|
 | `Widget` | E:\SurvivalcraftAPIProject\Survivalcraft\Widget\Widget.cs | 全部部件基类：XML 解析、布局、命中、绘制管线 |
 | `ContainerWidget` | E:\SurvivalcraftAPIProject\Survivalcraft\Widget\ContainerWidget.cs | 抽象容器；对齐算术 `ArrangeChildWidgetInCell` |

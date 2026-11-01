@@ -81,7 +81,12 @@ def collect_sources():
 # ---------- 最小 GFM 转换器 ----------
 CODE_RE = re.compile(r"`([^`]+)`")
 BOLD_RE = re.compile(r"\*\*([^*]+)\*\*")
-ITAL_RE = re.compile(r"(?<!\*)\*([^*\n]+)\*(?!\*)")
+ITAL_RE = re.compile(r"(?<!\*)\*([^*\n]+)\*(?!\*)")  # 已弃用：源 md 的 * 是乘号/通配符，见 inline()
+LOCAL_PREFIX = "E:\\SurvivalcraftAPIProject\\"
+
+def repo_path(t):
+    """源码引用统一剥本机前缀→仓库相对路径（对应 Gitee 仓库同名文件；本机克隆位置不外泄）"""
+    return t.replace(LOCAL_PREFIX, "")
 LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
 IMG_RE = re.compile(r"!\[([^\]]*)\]\(([^)\s]+)\)")
 IMG_COPIES = []  # (绝对路径, 输出相对路径)
@@ -123,6 +128,7 @@ def rewrite_link_target(href, src_file, reg):
 
 def inline(text, src_file, reg):
     text = html.escape(text, quote=False)
+    text = repo_path(text)
     # 已有实体（&lt; 等）在 escape 后变成 &amp;lt;，还原
     text = text.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;").replace("&amp;amp;", "&amp;")
     spans = []
@@ -230,7 +236,7 @@ def md_to_html(md_text, src_file, reg):
                 buf.append(lines[i]); i += 1
             i += 1
             pre_html = '<pre class="code%s"><code>%s</code></pre>' % (
-                (" lang-" + lang) if lang else "", highlight("\n".join(buf), lang))
+                (" lang-" + lang) if lang else "", highlight(repo_path("\n".join(buf)), lang))
             out.append('<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>%s</span></div>%s</div>' % (
                 html.escape(lang or "text"), pre_html))
             continue
@@ -240,7 +246,7 @@ def md_to_html(md_text, src_file, reg):
             flush(); out.append("<hr>"); i += 1; continue
         m = re.match(r"^(#{1,6})\s+(.*)$", s)
         if m:
-            flush(); lvl = len(m.group(1)); t = m.group(2)
+            flush(); lvl = len(m.group(1)); t = repo_path(m.group(2))
             base = slug(t); hid = base; k = 2
             while hid in used_ids:
                 hid = "%s-%d" % (base, k); k += 1
@@ -279,7 +285,7 @@ def md_to_html(md_text, src_file, reg):
             if is_filetable:
                 cs = [(raw, rid) for rid, raw in files[fstart:] if ".cs" in raw]
                 if len(cs) >= 3:
-                    chip_html = "".join('<a href="#%s">%s</a>' % (rid, html.escape(raw)) for raw, rid in cs)
+                    chip_html = "".join('<a href="#%s">%s</a>' % (rid, html.escape(repo_path(raw))) for raw, rid in cs)
                     tbl = ('<details class=jumpbox><summary>⚡ 文件快速跳转 · %d</summary><div class=chips>%s</div></details>' % (len(cs), chip_html)) + tbl
             out.append(tbl)
             continue
@@ -744,7 +750,7 @@ def main():
                     if re.match(num + r"[ab]-", dname):
                         for rid, raw in files_map[dname]:
                             if ".cs" in raw:
-                                chips.append('<a href="明细/%s#%s">%s</a>' % (dname.replace(".md", ".html"), rid, html.escape(raw)))
+                                chips.append('<a href="明细/%s#%s">%s</a>' % (dname.replace(".md", ".html"), rid, html.escape(repo_path(raw))))
                 if chips:
                     aside_extra = ('<details class=jumpbox open><summary>⚡ 文件速跳 · %d</summary><div class=chips>%s</div></details>'
                                    % (len(chips), "".join(chips)))

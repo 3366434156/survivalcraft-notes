@@ -8,7 +8,7 @@
 
 ## 目录地图
 
-| 家族 | 文件(绝对路径前缀 `E:\SurvivalcraftAPIProject\Engine\Engine\`) | 职责 |
+| 家族 | 文件(仓库路径前缀 `Engine\Engine\`) | 职责 |
 |---|---|---|
 | 窗口 | `Window.cs`(932行) `WindowMode.cs` `UnhandledExceptionInfo.cs` | 静态窗口门面：平台分派、生命周期事件、帧回调挂载点 |
 | 时间 | `Time.cs` | 墙钟单例：帧号/帧时长/延时队列/限帧 |

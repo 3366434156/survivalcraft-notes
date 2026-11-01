@@ -8,7 +8,7 @@ Subsystem 是"每个世界一份的单例服务"：注册进 Project 模板、�
 
 ## 目录地图
 
-| 符号(类/文件) | 绝对路径 | 职责 |
+| 符号(类/文件) | 仓库路径 | 职责 |
 |---|---|---|
 | `Subsystem` 基类 | E:\SurvivalcraftAPIProject\EntitySystem\GameEntitySystem\Subsystem.cs | 生命周期契约(Load/Save/Dispose/OnEntityAdded) |
 | `Project` | E:\SurvivalcraftAPIProject\EntitySystem\GameEntitySystem\Project.cs | 持有子系统表；实例化/加载/保存/互查 |

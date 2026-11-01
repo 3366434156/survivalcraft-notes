@@ -278,7 +278,7 @@ a{color:inherit}
     <span class=a>"GameplayImpactLevel":</span> <span class=s>"Assist"</span>
 }</code></pre></div>
 <h3 id="exampleglowore-cs-完整-一个文件两个类">ExampleGlowOre.cs（完整，一个文件两个类）</h3>
-<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>csharp</span></div><pre class="code lang-csharp"><code><span class=k>using</span> <span class=t>Engine</span>;                                                  <span class=c>// Log 所在命名空间（E:\SurvivalcraftAPIProject\Engine\Engine\Log.cs:1）</span>
+<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>csharp</span></div><pre class="code lang-csharp"><code><span class=k>using</span> <span class=t>Engine</span>;                                                  <span class=c>// Log 所在命名空间（Engine\Engine\Log.cs:1）</span>
 
 <span class=k>namespace</span> <span class=t>MyCompany</span>.<span class=t>ExampleGlowOre</span> {                           <span class=c>// 自有命名空间防重名（同名类会互相顶替，BlocksManager.cs:307-313）</span>
     <span class=k>public</span> <span class=k>class</span> <span class=t>ExampleGlowOreLoader</span> : <span class=t>ModLoader</span> {            <span class=c>// 契约照抄 ModLoader.cs:10（public 非抽象+public 无参构造，ModEntity.cs:412-421 实例化后立即调 __ModInitialize）</span>

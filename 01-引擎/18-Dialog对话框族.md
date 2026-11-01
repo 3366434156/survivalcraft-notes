@@ -10,7 +10,7 @@ Dialog 目录级域：模态对话框容器（遮罩/动画/生命周期）、�
 
 ## 目录地图
 
-| 符号(类/文件) | 绝对路径 | 职责 |
+| 符号(类/文件) | 仓库路径 | 职责 |
 |---|---|---|
 | `Dialog` | E:\SurvivalcraftAPIProject\Survivalcraft\Dialog\Dialog.cs | 全部对话框基类：CanvasWidget + 全屏命中 + Size=∞ |
 | `DialogsManager` | E:\SurvivalcraftAPIProject\Survivalcraft\Managers\DialogsManager.cs | 静态管理：挂树/遮罩/进出场动画/每帧更新 |

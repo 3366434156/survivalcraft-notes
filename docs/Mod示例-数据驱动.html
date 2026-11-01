@@ -257,7 +257,7 @@ a{color:inherit}
 <h2 id="前置知识">前置知识</h2>
 <ul><li><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a>：装载 20 步、modinfo 13 键陷阱、包结构红线</li><li><a href="01-引擎/04-方块系统.html">04-方块系统</a>"csv 数据覆盖"节：解析规则逐条（本文不重复）</li><li><a href="Mod开发配方.html">Mod开发配方</a>"数据资产"节：原版数据文件底本位置</li></ul>
 <h2 id="原理-30-秒">原理 30 秒</h2>
-<ul><li>模组 <code>.csv</code> 与原版 <code>BlocksData.txt</code> 共用同一解析器 <code>BlocksManager.LoadBlocksData</code>（E:\SurvivalcraftAPIProject\Survivalcraft\Managers\BlocksManager.cs:1037-1094）：<b>第 1 行是本文件自己的表头</b>；逐行按"第 1 列类名"找到已注册的 Block 实例，回写 public 非静态实例字段；空单元格=不改该字段（:1073）。</li><li>模组 <code>.cr</code> 经 <code>ModsManager.CombineCrLogic</code>（E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\ModsManager.cs:974-996）：<code>&lt;Recipe&gt;</code> 无指令前缀属性 = <b>追加新配方</b>（:988-990）；<code>new-Xxx</code>/<code>r-Xxx</code> 前缀才改/删同款（:977-987）。</li><li>时序：csv 在全部方块注册后的 <code>PostProcessBlocksLoad</code> 逐模组加载（BlocksManager.cs:407-411），<code>.cr</code> 在 <code>CombineDataBase</code> 阶段合并（ModEntity.cs:365-378）——所以 csv 能改原版方块、也能改自己 mod 的方块。</li></ul>
+<ul><li>模组 <code>.csv</code> 与原版 <code>BlocksData.txt</code> 共用同一解析器 <code>BlocksManager.LoadBlocksData</code>（Survivalcraft\Managers\BlocksManager.cs:1037-1094）：<b>第 1 行是本文件自己的表头</b>；逐行按"第 1 列类名"找到已注册的 Block 实例，回写 public 非静态实例字段；空单元格=不改该字段（:1073）。</li><li>模组 <code>.cr</code> 经 <code>ModsManager.CombineCrLogic</code>（Survivalcraft\ModsManager\ModsManager.cs:974-996）：<code>&lt;Recipe&gt;</code> 无指令前缀属性 = <b>追加新配方</b>（:988-990）；<code>new-Xxx</code>/<code>r-Xxx</code> 前缀才改/删同款（:977-987）。</li><li>时序：csv 在全部方块注册后的 <code>PostProcessBlocksLoad</code> 逐模组加载（BlocksManager.cs:407-411），<code>.cr</code> 在 <code>CombineDataBase</code> 阶段合并（ModEntity.cs:365-378）——所以 csv 能改原版方块、也能改自己 mod 的方块。</li></ul>
 <h2 id="制品">制品</h2>
 <h3 id="目录树-scmod-zip-容器-条目名一律-utf-8">目录树（.scmod = zip 容器，条目名一律 UTF-8）</h3>
 <div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>text</span></div><pre class="code"><code>example-databasics.scmod
@@ -275,15 +275,15 @@ a{color:inherit}
     <span class=a>"LoadOrder":</span> <span class=n>10000</span>,
     <span class=a>"GameplayImpactLevel":</span> <span class=s>"Break"</span>
 }</code></pre></div>
-<ul><li><code>LoadOrder</code> 必须是 JSON 数字（写成 <code>"10000"</code> 静默退 0）；<code>GameplayImpactLevel</code> 大小写敏感、取"产量倍增"含义故填 Break（枚举注释 E:\SurvivalcraftAPIProject\Survivalcraft\Game\GameplayImpactLevel.cs:29-32）。解析逐键规则见 12 页 modinfo 表（<code>ModsManager.DeserializeJson</code> ModsManager.cs:219-354）。</li><li>故意省略 <code>NonPersistentMod</code>：默认 false = 常规模组（会记入存档 UsedMods）；要临时试效果才写<b>字面量</b> <code>true</code>。</li></ul>
+<ul><li><code>LoadOrder</code> 必须是 JSON 数字（写成 <code>"10000"</code> 静默退 0）；<code>GameplayImpactLevel</code> 大小写敏感、取"产量倍增"含义故填 Break（枚举注释 Survivalcraft\Game\GameplayImpactLevel.cs:29-32）。解析逐键规则见 12 页 modinfo 表（<code>ModsManager.DeserializeJson</code> ModsManager.cs:219-354）。</li><li>故意省略 <code>NonPersistentMod</code>：默认 false = 常规模组（会记入存档 UsedMods）；要临时试效果才写<b>字面量</b> <code>true</code>。</li></ul>
 <h3 id="basics-csv-完整-2-行改动-1-行可选演示">basics.csv（完整，2 行改动 + 1 行可选演示）</h3>
-<p>底本：原版 <code>E:\SurvivalcraftAPIProject\Survivalcraft\Content\Assets\BlocksData.txt</code> 第 1 行表头 + 第 6 行 DirtBlock（DefaultDropCount=1，DefaultDropContent=<code>#</code>=自引用掉落）。模组 csv 不必抄全 79 列——只写要改的列即可（解析器读本文件自己的表头，:1040/:1073）：</p>
+<p>底本：原版 <code>Survivalcraft\Content\Assets\BlocksData.txt</code> 第 1 行表头 + 第 6 行 DirtBlock（DefaultDropCount=1，DefaultDropContent=<code>#</code>=自引用掉落）。模组 csv 不必抄全 79 列——只写要改的列即可（解析器读本文件自己的表头，:1040/:1073）：</p>
 <div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>text</span></div><pre class="code"><code>Class Name;DefaultDropCount;DefaultDropContent
 DirtBlock;3;
 IceBlock;;#</code></pre></div>
 <ul><li>第 2 行：泥土掉落 1→3（留空 DefaultDropContent=沿用原版 <code>#</code>）。</li><li>第 3 行：冰掉落改为掉自己（<code>#</code>=本方块 BlockIndex，语法 :1078-1085；<code>#WaterBlock</code> 形式可引用别的方块）。</li><li>csv 唯一能表达的"换装"是改显示名等字段值：把上表表头第三列换成 <code>DefaultDisplayName</code>，行写 <code>DirtBlock;3;沃土</code>。<b>csv 无法新增方块、无法做染色变体</b>：第 1 列只按类名匹配已注册实例（:1056），染色在 data 位不是 csv 字段——换色变体请走 <a href="01-引擎/04-方块系统.html">04-方块系统</a> 的 PaintedCubeBlock/data 编码，此处按"宁缺毋错"放弃。</li></ul>
 <h3 id="basics-cr-完整">basics.cr（完整）</h3>
-<p>底本：原版 <code>E:\SurvivalcraftAPIProject\Survivalcraft\Content\Assets\CraftingRecipes.xml:69-73</code> 的木棍配方（<code>"a"</code>×2 竖排，a=planks），仅把配料换成泥土的 CraftingId（DirtBlock 行 CraftingId=<code>dirt</code>）：</p>
+<p>底本：原版 <code>Survivalcraft\Content\Assets\CraftingRecipes.xml:69-73</code> 的木棍配方（<code>"a"</code>×2 竖排，a=planks），仅把配料换成泥土的 CraftingId（DirtBlock 行 CraftingId=<code>dirt</code>）：</p>
 <div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>xml</span></div><pre class="code lang-xml"><code><span class=t2>&lt;Recipes</span><span class=t2>&gt;</span>
     <span class=t2>&lt;Recipe</span> <span class=a>Result</span>=<span class=s>"StickBlock"</span> <span class=a>ResultCount</span>=<span class=s>"4"</span> <span class=a>RequiredHeatLevel</span>=<span class=s>"0"</span> <span class=a>a</span>=<span class=s>"dirt"</span> <span class=a>Description</span>=<span class=s>"[0]"</span><span class=t2>&gt;</span>
       <span class=s>"a"</span>

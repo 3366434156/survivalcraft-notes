@@ -9,7 +9,7 @@
 
 ## 目录地图
 
-| 符号(类/文件) | 绝对路径 | 职责 |
+| 符号(类/文件) | 仓库路径 | 职责 |
 |---|---|---|
 | `ModsManager` | E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\ModsManager.cs | 扫描 .scmod、modinfo 解析、钩子表、拓扑排序、CombineDataBase、Rescan |
 | `ModEntity` | E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\ModEntity.cs | 一个模组的内存表示：文件清单/资源合并/程序集加载/依赖检查 |

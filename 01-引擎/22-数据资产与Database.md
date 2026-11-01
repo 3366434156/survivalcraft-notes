@@ -8,7 +8,7 @@ Content/Assets 下约 20 族纯数据文件把原版大半设计(1132 个模板�
 
 ## 目录地图
 
-| 符号(类/文件) | 绝对路径 | 职责 |
+| 符号(类/文件) | 仓库路径 | 职责 |
 |---|---|---|
 | `Database.xml` | E:\SurvivalcraftAPIProject\Survivalcraft\Content\Assets\Database.xml | 全游戏模板库：实体/组件/子系统/项目模板 + GUID 继承树 |
 | `BlocksData.txt` | E:\SurvivalcraftAPIProject\Survivalcraft\Content\Assets\BlocksData.txt | 258 种方块 × 79 列参数表(`;` 分隔) |

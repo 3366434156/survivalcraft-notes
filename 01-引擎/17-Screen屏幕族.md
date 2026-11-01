@@ -8,7 +8,7 @@
 
 ## 目录地图
 
-| 符号(类/文件) | 绝对路径 | 职责 |
+| 符号(类/文件) | 仓库路径 | 职责 |
 |---|---|---|
 | `Screen` | E:\SurvivalcraftAPIProject\Survivalcraft\Screen\Screen.cs | 基类：`: CanvasWidget`，仅虚 `Enter(object[])`/`Leave()` |
 | `ScreensManager` | E:\SurvivalcraftAPIProject\Survivalcraft\Managers\ScreensManager.cs | 注册表/栈/动画/绘制（切换细节另见 01 页） |
