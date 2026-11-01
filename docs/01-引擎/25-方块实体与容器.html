@@ -1,0 +1,377 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><script>(function(){try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}})()</script><title>25-方块实体与容器（带数据/带界面方块的端到端全链） · SC 源码笔记</title><style>
+:root{
+--bg:#f8fafc;--sheet:#ffffff;--surface-2:#f1f5f9;--side-bg:#f8fafc;
+--ink:#0f172a;--ink-soft:#475569;--ink-faint:#94a3b8;
+--line:#e6e9f0;--line-strong:#d5dbe5;
+--acc:#4f46e5;--acc-2:#7c3aed;--acc-ink:#4338ca;--acc-soft:#eef2ff;
+--top-bg:rgba(248,250,252,.82);--code-bg:#0f172a;--code-ink:#e2e8f0;
+--shadow:0 1px 2px rgba(2,6,23,.05),0 12px 32px -8px rgba(2,6,23,.10);
+--shadow-sm:0 1px 2px rgba(2,6,23,.06);
+--header-h:58px;--side-w:264px}
+:root[data-theme=dark]{
+--bg:#0a0d14;--sheet:#10141f;--surface-2:#161c2b;--side-bg:#0c101a;
+--ink:#e6e9f0;--ink-soft:#a6afc2;--ink-faint:#64708c;
+--line:#1e2536;--line-strong:#2b3550;
+--acc:#818cf8;--acc-2:#a78bfa;--acc-ink:#a5b4fc;--acc-soft:rgba(99,102,241,.16);
+--top-bg:rgba(10,13,20,.78);--code-bg:#0b101c;--code-ink:#d7dee8;
+--shadow:0 1px 2px rgba(0,0,0,.45),0 14px 36px -10px rgba(0,0,0,.55);
+--shadow-sm:0 1px 2px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px)}
+body{margin:0;font-family:ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",-apple-system,sans-serif;
+color:var(--ink);font-size:15px;line-height:1.8;
+background:radial-gradient(1000px 460px at 78% -12%,rgba(99,102,241,.09),transparent 60%),
+radial-gradient(820px 420px at -8% -4%,rgba(124,58,237,.06),transparent 55%),var(--bg);
+transition:color .2s,background-color .2s}
+::selection{background:var(--acc-soft);color:var(--acc-ink)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+/* 顶栏：玻璃 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
+background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
+#themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
+#themeBtn:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap;border:1px solid var(--line);border-radius:9px;padding:6px 11px;background:var(--surface)}
+#top .gh:hover{color:var(--acc);border-color:var(--acc)}
+/* 布局 */
+#layout{display:flex;min-height:calc(100vh - var(--header-h))}
+#backdrop{display:none}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-size:10.5px;font-weight:700;color:var(--ink-faint);letter-spacing:2.2px;text-transform:uppercase}
+#side .sec:first-child{margin-top:4px}
+#nav a{display:block;padding:5.5px 10px;margin:1px 0;border-radius:8px;color:var(--ink-soft);text-decoration:none;font-size:13.5px;line-height:1.5;transition:background .12s,color .12s}
+#nav a:hover{background:var(--acc-soft);color:var(--acc-ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-ink);font-weight:600;box-shadow:inset 2px 0 0 var(--acc)}
+/* 正文 + 右侧目录 */
+#main{flex:1;min-width:0;padding:32px clamp(16px,3.5vw,44px) 80px}
+#contentrow{display:flex;gap:34px;align-items:flex-start;justify-content:center;max-width:1240px;margin:0 auto}
+article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow);overflow-wrap:break-word}
+h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
+background:linear-gradient(120deg,var(--ink) 30%,var(--acc-ink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;padding-left:13px;border-bottom:1px solid var(--line);position:relative}
+h2::before{content:"";position:absolute;left:0;top:4px;bottom:13px;width:4px;border-radius:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:.9}
+h3{font-size:16px;font-weight:700;margin:26px 0 10px}
+p{margin:10px 0}
+a{color:var(--acc-ink);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:6px 12px 12px 6px;color:var(--ink-soft);font-size:14.5px}
+blockquote p{margin:4px 0}
+code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:break-word}
+:root[data-theme=dark] code{color:#c7d2fe}
+:root[data-theme=dark] article{border-color:rgba(148,163,184,.15);box-shadow:0 20px 48px -20px rgba(0,0,0,.65)}
+:root[data-theme=dark] #top{border-bottom-color:rgba(148,163,184,.13)}
+:root[data-theme=dark] #side{border-right-color:rgba(148,163,184,.1)}
+pre.code{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:var(--shadow-sm)}
+pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);box-shadow:var(--shadow-sm)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
+th{background:var(--surface-2);color:var(--ink);font-weight:600;text-align:left}
+th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:break-word}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--acc-soft)}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+ul,ol{padding-left:1.5em;margin:10px 0}
+li{margin:4px 0}
+#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+/* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
+pre.code .k{color:#ff7b72}
+pre.code .t{color:#ffa657}
+pre.code .s{color:#a5d6ff}
+pre.code .c{color:#8b949e;font-style:italic}
+pre.code .n{color:#79c0ff}
+pre.code .a{color:#d2a8ff}
+pre.code .t2{color:#7ee787}
+/* 上一页/下一页 */
+.pn{display:flex;gap:14px;margin:36px 0 6px}
+.pn a{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pn a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(79,70,229,.35)}
+.pn a.next{text-align:right}
+.pn a small{color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px}
+.pn a b{color:var(--acc-ink);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .pnvoid{flex:1}
+/* 首页三入口卡片 */
+.hero{margin:24px 0 4px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
+.hcard:hover::before{opacity:1}
+.hcard .ico{font-size:21px;line-height:1}
+.hcard b{font-size:15.5px;color:var(--ink)}
+.hcard span{font-size:12.5px;color:var(--ink-soft)}
+/* 长表格：内部滚动 + 粘性表头 */
+.tablewrap.tall{max-height:calc(100vh - 150px);overflow:auto}
+.tablewrap.tall th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line-strong)}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
+.deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
+/* ── 交互层 ── */
+#pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0}
+#btt{position:fixed;right:22px;bottom:26px;z-index:18;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--acc);font-size:17px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:all .25s;box-shadow:var(--shadow-sm)}
+#btt.show{opacity:1;pointer-events:auto;transform:none}
+#btt:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);transform:translateY(-2px)}
+pre.code{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:var(--code-ink);border-radius:7px;padding:3px 9px;font-size:11.5px;cursor:pointer;opacity:0;transition:all .18s}
+pre.code:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.15);border-color:var(--acc)}
+.copybtn.ok{color:#4ade80;border-color:rgba(74,222,128,.6)}
+.tablewrap{transition:box-shadow .2s,border-color .2s}
+.tablewrap:hover{border-color:var(--line-strong);box-shadow:0 6px 24px -8px rgba(2,6,23,.18)}
+tr[id] td:first-child{font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:12.5px}
+tr[id] td{transition:background .12s}
+tr[id]:hover td{background:var(--acc-soft)}
+#nav a{transition:background .15s,color .15s,padding-left .15s}
+#nav a:hover{padding-left:15px}
+#tocnav a{transition:color .12s,background .12s,padding-left .15s}
+#tocnav a:hover{padding-left:15px}
+.jumpbox{margin:12px 0 2px}
+.jumpbox summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--acc-ink);background:var(--acc-soft);border:1px solid var(--line);border-radius:9px;padding:5px 12px;display:inline-block;list-style:none;transition:all .15s;user-select:none}
+.jumpbox summary::-webkit-details-marker{display:none}
+.jumpbox summary:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 2px}
+.chips a{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--ink-soft);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px 8px;text-decoration:none;transition:all .12s}
+.chips a:hover{color:var(--acc-ink);border-color:var(--acc);background:var(--acc-soft);transform:translateY(-1px)}
+.rv{opacity:0;transform:translateY(10px)}
+.rv.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
+@media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none}}
+/* 右侧目录 */
+#toc{flex:0 0 224px;position:sticky;top:calc(var(--header-h) + 26px);max-height:calc(100vh - var(--header-h) - 52px);overflow-y:auto;font-size:12.5px;line-height:1.5;padding:4px 0 20px}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ink-faint);margin:8px 10px 10px;text-transform:uppercase}
+#tocnav a{display:block;padding:4px 10px;border-left:2px solid var(--line);color:var(--ink-soft);text-decoration:none;border-radius:0 7px 7px 0;margin:1px 0}
+#tocnav a.lvl3{padding-left:22px;font-size:12px;color:var(--ink-faint)}
+#tocnav a:hover{color:var(--acc);text-decoration:none}
+#tocnav a.active{color:var(--acc-ink);border-left-color:var(--acc);background:var(--acc-soft);font-weight:600}
+@media(max-width:1279px){#toc{display:none}#contentrow{max-width:920px}}
+/* 大屏加宽档：含 40+ 行大表的页(wideart)放得更开，散文页适度加宽 */
+article.wideart{max-width:1060px}
+@media(min-width:1600px){#contentrow{max-width:1580px}#foot{max-width:1580px}article{max-width:960px}article.wideart{max-width:1300px}}
+@media(min-width:2000px){#contentrow{max-width:1720px}#foot{max-width:1720px}article{max-width:1020px}article.wideart{max-width:1420px}body{font-size:15.5px}table{font-size:14px}}
+/* 窄屏 */
+@media(max-width:1024px){
+#burger{display:block}
+#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(2,6,23,.42);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
+#backdrop.show{opacity:1;pointer-events:auto}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:14px 0 36px rgba(2,6,23,.2)}
+#side.open{left:0}
+#top .gh{display:block;font-size:11.5px;padding:6px 9px}
+#top .brand small{display:none}
+.searchwrap{width:min(230px,50vw)}
+.searchwrap kbd{display:none}
+#main{padding:22px clamp(14px,3vw,24px) 70px}
+article{padding:22px 18px 30px;border-radius:14px}
+}
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
+/* 手机档（置于 CSS 末尾保证覆盖上方 searchwrap 宽度）：搜索收成纯图标钮，把宽度让给品牌名 */
+@media(max-width:600px){
+.searchwrap{width:38px;padding:7.5px 0;justify-content:center}
+.searchwrap .ph{display:none}
+#top{gap:8px}
+#top .brand b{font-size:15px;letter-spacing:-.1px;max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+#top .gh{font-size:10.5px;padding:6px 7px}
+}
+/* 手机横滚表：首列吸附，滚动时保留行上下文 */
+@media(max-width:760px){
+.tablewrap th:first-child,.tablewrap td:first-child{position:sticky;left:0;z-index:1;background:var(--sheet);box-shadow:inset -1px 0 0 var(--line)}
+.tablewrap th:first-child{background:var(--surface-2);z-index:2}
+.tablewrap.tall th:first-child{z-index:3}
+.tablewrap tbody tr:hover td:first-child{background:var(--acc-soft)}
+/* 慢设备上逐行瀑布会闪空白：手机端直接整行呈现 */
+.rv tbody tr{animation:none;opacity:1;transform:none}
+}
+@media print{
+#top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
+body{background:#fff;color:#000}
+#main{padding:0}#contentrow{display:block}
+article{box-shadow:none;border:none;max-width:100%}
+a{color:inherit}
+}
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 16</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod开发配方2.html">Mod开发配方2</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../数据格式参考3.html">数据格式参考3</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 25</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><a href="../01-引擎/25-方块实体与容器.html">25-方块实体与容器</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="25-方块实体与容器-带数据-带界面方块的端到端全链">25-方块实体与容器（带数据/带界面方块的端到端全链）</h1>
+<blockquote>域: SC引擎 · 更新: 2026-11-01 · 状态: 全读(21/29)（其余 8 个按链路片段实读：GameManager/SubsystemTerrain/TerrainUpdater/SubsystemSignBlockBehavior/Database.xml/ModsManager/ModLoader/IUpdateable）；⚡=ModLoader 钩子/可挂点 一句话定位：<b>箱子/熔炉/工作台/发射器这类"方块上长出的数据体"= 一只按坐标索引的实体（Entity），BlockEntity 组件只当锚点（坐标+代持方块值），数据全在兄弟组件（继承 ComponentInventoryBase）里，界面只是每帧读格子画出来的壳</b>。</blockquote>
+<p>源码引用一律仓库相对路径（<code>Survivalcraft\...</code>、<code>EntitySystem\...</code>）。</p>
+<h2 id="结构总览-实体家族全列">结构总览 · 实体家族全列</h2>
+<div class="tablewrap"><table><thead><tr><th>类名</th><th>挂什么方块</th><th>存什么（ValuesDictionary 契约）</th></tr></thead><tbody><tr><td><code>ComponentBlockEntity</code>（锚组件）</td><td>任何走 <code>SubsystemEntityBlockBehavior</code> 的方块</td><td><code>Coordinates</code>(:81) + <code>MovingBlock</code> 状态(:82)；<b>不存内容物</b>，只代持 <code>BlockValue</code> 读写(:18-46)与"吸拾取物"目标(:59-75)</td></tr><tr><td><code>ComponentChest</code>（:5-15）</td><td>箱子 45</td><td>16 槽（Database.xml:4054-4057 SlotsCount=16）；槽袋见下节</td></tr><tr><td><code>ComponentFurnace</code>（:7-292）</td><td>熔炉 64 + 点亮 65</td><td>5 槽（2 输入+燃料+产物+余渣，:62-66）+ <code>FireTimeRemaining</code>/<code>HeatLevel</code>(:230-234)；IUpdateable 每帧烧</td></tr><tr><td><code>ComponentCraftingTable</code>（:7-183）</td><td>工作台 27</td><td>11 槽（9 配方格+产物+余渣，SlotsCount=11，Database.xml:3399-3400）</td></tr><tr><td><code>ComponentDispenser</code>（:6-124）</td><td>发射器 216</td><td>8 槽（Database.xml:4228-4230）；不含发射方向——方向在方块 data 位(:18-19)</td></tr></tbody></table></div>
+<p>不在家族里的"带数据方块"（对照，别走实体路）：<b>告示牌</b>文本存在 <code>SubsystemSignBlockBehavior</code> 的子系统袋 <code>Texts</code> 里（<code>Survivalcraft\Subsystem\BlockBehavior\SubsystemSignBlockBehavior.cs:208-279</code>，Save 按编号 0,1,2… 写 <code>Line1-4/Color1-4/Url/Point</code>）；塌方、门等也是行为子系统自有袋。判据：要不要"格子容器/独立生命/每格一组数据"——要→实体家族；散点小数据→行为子系统袋。</p>
+<p>管理器 <code>SubsystemBlockEntities</code>（<code>Survivalcraft\Subsystem\SubsystemBlockEntities.cs</code>）只有两个字典：<code>m_blockEntities</code>(Point3→实体,:6)、<code>m_movingBlockEntities</code>(MovingBlock→实体,:8)；注册/注销全靠 <code>OnEntityAdded/OnEntityRemoved</code>(:25-45)，<b>Y&lt;0 的实体不入主表</b>(:31-33)，查找 <code>GetBlockEntity(x,y,z)</code>(:10-23)。它不 tick 任何东西——tick 的是组件自己（见链 5）。</p>
+<h2 id="链-1-放置方块-实体从模板出生">链 1 · 放置方块 → 实体从模板出生</h2>
+<div class="tablewrap"><table><thead><tr><th>#</th><th>发生什么</th><th>出处</th></tr></thead><tbody><tr><td>1</td><td>放格：<code>SubsystemTerrain.ChangeCell</code> → <code>ChangeCellToBehavior</code>：contents 变→旧行为 <code>OnBlockRemoved</code>→新行为 <code>OnBlockAdded</code></td><td>Survivalcraft\Subsystem\SubsystemTerrain.cs:396-427</td></tr><tr><td>2</td><td>命中行为：每个含该方块 ID 的行为都会被调（<code>HandledBlocks</code> 声明：箱 45 / 熔炉 64+65 / 台 27 / 发射器 216）</td><td>SubsystemChestBlockBehavior.cs:5; SubsystemFurnaceBlockBehavior.cs:10; SubsystemCraftingTableBlockBehavior.cs:5; SubsystemDispenserBlockBehavior.cs:5</td></tr><tr><td>3</td><td><code>SubsystemEntityBlockBehavior.OnBlockAdded</code>：<b>同坐标已有实体先报错拒绝</b>（防重复）→ 从模板袋 <code>PopulateFromDatabaseObject(m_databaseObject)</code> 造 ValuesDictionary → 往子袋 <code>BlockEntity</code> 写入 <code>Coordinates</code> → <code>Project.CreateEntity</code>+<code>AddEntity</code></td><td>Survivalcraft\Subsystem\BlockBehavior\SubsystemEntityBlockBehavior.cs:25-35</td></tr><tr><td>4</td><td>模板袋来自游戏库：EntityTemplate <code>Chest</code> 含两个成员组件 <code>Chest</code>(Class=Game.ComponentChest) + <code>BlockEntity</code>(Class=Game.ComponentBlockEntity)</td><td>Survivalcraft\Content\Assets\Database.xml:3351-3354, :3966-3967, :4054-4057</td></tr><tr><td>5</td><td>实体构造时每个成员子袋原样成为组件的 ValuesDictionary（"模板参数与存档值住同一个袋子"）</td><td>EntitySystem\GameEntitySystem\Component.cs:41-47</td></tr><tr><td>6</td><td><code>AddEntity</code> 分配 Entity.Id；此时 <code>PostponeFireEntityAddedEvents=true</code>，注册事件押后</td><td>EntitySystem\GameEntitySystem\Project.cs:181-196, :39</td></tr><tr><td>7</td><td>世界加载路径的实体<b>不走链 1</b>：全部从 Project.xml <code>&lt;Entities&gt;</code> 反序列化（链 6），<code>LoadEntities</code> 尾部统一补发 <code>FireEntityAddedEvents</code> → <code>SubsystemBlockEntities.OnEntityAdded</code> 入字典</td><td>EntitySystem\GameEntitySystem\Project.cs:248-262; SubsystemBlockEntities.cs:25-35</td></tr></tbody></table></div>
+<p>chunk 加载<b>不会</b>重建实体：区块变合法时行为只收 <code>OnBlockGenerated</code>（熔炉用它补火焰粒子），不造实体（Survivalcraft\Game\TerrainUpdater.cs:1299-1325）——野生箱"没实体"的坑正源于此，见链 2 第 5 步。<b>实体与 chunk 卸载零耦合</b>：实体终身驻留 Project，直到方块被挖或世界关闭，跨区块搬家用 MovingBlock 字典切换键（SubsystemEntityBlockBehavior.cs:80-97）。</p>
+<h2 id="链-2-右键交互-打开界面">链 2 · 右键交互 → 打开界面</h2>
+<div class="tablewrap"><table><thead><tr><th>#</th><th>发生什么</th><th>出处</th></tr></thead><tbody><tr><td>1</td><td>玩家交互射线命中 → <code>SubsystemEntityBlockBehavior.OnInteract</code>：按坐标查 <code>GetBlockEntity</code></td><td>SubsystemEntityBlockBehavior.cs:48-63</td></tr><tr><td>2</td><td>⚡ <code>OnEntityBehaviorBlockInteracted</code> 钩子：可整体替换 <code>ref blockEntity</code>（含"原本没有实体"的场景）</td><td>SubsystemEntityBlockBehavior.cs:54-61（签名与文档 Survivalcraft\ModsManager\ModLoader.cs:2075-2090）</td></tr><tr><td>3</td><td>子类 <code>InteractBlockEntity</code>：查具体组件 → <b>new 一个 Widget 塞进玩家 <code>ModalPanelWidget</code></b>（箱子=new ChestWidget(玩家Inventory, componentChest)）→ "Audio/UI/ButtonClick"</td><td>SubsystemChestBlockBehavior.cs:12-21; 同款 Furnace:53-62 / CraftingTable:12-25 / Dispenser:12-23（冒险模式禁开）</td></tr><tr><td>4</td><td>界面销毁不用手动关：Widget.Update 每帧查 <code>IsAddedToProject</code>，实体没了自动摘面板</td><td>ChestWidget.cs:38-42; FurnaceWidget.cs:56-62</td></tr><tr><td>5</td><td>野生箱（地形生成时没有实体）交互时 blockEntity=null → 原版直接返回 false；mod 用钩子 2 现场 <code>Project.CreateEntity</code>+<code>AddEntity</code> 补一只宝箱实体即可救活</td><td>SubsystemChestBlockBehavior.cs:12-21 返回 false 分支</td></tr></tbody></table></div>
+<h2 id="链-3-界面与数据同步-没有-提交-动作-全是实时读写">链 3 · 界面与数据同步（没有"提交"动作，全是实时读写）</h2>
+<div class="tablewrap"><table><thead><tr><th>#</th><th>发生什么</th><th>出处</th></tr></thead><tbody><tr><td>1</td><td>槽位绑定：Widget 构造时给每个格子 new <code>InventorySlotWidget</code> 并 <code>AssignInventorySlot(某IInventory, 槽号)</code>——箱子格绑 componentChest 0-15，玩家背包格绑 componentInventory <b>从 10 起</b>（0-9 是手部格）</td><td>ChestWidget.cs:18-35; FurnaceWidget.cs:33-53</td></tr><tr><td>2</td><td>每帧 <code>InventorySlotWidget.Update</code> 直接 <code>inventory.GetSlotValue/Count</code> 画图标数量——<b>没有中间缓存/脏标记</b>，组件字段改了下一帧就显示</td><td>Survivalcraft\Widget\InventorySlotWidget.cs:201-211</td></tr><tr><td>3</td><td>拖拽拿起：按住+拖 → <code>CalculateSplitCount</code>（全部/单个/对半）→ <code>DragHostWidget.BeginDrag(InventoryDragData{Inventory,SlotIndex,DragMode})</code></td><td>InventorySlotWidget.cs:294-328（拆分数 :499-529）</td></tr><tr><td>4</td><td>放下：目标格 <code>DragDrop</code> → <code>HandleDragDrop</code> 三分支：① 目标 <code>GetSlotProcessCapacity&gt;0</code> → <code>ProcessSlotItems</code>（进食/装填等"加工型"槽，经方块行为链）②普通移入（同值或空格，容量截断）③双向交换</td><td>InventorySlotWidget.cs:569-693（加工归还契约 :609-644）；ProcessCapacity 来源 ComponentInventoryBase.cs:145-160,186-211</td></tr><tr><td>5</td><td>真正搬家只有两个原语：<code>RemoveSlotItems</code>（源）+<code>AddSlotItems</code>（目标，<b>同值/超容直接抛 InvalidOperationException</b>）</td><td>ComponentInventoryBase.cs:162-184, :213-222</td></tr><tr><td>6</td><td>⚡ 拖拽全程四个钩子：<code>OnInventorySlotWidgetCalculateSplitCount</code>、<code>HandleInventoryDragProcess</code>、<code>HandleInventoryDragMove</code>、<code>HandleMoveInventoryItem</code>；格子构造还有 <code>OnInventorySlotWidgetDefined</code> 可加子控件</td><td>InventorySlotWidget.cs:180-189, :514-525, :537-552, :585-598, :650-665</td></tr><tr><td>7</td><td>容量规则：默认=方块 <code>GetMaxStacking</code>；熔炉燃料槽只收 <code>GetFuelHeatLevel&gt;0</code> 的东西（覆写 <code>GetSlotCapacity</code> 返 0=拒收）</td><td>ComponentInventoryBase.cs:137-143; ComponentFurnace.cs:74-82</td></tr></tbody></table></div>
+<h2 id="链-4-挖掉方块-内容物喷出-实体销毁">链 4 · 挖掉方块 → 内容物喷出 → 实体销毁</h2>
+<div class="tablewrap"><table><thead><tr><th>#</th><th>发生什么</th><th>出处</th></tr></thead><tbody><tr><td>1</td><td><code>DestroyCell</code>→<code>ChangeCell(0)</code>→<code>ChangeCellToBehavior</code>→<code>OnBlockRemoved</code></td><td>SubsystemTerrain.cs:414-421</td></tr><tr><td>2</td><td><code>SubsystemEntityBlockBehavior.OnBlockRemoved</code>：按坐标查到实体 → 遍历实体上<b>所有 IInventory</b> 逐格 <code>DropAllItems(格中心)</code>（随机速度抛物）→ <code>Project.RemoveEntity(entity, true)</code></td><td>SubsystemEntityBlockBehavior.cs:37-46</td></tr><tr><td>3</td><td>掉落落地：<code>DropSlotItems</code> → <code>SubsystemPickables.AddPickable</code>（普通掉落物，非实体）</td><td>ComponentInventoryBase.cs:73-86, :224-233</td></tr><tr><td>4</td><td>反向：扔东西砸箱子会<b>被吸进去</b>——<code>OnHitByProjectile</code> → <code>ComponentBlockEntity.GatherPickable</code> → <code>AcquireItems(m_inventoryToGatherPickable,…)</code>；该字段由 ComponentChest/ComponentDispenser 在 Load 时自荐</td><td>SubsystemEntityBlockBehavior.cs:99-113; ComponentBlockEntity.cs:59-75; ComponentChest.cs:12; ComponentDispenser.cs:66</td></tr><tr><td>5</td><td>工作台销毁不弹产物格：覆写 <code>DropAllItems</code> 跳过 <code>ResultSlotIndex</code></td><td>ComponentCraftingTable.cs:108-120</td></tr></tbody></table></div>
+<p>熔炉 64↔65 点亮切换<b>不是</b>挖放：<code>ComponentFurnace.Update</code> 直接改写 <code>m_componentBlockEntity.BlockValue</code> 换 ID，实体和内容物原地不动（ComponentFurnace.cs:143-157；所以 SubsystemFurnaceBlockBehavior 的 Added/Removed 对 64↔65 互切要跳过实体增删，:12-30）。</p>
+<h2 id="链-5-谁在-tick">链 5 · 谁在 tick</h2>
+<ul><li><code>ComponentFurnace</code>/<code>ComponentCraftingTable</code> 实现 <code>IUpdateable</code>；<code>SubsystemUpdate.OnEntityAdded</code> 把实体上所有 IUpdateable 注册进 tick 表（<code>Survivalcraft\Subsystem\SubsystemUpdate.cs:179-189</code>），按 <code>FloatUpdateOrder</code> 排序逐个 <code>Update(dt)</code>（:44-118）。<b>箱子没有 tick</b>——纯静态数据体。</li><li>熔炉每帧：燃料倒计时→无配方熄火→<code>UseFuel</code>（爆炸物当燃料直接引爆 :187-205）→进度累积→满格出货→按热力换 64/65 与火焰粒子（ComponentFurnace.cs:98-158）。</li><li>工作台只在槽变动后的下一帧重算配方（<code>m_recipeUpdateNeeded</code> 标记，ComponentCraftingTable.cs:24-30），配额 <code>num</code> 取 9 格最少堆数(:128-172)。</li><li>发射器不被 tick，被电信号推：<code>DispenserElectricElement</code> 拿 <code>GetBlockEntity</code> 找组件调 <code>Dispense()</code>（Survivalcraft\ElectricElement\DispenserElectricElement.cs:28）。</li></ul>
+<h2 id="链-6-持久化-实体不是-chunk-数据-是世界级-xml">链 6 · 持久化（实体不是 chunk 数据，是世界级 XML）</h2>
+<div class="tablewrap"><table><thead><tr><th>#</th><th>发生什么</th><th>出处</th></tr></thead><tbody><tr><td>1</td><td>保存：<code>GameManager.SaveProject</code> → <code>m_project.Save()</code>：每个实体的每个组件调 <code>Save(ValuesDictionary,…)</code>（Count&gt;0 才落盘），汇总成 <code>ProjectData.EntityDataList</code></td><td>Managers\GameManager.cs:118-131; EntitySystem\GameEntitySystem\Project.cs:284-297, :264-282</td></tr><tr><td>2</td><td>后台线程写 <code>&lt;世界目录&gt;/Project.xml</code> 的 <code>&lt;Entities&gt;</code> 节点（存档值与模板参数同袋覆盖，详见 <a href="../01-引擎/11-存档持久化.html">11页</a>）；钩子 <code>ProjectXmlSave</code>/<code>OnProjectXmlSaved</code> 可改整棵 XML</td><td>GameManager.cs:133-159</td></tr><tr><td>3</td><td>组件契约：ComponentBlockEntity 存 <code>Coordinates</code>；ComponentInventoryBase 存 <code>Slots</code> 子袋，<b>只写 Count&gt;0 的槽</b>（键 <code>Slot{i}</code> → <code>Contents</code>+<code>Count</code>）；熔炉追加 <code>FireTimeRemaining</code>/<code>HeatLevel</code></td><td>ComponentBlockEntity.cs:85-88; ComponentInventoryBase.cs:104-116; ComponentFurnace.cs:230-234</td></tr><tr><td>4</td><td>加载：<code>LoadProject</code> → <code>new ProjectData</code> 读 <code>&lt;Entities&gt;</code> → <code>new Project</code> 构造+组件 Load → 统一补发实体添加事件入字典</td><td>GameManager.cs:32-105; Project.cs:42-108（入表 :248-262）</td></tr><tr><td>5</td><td>版本迁移点：1.28→1.29 转换器对<b>六个名字</b>（Inventory/CreativeInventory/CraftingTable/Chest/Furnace/Dispenser）的 <code>Slots</code> 子袋逐槽重映射 <code>Contents</code> 物品值；1.21→1.22 同款名单</td><td>Survivalcraft\Game\VersionConverter128To129.cs:81-99; VersionConverter21To22.cs:93</td></tr><tr><td>6</td><td>删模组兼容：实体模板整只找不到→警告丢弃该实体；组件 Class 未知→按 IsOptional 分崩</td><td>11 页"损坏与兼容"</td></tr></tbody></table></div>
+<h2 id="数据契约速记">数据契约速记</h2>
+<ul><li><b>实体模板三件套</b>（Database.xml）：EntityTemplate（名字=模板名）→ MemberComponentTemplate <code>BlockEntity</code>（继承 <code>09a85cba…</code>）+ 业务组件（带 <code>SlotsCount</code> 参数）→ 各自 ComponentTemplate 的 <code>Class</code> 参数指 C# 类。</li><li><b>方块 ↔ 实体桥</b>：<code>SubsystemEntityBlockBehavior</code> 子类在 Load 里 <code>FindDatabaseObject("模板名", EntityTemplateType, true)</code> 绑模板（SubsystemChestBlockBehavior.cs:9），<code>HandledBlocks</code> 声明方块 ID。</li><li><b>槽位下标约定</b>：熔炉末三格=燃料/产物/余渣（<code>SlotsCount-3/-2/-1</code>）；工作台末两格=产物/余渣；玩家背包 0-9 手部格——自己写容器时照此"功能区放尾部"。</li></ul>
+<h2 id="原版范例表">原版范例表</h2>
+<div class="tablewrap"><table><thead><tr><th>我要做…</th><th>照抄哪里</th><th>为什么</th></tr></thead><tbody><tr><td>最简：带 16 格容器的自定义方块</td><td>箱子四件套：Database.xml:3351-3354 + <code>SubsystemChestBlockBehavior.cs</code>（23 行）+ <code>ComponentChest.cs</code>（15 行，空壳继承）+ <code>ChestWidget.cs</code>（43 行）</td><td>全链最短路径：数据/逻辑/界面三层都零定制，改名字和 SlotsCount 就能用</td></tr><tr><td>最全：带状态机+每帧逻辑+换方块外观</td><td>熔炉：<code>ComponentFurnace.cs</code>（IUpdateable、燃料表、64↔65 换装、粒子）+ <code>SubsystemFurnaceBlockBehavior.cs</code>（双 ID 豁免、OnBlockGenerated）</td><td>唯一演示"实体活起来"和"点亮态不重建实体"的完整样板</td></tr><tr><td>纯数据方块（无容器）</td><td>锚组件照抄 <code>ComponentBlockEntity</code> 本体，业务组件自定 Load/Save 存任意键（ValuesDictionary 随实体落 Project.xml）</td><td>告示牌那种"行为子系统袋"方案适合无实体生命周期的散点数据；要按坐标查+随挖消失就用实体</td></tr><tr><td>特殊槽位规则（只收某类物品）</td><td><code>ComponentFurnace.GetSlotCapacity</code> 覆写返 0 拒收（:74-82）；"加工型"槽走 <code>GetSlotProcessCapacity</code>+方块行为 <code>GetProcessInventoryItemCapacity</code>（ComponentInventoryBase.cs:145-160）</td><td>容量 0=UI 拖不进去，这是原版唯一入口</td></tr><tr><td>把容器数据存成新键</td><td>照抄 <code>ComponentFurnace.Save/Load</code>：base.Save 之后 <code>SetValue</code> 追加（:230-234）；Load 里 <code>GetValue(key, default)</code> 给默认值</td><td>老档没有该键时静默用默认值，天然向后兼容</td></tr><tr><td>界面里混排多个容器</td><td><code>ChestWidget.cs:18-35</code>：左右两个 GridPanelWidget 分别 <code>AssignInventorySlot</code> 绑不同 IInventory</td><td>拖拽系统天生支持跨 IInventory 搬运（InventorySlotWidget.cs:224-239 SpecialClick 快捷转移按"页面里另一只 inventory"找目标）</td></tr><tr><td>mod 注册自己的实体模板/行为</td><td>Database.xml 片段随 mod 合并：<code>ModsManager.CombineDataBase</code>（Survivalcraft\ModsManager\ModsManager.cs:1073-1130，新增 EntityTemplate 自动打 ModSource 标）；行为子系统照抄 Database.xml:3535-3536 的 SubsystemTemplate+Class 参数写法</td><td>不用写注册代码，数据驱动；<code>Remove</code> 属性可删原版模板</td></tr><tr><td>拦截/增强容器交互</td><td>⚡<code>OnEntityBehaviorBlockInteracted</code>（ModLoader.cs:2075-2090）救野生箱；⚡<code>HandleMoveInventoryItem</code> 系四钩子（InventorySlotWidget.cs:537-665）改搬运规则；⚡<code>DispenserChooseItemToDispense</code>（ComponentDispenser.cs:37-43）改发射选槽</td><td>钩子都在链上的确切位置，见各出处行号</td></tr></tbody></table></div>
+<h2 id="快查路由">快查路由</h2>
+<ul><li><b>箱子里东西不见了</b>：先查 <code>Project.xml</code> 搜组件名（Chest/Furnace…）看 <code>Slots</code> 在不在——不在=该实体没被保存过或模板袋无此键；再查是否走了 1.28→1.29 转换（VersionConverter128To129.cs:81）。</li><li><b>打开界面立刻闪退/黑面板</b>：<code>InteractBlockEntity</code> 里 <code>FindComponent&lt;T&gt;(true)</code> 找不到组件（模板没挂该 MemberComponent）→ 崩；照 Database.xml:3351-3354 对齐。</li><li><b>同坐标实体已存在报错</b>：<code>A blockEntity already exists</code>（SubsystemEntityBlockBehavior.cs:27）——换方块时旧实体没被 OnBlockRemoved 清掉（如用 mod 直接改地形没走 ChangeCell）。</li><li><b>拖进格子没反应</b>：<code>GetSlotCapacity</code> 返 0（拒收）或目标格 <code>AddSlotItems</code> 抛同值/超容异常——查 ComponentInventoryBase.cs:162-184。</li><li><b>想每帧动箱子</b>：给业务组件实现 <code>IUpdateable</code> 即自动进 tick 表（SubsystemUpdate.cs:179-183），箱子本体没有 tick 是原版选择不是限制。</li><li><b>MovingBlock（活塞/塌方）搬运</b>：键从坐标字典切到 MovingBlock 字典再切回，Coordinates 同步改写（SubsystemEntityBlockBehavior.cs:80-97）。</li><li>交互 Widget 家族明细 → <a href="../01-引擎/09-UI与Widget体系.html">09页</a>；IInventory 全实现类与玩家背包 → <a href="../01-引擎/03-实体与组件体系.html">03页</a>/<a href="../01-引擎/16-玩法物品与背包.html">16页</a>；Project.xml 序列化底座与钩子 → <a href="../01-引擎/11-存档持久化.html">11页</a>；Database/模板继承 → <a href="../01-引擎/22-数据资产与Database.html">22页</a>；放置/挖掘公共底座 → <a href="../01-引擎/24-机制全链.html">24页</a> 链 1/2。</li></ul><nav class=pn><a class="prev" href="../01-引擎/24-机制全链.html"><small>上一页 · SC引擎</small><b>24-机制全链</b></a><a class="next" href="../01-引擎/明细/02a-子系统明细.html"><small>下一页 · SC引擎·明细</small><b>02a-子系统明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#结构总览-实体家族全列">结构总览 · 实体家族全列</a><a class="lvl2" href="#链-1-放置方块-实体从模板出生">链 1 · 放置方块 → 实体从模板出生</a><a class="lvl2" href="#链-2-右键交互-打开界面">链 2 · 右键交互 → 打开界面</a><a class="lvl2" href="#链-3-界面与数据同步-没有-提交-动作-全是实时读写">链 3 · 界面与数据同步（没有&quot;提交&quot;动作，全是实时读写）</a><a class="lvl2" href="#链-4-挖掉方块-内容物喷出-实体销毁">链 4 · 挖掉方块 → 内容物喷出 → 实体销毁</a><a class="lvl2" href="#链-5-谁在-tick">链 5 · 谁在 tick</a><a class="lvl2" href="#链-6-持久化-实体不是-chunk-数据-是世界级-xml">链 6 · 持久化（实体不是 chunk 数据，是世界级 XML）</a><a class="lvl2" href="#数据契约速记">数据契约速记</a><a class="lvl2" href="#原版范例表">原版范例表</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+const $=s=>document.querySelector(s);
+const ROOT="../"; // 站点根相对前缀（按页面深度注入）
+// 主题切换
+const tbtn=$('#themeBtn');
+function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
+applyTheme(document.documentElement.dataset.theme||'light');
+tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+// ⌘K 命令面板
+let IDX=[];
+fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
+});
+// 移动端侧栏抽屉
+const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
+function setSide(open){side.classList.toggle('open',open);backdrop.classList.toggle('show',open)}
+burger.addEventListener('click',e=>{e.stopPropagation();setSide(!side.classList.contains('open'))});
+document.addEventListener('click',e=>{if(window.innerWidth<=1024&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==burger)setSide(false)});
+backdrop.addEventListener('click',()=>setSide(false));
+// 高亮当前页
+const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
+document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
+const tocLinks=[...document.querySelectorAll('#tocnav a')];
+if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
+  const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
+  const onScroll=()=>{
+    let idx=0;
+    for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
+    tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
+  };
+  document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
+document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
+btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+// 代码块复制按钮
+document.querySelectorAll('pre.code').forEach(pre=>{
+  const b=document.createElement('button');b.className='copybtn';b.textContent='复制';
+  b.addEventListener('click',async()=>{const txt=pre.innerText;let ok=false;
+    try{await navigator.clipboard.writeText(txt);ok=true}catch(e){
+      try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(e2){}}
+    b.textContent=ok?'✓ 已复制':'失败';
+    if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
+  pre.appendChild(b);
+});
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
+</script></body></html>

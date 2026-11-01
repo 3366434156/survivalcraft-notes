@@ -1,6 +1,6 @@
 # Mod 开发配方 2（全量任务索引 · 任务 → 照抄原版代码）
 
-> 独立库 · 更新: 2026-11-01 · 状态: 19 个引擎主线页"原版范例"表 + [Mod开发配方.md](Mod开发配方.md) 全量去重合并（235 条）；按任务动词分 15 大类，类内按域分组。
+> 独立库 · 更新: 2026-11-01 · 状态: 23 个引擎主线页"原版范例"表 + [Mod开发配方.md](Mod开发配方.md) 全量去重合并（243 条）；按任务动词分 15 大类，类内按域分组。
 > 精选高频 30 条在 [Mod开发配方.md](Mod开发配方.md)；本页是全量索引，一条一行。
 
 **路径约定**：裸文件名均在 `E:\SurvivalcraftAPIProject\Survivalcraft\` 子树下；带 `Engine\Engine\`、`Engine.Media\`、`Engine.Animation\`、`Engine.Browser\`、`Survivalcraft.Browser\` 前缀的按前缀定位。行号以各页写页当日实读为准（关键行已抽验）。
@@ -36,6 +36,8 @@
 
 | 域 | 我要做… | 照抄哪里（+为什么抄它） |
 |---|---|---|
+| 组件 | 写一个完整自定义组件（契约全集） | `ComponentSpawn.cs`（61 行全文件：IUpdateable+Load 抓服务/兄弟组件（必需/可选依赖两种写法同框）+Save 条件落盘+Update 到点 RemoveEntity） 〔03〕 |
+| 组件 | 运行时按模板生成实体（模板+微调） | `Managers\DatabaseManager.cs:77-92`（CreateEntity 带 ValuesDictionary overrides 重载）+批量落点照 `SubsystemCreatureSpawn.cs:1104-1135`（50 次随机偏移+适宜度>0） 〔03〕 |
 | AI | 新增一个引擎级 AI 行为 | `ComponentWalkAroundBehavior.cs:6`（最简 ComponentBehavior 子类：ImportanceLevel+IsActive+Update）；调度器 `ComponentBehaviorSelector.cs` 自动收集，无需注册 〔03〕 |
 | AI | 生物追逐目标并打人 | `ComponentChaseBehavior.cs:6`（只置 AttackOrder）；命中链 :180→`ComponentMiner.cs:636-715`（伤害/命中率/耐久/统计全在 Miner，绕过会丢全套管线） 〔03〕 |
 | 生物 | 伤害/死亡/掉落全链 | [03页](01-引擎/03-实体与组件体系.md)"生命/伤害结算链"（Injure→Process→Die→掉落→Despawn 带行号） 〔03〕 |
@@ -61,6 +63,7 @@
 |---|---|---|
 | 子系统 | 新增子系统 | Subsystem 基类+xdb MemberSubsystemTemplate（[02页](01-引擎/02-Subsystem体系.md) 全链含 XML 片段路由） 〔02〕 |
 | 子系统 | 子系统互查/顺序 | `Project.FindSubsystem`+Dependencies 声明；"全体 Load 前"窗口=`ProjectBeforeSubsystemsAndEntitiesLoad` 〔02〕 |
+| 子系统 | tick 内每 N 游戏秒做一次 | `SubsystemTime.cs:147-155`（PeriodicGameTimeEvent）+用法 `ComponentHealth.cs:320`（每 2 游戏秒判溺水）——随速度倍率/睡觉加速，墙钟版见 〔01〕 〔02〕 |
 | 电学 | 自定义电力元件 4 步全流程 | ElectricElement 子类（[15页](01-引擎/15-电学与机构.md) 4 步+百科 03-add-an-element）；**必须**补进 63 ID 硬编码表 `SubsystemElectricBlockBehavior.cs:8-70` 〔15〕 |
 | 电学 | 最小执行元件 | `GunpowderKegElectricElement.cs:5-12`（全库最短：高数>0→调行为子系统） 〔15〕 |
 | 电学 | 常量脉冲源 | `ButtonElectricElement.cs:16-39`（Press→+1 步起、+10 步回落） 〔15〕 |
@@ -290,6 +293,10 @@
 | 物理 | 实体间挤压/击退 | `ComponentBody.cs:854-945`（HandleAxisCollision）+`InelasticCollision:1288`（非弹性碰撞系数） 〔13〕 |
 | 物理 | 空间查询/射线 | `SubsystemBodies.cs:18`(FindBodiesAroundPoint)/:52(Raycast)+`BodyRaycastResult` 〔13〕 |
 | 物理 | 爆炸 | `SubsystemExplosions`（压力/破坏/点燃链，见 [13页](01-引擎/13-物理与碰撞.md)） 〔13〕 |
+| 物理 | 发射一颗弹道（发射器全流程） | `ComponentDispenser.cs:91-118`（CanFireProjectile 测遮挡出炮口→CreateProjectile 初速 39~41+扰动→OnDispenseShoot 钩子→FireProjectileFast） 〔13〕 |
+| 物理 | 触发一次爆炸（起爆方块/纯冲击波） | `DetonatorElectricElement.cs:5-16`（TryExplodeBlock 一行起爆）+`SubsystemSky.cs:258-260`（AddExplosion 末参静音的无声波） 〔13〕 |
+| 物理 | 主动击退/后坐力（施加冲量） | `Attackment.cs:193-198`（命中向+抖动+0.2 上抬配方，ImpulseFactor≤0 早退）+`SubsystemMusketBlockBehavior.cs:199`（-4×射向后坐） 〔13〕 |
+| 物理 | 自定义实体碰撞箱（大小） | `ComponentBody.cs:370`（BoxSize 是模板参数，全仓无 ComponentBody 子类）+`Content\Assets\Database.xml:104`（牛 1.3,1.4,1.3）；蹲伏缩半 StanceBoxSize :122 〔13〕 |
 
 ## 十五、平台工具与排查（Engine 核心 + 浏览器）
 
@@ -306,6 +313,7 @@
 | 引擎 | SIMD 批量变换 | `Engine\Engine\Vector3.cs:257-280`（全仓唯一带崩溃实证注释的范本；外门必须 AdvSimd\|\|Sse） 〔21〕 |
 | 引擎 | 平滑插值/缓动 | `Engine\Engine\MathUtils.cs:213-218` Lerp/SmoothStep（UI 动画与相机过渡的标准件） 〔21〕 |
 | 引擎 | 自定义日志落盘 | `Engine\Engine\StreamLogSink.cs:7-28`（实现 ILogSink 30 行完事，挂 `Log.AddLogSink`） 〔21〕 |
+| 引擎 | 每 N 秒做一次/延 N 帧执行（墙钟） | `Engine\Engine\Time.cs:63-67`（PeriodicEvent，用法 `ComponentOnFire.cs:68`）+:73-75（QueueFrameIndexDelayedExecution，用法 `Window.cs:778`） 〔01〕 |
 | 引擎 | 平台入口差异（Win/Android/iOS） | [01页](01-引擎/01-程序入口与主循环.md)"平台入口与启动差异"节（三形态入口+帧链收口 Program.FrameHandler） 〔01〕 |
 | 浏览器 | 高频数据 JS→C# 零拷贝传输 | `Engine.Browser\InputBridge.cs:12-36`+`main.js:115-159`（共享内存双缓冲+Atomics 原子翻转协议） 〔23〕 |
 | 浏览器 | 新增一种输入事件类型 | `InputEventType.cs:2-27`+`InputBridge.cs:83-110`+`main.js:121-139`（三处镜像逐字段同步） 〔23〕 |

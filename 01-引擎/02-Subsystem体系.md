@@ -1,6 +1,6 @@
 # Subsystem体系
 
-> 域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(111/111，特大文件0个)——顶层40+BlockBehavior子目录71，共20185行全部读毕；逐文件明细见 [02a-子系统明细.md](明细/02a-子系统明细.md)
+> 域: SC引擎 · 更新: 2026-11-01 · 状态: 全读(111/111，特大文件0个)——顶层40+BlockBehavior子目录71，共20185行全部读毕；逐文件明细见 [02a-子系统明细.md](明细/02a-子系统明细.md)
 
 ## 一句话定位
 
@@ -129,6 +129,20 @@ DrawOrders 实测序：-10000 ModelsRenderer 准备 | -100 Sky 雾参数 | 0 Ter
 - **火焰燃烧进度不存档**：FireData 纯内存(`SubsystemFireBlockBehavior` 无 Save)——读档后全部火重新计时。
 - **爆炸掉落限流**：`SubsystemExplosions.cs:707-710` 抛射物数≥40 后掉落概率骤降——大爆炸"东西没了"是限流非 bug；`ExplosionKeepsPickables=true` 豁免。
 - **水体扩散放大邻居通知**：`SpreadFluid` 每轮手动 `ProcessModifiedCells`(`SubsystemFluidBlockBehavior.cs:263`)，大面积水每 0.25s 两轮全量回调。
+
+## 原版范例
+
+路径为仓库相对路径（源码树根起）。
+
+| 我要做… | 照抄哪里 | 为什么抄它 |
+|---|---|---|
+| 最小完整子系统骨架（Load+每帧 Update） | `Survivalcraft\Subsystem\SubsystemSeasons.cs`（83 行全文件）：`:8` 继承 Subsystem+IUpdateable、`:33` UpdateOrder 属性、`:55-57` Load 里 `FindSubsystem<SubsystemGameInfo>(true)` 抓依赖、`:59-63` Update | 全库最短的"可更新子系统"完整文件，字段/属性/生命周期各占其位，零噪音 |
+| Save/Load 契约（数值进存档） | `Survivalcraft\Subsystem\SubsystemGameInfo.cs:77-91`：Load `GetValue<T>("键")`(:82-84) 与 Save `SetValue("键", …)`(:87-91) 一键一对 | 原版主信息子系统就是这份"读写成对"清单；对照本页"Count>0 才落盘"坑看最直观 |
+| 把一组对象打包存档（嵌套袋列表） | `Survivalcraft\Subsystem\SubsystemUsedMods.cs:6-30`（全文件 31 行）：循环 new 子 ValuesDictionary→`valuesDictionary.SetValue("Mods", modsDict)`+计数键 | 存"列表/数组"没有专用类型，原版就是"计数+编号子袋"，抄它不用自己发明协议 |
+| Dependencies 声明与消费（配对看两处） | 声明：`Survivalcraft\Content\Assets\Database.xml:3649`（Players：`Dependencies="GameInfo, Terrain"`，逗号分隔多依赖）+`:3611`（BombBlockBehavior：`"Projectiles, BlockBehaviors"`）；消费：`Survivalcraft\Subsystem\SubsystemUpdate.cs:147-153`（Load 第一行抓 SubsystemTime 再收全体 IUpdateable） | 声明端保证自己 Load 时依赖已 Load，消费端示范"Load 里抓服务"的标准第一行 |
+| 子系统响应实体增删（维护索引） | `Survivalcraft\Subsystem\SubsystemNames.cs:31-41`：OnEntityAdded/Removed 增删 name→ComponentName 字典；查询端 `FindEntityByName`(:18-21) | 基类仅有的两个实体回调的真实用法；进世界批量建实体时也是统一走它 |
+| 做一个"别人调、别人听"的世界服务 | `Survivalcraft\Subsystem\SubsystemNoise.cs:11-36`：MakeNoise 双重载(:11-17)→FindBodiesAroundPoint 扫半径(:26)→对每 body 的 `FindComponents<INoiseListener>()` 广播(:31-32) | 接口解耦的服务广播范式：调用方不认识监听方，加新监听者零改动 |
+| 游戏时钟节流/延时（tick 内） | `Survivalcraft\Subsystem\SubsystemTime.cs:147-155`（`PeriodicGameTimeEvent`）+`:143-145`（`QueueGameTimeDelayedExecution`）+用法 `Survivalcraft\Component\ComponentHealth.cs:320`（每 2 游戏秒判一次溺水） | 与 01 页墙钟 `Time.PeriodicEvent` 区分：这套跟随游戏速度倍率，睡觉加速会同步加速 |
 
 ## 快查路由
 
