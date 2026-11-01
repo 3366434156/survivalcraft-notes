@@ -157,7 +157,7 @@ article.wideart{max-width:1060px}
 #backdrop.show{opacity:1;pointer-events:auto}
 #side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:14px 0 36px rgba(2,6,23,.2)}
 #side.open{left:0}
-#top .gh{display:none}
+#top .gh{display:block;font-size:11.5px;padding:6px 9px}
 #top .brand small{display:none}
 .searchwrap{width:min(230px,50vw)}
 .searchwrap kbd{display:none}
@@ -227,7 +227,15 @@ pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
 .searchwrap{width:38px;padding:7.5px 0;justify-content:center}
 .searchwrap .ph{display:none}
 #top{gap:8px}
-#top .brand b{font-size:15px;letter-spacing:-.1px;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+#top .brand b{font-size:15px;letter-spacing:-.1px;max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+#top .gh{font-size:10.5px;padding:6px 7px}
+}
+/* 手机横滚表：首列吸附，滚动时保留行上下文 */
+@media(max-width:760px){
+.tablewrap th:first-child,.tablewrap td:first-child{position:sticky;left:0;z-index:1;background:var(--sheet);box-shadow:inset -1px 0 0 var(--line)}
+.tablewrap th:first-child{background:var(--surface-2);z-index:2}
+.tablewrap.tall th:first-child{z-index:3}
+.tablewrap tbody tr:hover td:first-child{background:var(--acc-soft)}
 }
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
