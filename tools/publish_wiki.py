@@ -7,7 +7,11 @@
 - 初始化：Wiki 无页面时先经 REST API 播种 Home（之后 git 仓库才存在）
 - 同步：临时目录 clone → 覆盖/删除 → 变化才 commit/push；git 直连失败自动改走 127.0.0.1:7897 代理
 """
-import os, re, subprocess, sys, tempfile, shutil, json, pathlib
+import os, re, stat, subprocess, sys, tempfile, shutil, json, pathlib
+
+def rmtree_ro(p):
+    """Windows 下 .git 只读对象挡 rmtree：逐个 chmod 后重试"""
+    shutil.rmtree(p, onerror=lambda f, path, exc: (os.chmod(path, stat.S_IWRITE), f(path)))
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 OWNER, NAME = "3366434156", "survivalcraft-notes"
@@ -115,19 +119,22 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     stage = pathlib.Path(tempfile.gettempdir()) / "sc-wiki-stage"
     if stage.exists():
-        shutil.rmtree(stage)
+        rmtree_ro(stage)
     build_pages(stage)
     # clone；wiki 未初始化时 clone 404 → 本地 init + 首推（GitHub 会在首推时创建 wiki 仓库）
     wdir = pathlib.Path(tempfile.gettempdir()) / "sc-wiki-sync"
     if wdir.exists():
-        shutil.rmtree(wdir)
+        rmtree_ro(wdir)
     code, out = run(["clone", WIKI_GIT, str(wdir)])
     initialized = code == 0
+    if not initialized:
+        code, out = run(["clone", WIKI_GIT, str(wdir)], proxy=True)
+        initialized = code == 0
     if not initialized:
         wdir.mkdir(parents=True, exist_ok=True)
         run(["init", "-b", "master"], cwd=str(wdir))
         run(["remote", "add", "origin", WIKI_GIT], cwd=str(wdir))
-        print("wiki 仓库不存在，走首推初始化")
+        print("wiki 仓库不可克隆，走首推初始化")
     # 同步：写镜像页，删除不属于镜像的 .md
     keep = {p + ".md" for p, _ in MIRRor} | {"Home.md", "_Sidebar.md", "_Footer.md"}
     for old in wdir.glob("*.md"):
@@ -144,6 +151,11 @@ def main():
          "commit", "-m", "镜像同步：站点 %d 页（Home/侧边栏/十件套/24 主线/20 明细）" % len(keep)], cwd=str(wdir))
     branch = "master"
     code, out = run(["push", "-u", "origin", branch], cwd=str(wdir))
+    if code != 0 and "fetch first" in out:
+        # 远端有播种提交（用户手建首页）：收编后以镜像为准重放
+        run(["fetch", "origin", branch], cwd=str(wdir), proxy=True)
+        run(["rebase", "-X", "theirs", "origin/" + branch], cwd=str(wdir))
+        code, out = run(["push", "-u", "origin", branch], cwd=str(wdir))
     if code != 0:
         code, out = run(["push", "-u", "origin", branch], cwd=str(wdir), proxy=True)
     print("push:", "OK" if code == 0 else out[:400])
