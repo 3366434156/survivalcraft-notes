@@ -16,7 +16,7 @@
 ## 原理 30 秒
 
 1. **食物=FoodBlock 子类**：`FoodBlock` 是抽象基类（Block/FoodBlock.cs:5），子类只需一个构造调用——`BreadBlock` 全文就 4 行（BreadBlock.cs:3-7）：`base("Models/Bread", Matrix.Identity, Color.White, 242)`，四个参数=模型路径/物品栏姿态/染色/损坏变体值（`GetDamageDestructionValue` 返回它 :58-59，配腐坏行为才用得上）。
-2. **营养值是 csv 列，单位是 0~1 小数**：Block 字段 `DefaultNutritionalValue`（Block.cs:169），读取走 `GetNutritionalValue`（:510）——进食链 `ComponentVitalStats.Eat`（ComponentVitalStats.cs:106-149）取它直接加到饱食度上，而 `Food` 属性被 `MathUtils.Saturate` 钳在 0~1（:79-82）。**原版面包=0.5（半条）**，不是整数百分比；写 200 这种整数会一口吃满。进食时满食度 ≥0.98 拒吃（:134-137）、生病只吸收 75%（:146-148）。**mod 还可以挂 `OnVitalStatsEat` 钩子**改食物/直接接管进食（:111-117；ModLoader.cs:2138）。
+2. **营养值是 csv 列，单位是 0~1 小数**：Block 字段 `DefaultNutritionalValue`（Block.cs:169），读取走 `GetNutritionalValue`（:510）——进食链 `ComponentVitalStats.Eat`（ComponentVitalStats.cs:106-183，方法体后段为饱食度钳制/生病计时）取它直接加到饱食度上，而 `Food` 属性被 `MathUtils.Saturate` 钳在 0~1（:79-82）。**原版面包=0.5（半条）**，不是整数百分比；写 200 这种整数会一口吃满。进食时满食度 ≥0.98 拒吃（:134-137）、生病只吸收 75%（:146-148）。**mod 还可以挂 `OnVitalStatsEat` 钩子**改食物/直接接管进食（:111-117；ModLoader.cs:2138）。
 3. **三件分工**：dll 注册类（HandleAssembly 收 Block 子类，ModEntity.cs:430-433）→ csv 补分类/营养/名字（`BlocksManager.LoadBlocksData` 按表头字段名回写 :1037-1094）→ `.cr` 追加配方（`RequiredHeatLevel`>0 = 要炉子烤）。
 4. 模型物品的手持/掉落渲染由 FoodBlock 全包（`DrawBlock` :41-52 画 standalone mesh），零渲染代码。
 
@@ -123,4 +123,4 @@ HardtackBlock;Food;;0.35;压缩饼干
 | 不用炉子、徒手合成 | `RequiredHeatLevel="0"`（[Mod示例-数据驱动](Mod示例-数据驱动.md)） |
 | 药水/中毒类效果 | 进食链只有营养+生病两轨；自定义效果挂 `OnVitalStatsEat` 后自写 |
 | 喂生物/驯服 | `EatPickableBehavior.FoodFactors`（[Mod示例-自定义生物](Mod示例-自定义生物.md)同类机制） |
-| 进食链全貌 | ComponentVitalStats.cs:106-149（钩子→营养→病检→满检→音效→饱食度） |
+| 进食链全貌 | ComponentVitalStats.cs:106-183（钩子→营养→病检→满检→音效→饱食度） |
