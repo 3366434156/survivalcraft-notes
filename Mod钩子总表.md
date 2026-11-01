@@ -118,6 +118,7 @@ namespace MyMod {
 | 存档兼容性校验 | CompareModVersion | ML:56 | 仅主 Loader |
 | 模组设置 | SaveSettings/LoadSettings · OnModSettingChanged · OnSettingsScreenCreated | ML:787 · 795 · 1976 · 1968 | |
 | 加键位 | GetKeyboardMappings · GetGamepadMappings · InitKeyCompatibleGroups | ML:1931 · 1938 · 1960 | 直调无需注册 |
+| 手柄组合键注册 | GetGamepadMappings | ML:1938-1947 | 值传 ValuesDictionary（官方注释示例 ML:1939-1945）：`SetValue("ModifierKey", GamePadButton.LeftShoulder)`（修饰键仅 LS/RS/GamePadTrigger.Left/Right 四者）+`SetValue("ActionKey", GamePadButton.X)`（可为四个修饰键外任意键）→ `yield return new("映射名", 字典)` |
 | 加相机 | ManageCameras · GetCameraList · OnCameraChange | ML:879 · 1953 · 873 | |
 | 改界面 | OnWidgetContentsLoaded · BeforeWidgetUpdate/AfterWidgetUpdate · OnScreenEntered | ML:1005 · 1808/1814 · 1795 | |
 | 主界面/设置加按钮 | OnMainMenuScreenCreated · OnSettingsScreenCreated | ML:1846 · 1968 | |

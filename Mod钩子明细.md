@@ -266,7 +266,7 @@
 
 | 钩子名 | 触发时机 | 派发点 | 参数/返回 | 备注 |
 |---|---|---|---|---|
-| `OnWidgetConstruct` ML:999 | 界面 Widget 被创建 | Widget.cs:495 | (ref Widget) | 可整体替换 Widget |
+| `OnWidgetConstruct` ML:999 | 界面 Widget 被创建 | Widget.cs:495 | (ref Widget) | 可整体替换 Widget（ref 在实例化后、挂树+LoadContents 前）。**仅 XML 新建路径触发**（每节点一次）：① 一切 XML 模板的非根节点——`LoadChildren` 递归走 `LoadWidget`（Widget.cs:603），Screens/Dialogs/Widgets 及子面板全覆盖（屏本体走 `LoadContents`，其全部子节点走这里）；② 直接调 `LoadWidget` 建根容器的屏：PlayScreen.cs:30、RecipaediaScreen.cs:62、BestiaryScreen.cs:24、HelpScreen.cs:39、ExternalContentScreen.cs:37、WorldOptionsScreen.cs:356/447、PlayerScreen.cs:163、ManageContentScreen.cs:60-137、ManageUserScreen.cs:108/147、KeyboardMappingScreen.cs:11、GamepadMappingScreen.cs:12、VrControllerMappingScreen.cs:53、CameraManageScreen.cs:8、OriginalCommunityContentScreen.cs:73/86；③ 运行期构建：InventorySlotWidget.cs:311（拖放模板）、MotdWidget.cs:138（公告行）。**不触发**：纯代码 `new` 的控件（如 EditColorDialog 全代码框、AddSettingButton 按钮）、屏/框根本体、已存在 Name 的合并重载（Widget.cs:597-600 只走 LoadContents→改挂 `OnWidgetContentsLoaded`） |
 | `OnWidgetContentsLoaded` ML:1005 | 界面内容加载完成 | Widget.cs:510 | (Widget) | 改已有界面元素 |
 | `BeforeWidgetUpdate` ML:1808 | Widget.Update 前 | Widget.cs:849 | (Widget) | 可拦截原版按钮功能 |
 | `AfterWidgetUpdate` ML:1814 | Widget.Update 后 | Widget.cs:857 | (Widget) | |

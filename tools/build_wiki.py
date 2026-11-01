@@ -48,19 +48,21 @@ def collect_sources():
 
     moddev = [
         ("Mod开发", "Mod开发配方.md", 0),
-        ("Mod开发", "Mod钩子总表.md", 1),
-        ("Mod开发", "Mod钩子明细.md", 2),
-        ("Mod开发", "数据格式参考.md", 3),
-        ("Mod开发", "数据格式参考2.md", 4),
-        ("Mod开发", "Mod排错手册.md", 5),
-        ("Mod开发", "Mod排错手册2.md", 6),
-        ("Mod开发", "Mod示例-数据驱动.md", 7),
-        ("Mod开发", "Mod示例-代码方块.md", 8),
-        ("Mod开发", "Mod示例-电力元件.md", 9),
-        ("Mod开发", "Mod示例-自定义生物.md", 10),
-        ("Mod开发", "Mod示例-自定义界面.md", 11),
-        ("Mod开发", "Mod示例-自定义特效.md", 12),
-        ("Mod开发", "Mod示例-自定义食物.md", 13),
+        ("Mod开发", "Mod开发配方2.md", 1),
+        ("Mod开发", "Mod钩子总表.md", 2),
+        ("Mod开发", "Mod钩子明细.md", 3),
+        ("Mod开发", "数据格式参考.md", 4),
+        ("Mod开发", "数据格式参考2.md", 5),
+        ("Mod开发", "数据格式参考3.md", 6),
+        ("Mod开发", "Mod排错手册.md", 7),
+        ("Mod开发", "Mod排错手册2.md", 8),
+        ("Mod开发", "Mod示例-数据驱动.md", 9),
+        ("Mod开发", "Mod示例-代码方块.md", 10),
+        ("Mod开发", "Mod示例-电力元件.md", 11),
+        ("Mod开发", "Mod示例-自定义生物.md", 12),
+        ("Mod开发", "Mod示例-自定义界面.md", 13),
+        ("Mod开发", "Mod示例-自定义特效.md", 14),
+        ("Mod开发", "Mod示例-自定义食物.md", 15),
     ]
     for sec, name, k in moddev:
         p = SC_ROOT / name
@@ -391,14 +393,14 @@ a{color:var(--acc-ink);text-decoration:none}
 a:hover{text-decoration:underline;text-underline-offset:3px}
 blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:6px 12px 12px 6px;color:var(--ink-soft);font-size:14.5px}
 blockquote p{margin:4px 0}
-code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:anywhere}
+code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:break-word}
 :root[data-theme=dark] code{color:#c7d2fe}
 pre.code{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:var(--shadow-sm)}
 pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
 .tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);box-shadow:var(--shadow-sm)}
 table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
 th{background:var(--surface-2);color:var(--ink);font-weight:600;text-align:left}
-th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:anywhere}
+th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:break-word}
 tbody tr:last-child td{border-bottom:none}
 tbody tr{transition:background .1s}
 tbody tr:hover{background:var(--acc-soft)}
@@ -474,6 +476,10 @@ tr[id]:hover td{background:var(--acc-soft)}
 #tocnav a:hover{color:var(--acc);text-decoration:none}
 #tocnav a.active{color:var(--acc-ink);border-left-color:var(--acc);background:var(--acc-soft);font-weight:600}
 @media(max-width:1279px){#toc{display:none}#contentrow{max-width:920px}}
+/* 大屏加宽档：含 40+ 行大表的页(wideart)放得更开，散文页适度加宽 */
+article.wideart{max-width:1060px}
+@media(min-width:1600px){#contentrow{max-width:1580px}#foot{max-width:1580px}article{max-width:960px}article.wideart{max-width:1300px}}
+@media(min-width:2000px){#contentrow{max-width:1720px}#foot{max-width:1720px}article{max-width:1020px}article.wideart{max-width:1420px}body{font-size:15.5px}table{font-size:14px}}
 /* 窄屏 */
 @media(max-width:1024px){
 #burger{display:block}
@@ -653,7 +659,8 @@ lb.addEventListener('click',()=>lb.classList.remove('show'));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
 """
 
-def page_shell(title, body_html, nav_html, root_prefix, toc_html, aside_extra):
+def page_shell(title, body_html, nav_html, root_prefix, toc_html, aside_extra, wide=False):
+    artcls = ' class="spot wideart"' if wide else " class=spot"
     js = JS.replace("%ROOT%", json.dumps(root_prefix))
     title_suffix = "" if title == SITE_NAME else " · %s" % SITE_NAME
     return ("<!doctype html><html lang=zh><head><meta charset=utf-8>"
@@ -670,14 +677,14 @@ def page_shell(title, body_html, nav_html, root_prefix, toc_html, aside_extra):
             "<a class=gh href=\"%s\" target=_blank rel=noopener>GitHub ↗</a>"
             "</header>"
             "<div id=layout><aside id=side><nav id=nav>%s</nav></aside>"
-            "<main id=main><div id=contentrow><article class=spot>%s</article><aside id=toc>%s%s</aside></div>"
+            "<main id=main><div id=contentrow><article%s>%s</article><aside id=toc>%s%s</aside></div>"
             "<div id=foot>%s · 由 tools/build_wiki.py 生成</div>"
             "</main></div>"
             "<div id=backdrop></div>"
             "<div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div>"
             "<button id=btt aria-label=回到顶部>↑</button>"
             "<script>%s</script></body></html>"
-            ) % (html.escape(title), title_suffix, CSS, root_prefix, SITE_NAME, SITE_SUB, SITE_REPO, nav_html, body_html, toc_html, aside_extra, SITE_NAME, js)
+            ) % (html.escape(title), title_suffix, CSS, root_prefix, SITE_NAME, SITE_SUB, SITE_REPO, nav_html, artcls, body_html, toc_html, aside_extra, SITE_NAME, js)
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
@@ -744,7 +751,9 @@ def main():
             _pnlink(ordered[idx - 1] if idx > 0 else None, "上一页", False),
             _pnlink(ordered[idx + 1] if idx < len(ordered) - 1 else None, "下一页", True))
         page_body = (HERO_HTML + body) if p["out"] == "index.html" else body
-        out_path.write_text(page_shell(title, page_body + pn, page_nav, root_prefix, toc_html, aside_extra), encoding="utf-8")
+        # 任一表 >20 行的页面放宽正文列（构建期已知，散文页保持舒适行宽）
+        wide = any(ch.count("<tr") > 20 for ch in re.split(r'class="tablewrap', body))
+        out_path.write_text(page_shell(title, page_body + pn, page_nav, root_prefix, toc_html, aside_extra, wide), encoding="utf-8")
         text_sample = re.sub(r"[`#>*|\-\[\]()]", "", md)[:26000]
         index_data.append({"t": title, "u": p["out"], "b": text_sample.lower()})
         print("OK", p["out"])
