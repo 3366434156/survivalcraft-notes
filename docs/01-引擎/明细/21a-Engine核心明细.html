@@ -56,7 +56,8 @@ background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px
 article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow)}
 h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
 background:linear-gradient(120deg,var(--ink) 30%,var(--acc-ink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;padding-left:13px;border-bottom:1px solid var(--line);position:relative}
+h2::before{content:"";position:absolute;left:0;top:4px;bottom:13px;width:4px;border-radius:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:.9}
 h3{font-size:16px;font-weight:700;margin:26px 0 10px}
 p{margin:10px 0}
 a{color:var(--acc-ink);text-decoration:none}
@@ -65,6 +66,9 @@ blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-lef
 blockquote p{margin:4px 0}
 code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:break-word}
 :root[data-theme=dark] code{color:#c7d2fe}
+:root[data-theme=dark] article{border-color:rgba(148,163,184,.15);box-shadow:0 20px 48px -20px rgba(0,0,0,.65)}
+:root[data-theme=dark] #top{border-bottom-color:rgba(148,163,184,.13)}
+:root[data-theme=dark] #side{border-right-color:rgba(148,163,184,.1)}
 pre.code{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:var(--shadow-sm)}
 pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
 .tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);box-shadow:var(--shadow-sm)}
@@ -236,6 +240,8 @@ pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
 .tablewrap th:first-child{background:var(--surface-2);z-index:2}
 .tablewrap.tall th:first-child{z-index:3}
 .tablewrap tbody tr:hover td:first-child{background:var(--acc-soft)}
+/* 慢设备上逐行瀑布会闪空白：手机端直接整行呈现 */
+.rv tbody tr{animation:none;opacity:1;transform:none}
 }
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
