@@ -86,6 +86,36 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
 #foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+/* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
+pre.code .k{color:#ff7b72}
+pre.code .t{color:#ffa657}
+pre.code .s{color:#a5d6ff}
+pre.code .c{color:#8b949e;font-style:italic}
+pre.code .n{color:#79c0ff}
+pre.code .a{color:#d2a8ff}
+pre.code .t2{color:#7ee787}
+/* 上一页/下一页 */
+.pn{display:flex;gap:14px;margin:36px 0 6px}
+.pn a{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pn a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(79,70,229,.35)}
+.pn a.next{text-align:right}
+.pn a small{color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px}
+.pn a b{color:var(--acc-ink);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .pnvoid{flex:1}
+/* 首页三入口卡片 */
+.hero{margin:24px 0 4px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
+.hcard:hover::before{opacity:1}
+.hcard .ico{font-size:21px;line-height:1}
+.hcard b{font-size:15.5px;color:var(--ink)}
+.hcard span{font-size:12.5px;color:var(--ink-soft)}
+/* 长表格：内部滚动 + 粘性表头 */
+.tablewrap.tall{max-height:calc(100vh - 150px);overflow:auto}
+.tablewrap.tall th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line-strong)}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
 .deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
 /* ── 交互层 ── */
 #pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0}
@@ -144,7 +174,7 @@ body{background:#fff;color:#000}
 article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><a href="学习路线.html">学习路线</a><div class=sec>Mod 开发 · 13</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><a href="Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="Mod示例-自定义特效.html">Mod示例-自定义特效</a><div class=sec>引擎主线 · 24</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="mod-示例-代码方块-dll">Mod 示例 · 代码方块（dll）</h1>
+</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><a href="学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><a href="Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="mod-示例-代码方块-dll">Mod 示例 · 代码方块（dll）</h1>
 <blockquote>域: SC引擎 · 更新: 2026-11-01 · 状态: 端到端示例；每行代码注明"照抄自 原版文件:行号"（行号 2026-11-01 实读复核）</blockquote>
 <h2 id="目标">目标</h2>
 <p>新增一个会发光的矿石方块 <code>MyGlowOreBlock</code>（常亮 13 档光照，复用原版贴图槽），编译成 dll 装包；并用 <code>TerrainChangeCell</code> 钩子在放置时打一行日志验证代码真的在跑。</p>
@@ -162,36 +192,36 @@ a{color:inherit}
         └── glowore.csv       ← 给新方块补分类/贴图/名字（代码+csv 协作）</code></pre>
 <h3 id="modinfo-json-完整">modinfo.json（完整）</h3>
 <pre class="code lang-json"><code>{
-    &quot;Name&quot;: &quot;示例：发光矿石&quot;,
-    &quot;Version&quot;: &quot;1.0.0&quot;,
-    &quot;ApiVersion&quot;: &quot;1.8&quot;,
-    &quot;Author&quot;: &quot;SC笔记示例&quot;,
-    &quot;Description&quot;: &quot;新增常亮矿石方块并演示钩子注册。含代码。&quot;,
-    &quot;PackageName&quot;: &quot;example-glowore&quot;,
-    &quot;LoadOrder&quot;: 10000,
-    &quot;GameplayImpactLevel&quot;: &quot;Assist&quot;
+    <span class=a>"Name":</span> <span class=s>"示例：发光矿石"</span>,
+    <span class=a>"Version":</span> <span class=s>"1.0.0"</span>,
+    <span class=a>"ApiVersion":</span> <span class=s>"1.8"</span>,
+    <span class=a>"Author":</span> <span class=s>"SC笔记示例"</span>,
+    <span class=a>"Description":</span> <span class=s>"新增常亮矿石方块并演示钩子注册。含代码。"</span>,
+    <span class=a>"PackageName":</span> <span class=s>"example-glowore"</span>,
+    <span class=a>"LoadOrder":</span> <span class=n>10000</span>,
+    <span class=a>"GameplayImpactLevel":</span> <span class=s>"Assist"</span>
 }</code></pre>
 <h3 id="exampleglowore-cs-完整-一个文件两个类">ExampleGlowOre.cs（完整，一个文件两个类）</h3>
-<pre class="code lang-csharp"><code>using Engine;                                                  // Log 所在命名空间（E:\SurvivalcraftAPIProject\Engine\Engine\Log.cs:1）
+<pre class="code lang-csharp"><code><span class=k>using</span> <span class=t>Engine</span>;                                                  <span class=c>// Log 所在命名空间（E:\SurvivalcraftAPIProject\Engine\Engine\Log.cs:1）</span>
 
-namespace MyCompany.ExampleGlowOre {                           // 自有命名空间防重名（同名类会互相顶替，BlocksManager.cs:307-313）
-    public class ExampleGlowOreLoader : ModLoader {            // 契约照抄 ModLoader.cs:10（public 非抽象+public 无参构造，ModEntity.cs:412-421 实例化后立即调 __ModInitialize）
-        public override void __ModInitialize() {               // 签名照抄 ModLoader.cs:21；唯一初始化入口，此刻正处钩子注册窗口内
-            ModsManager.RegisterHook(&quot;TerrainChangeCell&quot;, this);   // 形态照抄 SurvivalCraftModLoader.cs:15-26（一行一个）；派发点 SubsystemTerrain.cs:357-366
+<span class=k>namespace</span> <span class=t>MyCompany</span>.<span class=t>ExampleGlowOre</span> {                           <span class=c>// 自有命名空间防重名（同名类会互相顶替，BlocksManager.cs:307-313）</span>
+    <span class=k>public</span> <span class=k>class</span> <span class=t>ExampleGlowOreLoader</span> : <span class=t>ModLoader</span> {            <span class=c>// 契约照抄 ModLoader.cs:10（public 非抽象+public 无参构造，ModEntity.cs:412-421 实例化后立即调 __ModInitialize）</span>
+        <span class=k>public</span> <span class=k>override</span> <span class=k>void</span> __ModInitialize() {               <span class=c>// 签名照抄 ModLoader.cs:21；唯一初始化入口，此刻正处钩子注册窗口内</span>
+            <span class=t>ModsManager</span>.<span class=t>RegisterHook</span>(<span class=s>"TerrainChangeCell"</span>, <span class=k>this</span>);   <span class=c>// 形态照抄 SurvivalCraftModLoader.cs:15-26（一行一个）；派发点 SubsystemTerrain.cs:357-366</span>
         }
 
-        public override void TerrainChangeCell(SubsystemTerrain subsystemTerrain, int x, int y, int z, int value, out bool skip) {   // 签名照抄 ModLoader.cs:525
-            skip = false;                                      // 照抄 ModLoader.cs:526 默认放行；true=原版 ChangeCell 整段跳过（SubsystemTerrain.cs:363-369），慎用
-            if (Terrain.ExtractContents(value) == MyGlowOreBlock.Index) {   // contents=低 10 位（Terrain.cs:64/:311）；Index 已被反射回写为分配 ID（BlocksManager.cs:108-119）
-                Log.Information($&quot;MyGlowOreBlock placed at {x},{y},{z}&quot;);   // 验证锚点：世界内放一块矿，日志应出现本行
+        <span class=k>public</span> <span class=k>override</span> <span class=k>void</span> <span class=t>TerrainChangeCell</span>(<span class=t>SubsystemTerrain</span> subsystemTerrain, <span class=k>int</span> x, <span class=k>int</span> y, <span class=k>int</span> z, <span class=k>int</span> value, <span class=k>out</span> <span class=k>bool</span> skip) {   <span class=c>// 签名照抄 ModLoader.cs:525</span>
+            skip = <span class=k>false</span>;                                      <span class=c>// 照抄 ModLoader.cs:526 默认放行；true=原版 ChangeCell 整段跳过（SubsystemTerrain.cs:363-369），慎用</span>
+            <span class=k>if</span> (<span class=t>Terrain</span>.<span class=t>ExtractContents</span>(value) == <span class=t>MyGlowOreBlock</span>.<span class=t>Index</span>) {   <span class=c>// contents=低 10 位（Terrain.cs:64/:311）；Index 已被反射回写为分配 ID（BlocksManager.cs:108-119）</span>
+                <span class=t>Log</span>.<span class=t>Information</span>(<span class=s>$"MyGlowOreBlock placed at {x},{y},{z}"</span>);   <span class=c>// 验证锚点：世界内放一块矿，日志应出现本行</span>
             }
         }
     }
 
-    public class MyGlowOreBlock : CubeBlock {                  // 基类形态照抄 IceBlock.cs:1-5；CubeBlock=最简满格方块（只补两个渲染钩子，CubeBlock.cs:6/:19）
-        public static int Index;                               // 形态照抄 IceBlock.cs:3；初值 0 无妨（见上&quot;原理 2&quot;动态分配+回写）；禁写 const——IsLiteral 跳过回写（BlocksManager.cs:112）
-        public override int GetEmittedLightAmount(int value) =&gt; 13;   // override 形态照抄 CampfireBlock.cs:146-152（常量简化版）；基类声明 Block.cs:508
-                                                               // 想按状态分档发光（data&gt;0 才亮）：照抄 CampfireBlock.cs:146-152 全文 min(8+data/2,15)
+    <span class=k>public</span> <span class=k>class</span> <span class=t>MyGlowOreBlock</span> : <span class=t>CubeBlock</span> {                  <span class=c>// 基类形态照抄 IceBlock.cs:1-5；CubeBlock=最简满格方块（只补两个渲染钩子，CubeBlock.cs:6/:19）</span>
+        <span class=k>public</span> <span class=k>static</span> <span class=k>int</span> <span class=t>Index</span>;                               <span class=c>// 形态照抄 IceBlock.cs:3；初值 0 无妨（见上"原理 2"动态分配+回写）；禁写 const——IsLiteral 跳过回写（BlocksManager.cs:112）</span>
+        <span class=k>public</span> <span class=k>override</span> <span class=k>int</span> <span class=t>GetEmittedLightAmount</span>(<span class=k>int</span> value) =&gt; <span class=n>13</span>;   <span class=c>// override 形态照抄 CampfireBlock.cs:146-152（常量简化版）；基类声明 Block.cs:508</span>
+                                                               <span class=c>// 想按状态分档发光（data&gt;0 才亮）：照抄 CampfireBlock.cs:146-152 全文 min(8+data/2,15)</span>
     }
 }</code></pre>
 <h3 id="assets-blocks-glowore-csv-完整">Assets/Blocks/glowore.csv（完整）</h3>
@@ -203,12 +233,12 @@ MyGlowOreBlock;Minerals;48;发光矿石</code></pre>
 <h2 id="打包清单">打包清单</h2>
 <ol><li>dll 在 zip <b>根层</b>；黑名单名 <code>Survivalcraft.dll</code>/<code>Engine.dll</code>/<code>EntitySystem.dll</code> 静默跳过（ModEntity.cs:31 + :393-395，两道都无日志）。</li><li>扩展名小写 <code>.dll</code>/<code>.csv</code>/<code>.scmod</code>；无 0 字节条目；条目不重名；Deflate/Store；文本 UTF-8（12 页包结构节）。</li><li><code>__ModInitialize</code> 抛异常 = 全部非原版模组连坐踢出（12 页坑表）——入口里别做可能抛的事。</li></ol>
 <h2 id="验证-日志锚点-游戏内">验证（日志锚点 + 游戏内）</h2>
-<div class=tablewrap><table><thead><tr><th>锚点</th><th>出处</th></tr></thead><tbody><tr><td><code>[示例：发光矿石](Version: 1.0.0) Loaded 3 resource files.</code></td><td>ModEntity.cs:275（modinfo+dll+csv）</td></tr><tr><td><code>[示例：发光矿石] Loading .dll assembly files.</code></td><td>ModEntity.cs:390</td></tr><tr><td><code>[示例：发光矿石] Handling assembly [ExampleGlowOre, Version=…, …]</code>（中括号里=程序集 FullName）</td><td>LoadingScreen.cs:281</td></tr><tr><td><code>[示例：发光矿石] Loading .csv blocksdata files.</code></td><td>ModEntity.cs:309</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>锚点</th><th>出处</th></tr></thead><tbody><tr><td><code>[示例：发光矿石](Version: 1.0.0) Loaded 3 resource files.</code></td><td>ModEntity.cs:275（modinfo+dll+csv）</td></tr><tr><td><code>[示例：发光矿石] Loading .dll assembly files.</code></td><td>ModEntity.cs:390</td></tr><tr><td><code>[示例：发光矿石] Handling assembly [ExampleGlowOre, Version=…, …]</code>（中括号里=程序集 FullName）</td><td>LoadingScreen.cs:281</td></tr><tr><td><code>[示例：发光矿石] Loading .csv blocksdata files.</code></td><td>ModEntity.cs:309</td></tr></tbody></table></div>
 <p>游戏内：创造模式 <code>Minerals</code> 分类出现"发光矿石"；放下后周围被照亮（13 档）；日志出现 <code>MyGlowOreBlock placed at x,y,z</code>。失败对照：搜 <code>Handle assembly failed</code>（LoadingScreen.cs:288）=入口抛异常连坐；搜 <code>Warning</code>（BlocksManager.cs:1058）=csv 类名拼错；方块进世界但全黑 = dll 根本没加载（看有没有 <code>Handling assembly</code>）。</p>
 <h2 id="该示例踩的坑">该示例踩的坑</h2>
-<ul><li><b>找不到"OnBlockAdded"钩子</b>：ModLoader 没有同名钩子——Mod 层拦方块变更走 <code>TerrainChangeCell</code>（ModLoader.cs:525，本例）；方块自身的增删改回调是 <code>SubsystemBlockBehavior.OnBlockAdded</code> 系（SubsystemBlockBehavior.cs:17-21），要自己写 behavior 子系统才接得到（见 15 页"4 步"路 B）。</li><li><b>钩子重写了不跑</b>：没 <code>RegisterHook</code>、错过注册窗口、名字打错三者必居其一（12 页坑表）；<code>TerrainChangeCell</code> 走钩子表，必须注册。</li><li><b><code>public static int Index</code> 写成 const</b>：回写跳过 IsLiteral（BlocksManager.cs:112），字段永远是 0 → 本例日志判定失灵、跨存档错乱。</li><li><b>类名与原版/其他 mod 撞名</b>：后注册者把先注册者踢出待分配列表（BlocksManager.cs:307-313），存档按类名恢复时互相顶替——类名/命名空间都加自有前缀。</li><li><b>在 TerrainChangeCell 里 return true</b>：钩子 lambda 返回 true 就地截断整条链（12 页）；本例的 <code>skip=true</code> 则直接跳过原版 ChangeCell（SubsystemTerrain.cs:367-369），不用别乱置。</li><li><b><code>#引用</code> 自己的方块写进 csv</b>：csv 的 <code>#类名</code> 引用的是"解析那一刻"的 BlockIndex，模组方块编号随存档变（04 页坑表）——跨方块引用在 dll 里用 <code>BlocksManager.GetBlockIndex&amp;lt;T&amp;gt;()</code>（BlocksManager.cs:188-190）。</li></ul>
+<ul><li><b>找不到"OnBlockAdded"钩子</b>：ModLoader 没有同名钩子——Mod 层拦方块变更走 <code>TerrainChangeCell</code>（ModLoader.cs:525，本例）；方块自身的增删改回调是 <code>SubsystemBlockBehavior.OnBlockAdded</code> 系（SubsystemBlockBehavior.cs:17-21），要自己写 behavior 子系统才接得到（见 15 页"4 步"路 B）。</li><li><b>钩子重写了不跑</b>：没 <code>RegisterHook</code>、错过注册窗口、名字打错三者必居其一（12 页坑表）；<code>TerrainChangeCell</code> 走钩子表，必须注册。</li><li><b><code>public static int Index</code> 写成 const</b>：回写跳过 IsLiteral（BlocksManager.cs:112），字段永远是 0 → 本例日志判定失灵、跨存档错乱。</li><li><b>类名与原版/其他 mod 撞名</b>：后注册者把先注册者踢出待分配列表（BlocksManager.cs:307-313），存档按类名恢复时互相顶替——类名/命名空间都加自有前缀。</li><li><b>在 TerrainChangeCell 里 return true</b>：钩子 lambda 返回 true 就地截断整条链（12 页）；本例的 <code>skip=true</code> 则直接跳过原版 ChangeCell（SubsystemTerrain.cs:367-369），不用别乱置。</li><li><b><code>#引用</code> 自己的方块写进 csv</b>：csv 的 <code>#类名</code> 引用的是"解析那一刻"的 BlockIndex，模组方块编号随存档变（04 页坑表）——跨方块引用在 dll 里用 <code>BlocksManager.GetBlockIndex&lt;T&gt;()</code>（BlocksManager.cs:188-190）。</li></ul>
 <h2 id="快查路由">快查路由</h2>
-<div class=tablewrap><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查模组方块为什么没注册</td><td>ModEntity.cs:430-433（扫描条件）+ 04 页"注册与 ID 分配"</td></tr><tr><td>查某虚方法该不该 override</td><td>04 页虚方法表（116 虚+2 抽象，带调用方行号）</td></tr><tr><td>查全部 236 个钩子</td><td>ModLoader.cs 逐个看注释；派发点全仓搜 <code>ModsManager.HookAction(&quot;名字&quot;</code></td></tr><tr><td>加异形方块（门/楼梯）</td><td>04 页"渲染套路"：Initialize 预烘变体表（DoorBlock.cs:21-62）</td></tr><tr><td>让方块可染色</td><td>PaintedCubeBlock.cs:121/:126-140（IPaintableBlock 位编码）</td></tr><tr><td>新方块掉什么/用什么工具挖</td><td>csv 的 DefaultDropContent/RequiredToolLevel 列（示例 1）或 override GetDropValues（Block.cs:426）</td></tr></tbody></table></div></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#目标">目标</a><a class="lvl2" href="#前置知识">前置知识</a><a class="lvl2" href="#原理-30-秒">原理 30 秒</a><a class="lvl2" href="#制品">制品</a><a class="lvl3" href="#目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</a><a class="lvl3" href="#modinfo-json-完整">modinfo.json（完整）</a><a class="lvl3" href="#exampleglowore-cs-完整-一个文件两个类">ExampleGlowOre.cs（完整，一个文件两个类）</a><a class="lvl3" href="#assets-blocks-glowore-csv-完整">Assets/Blocks/glowore.csv（完整）</a><a class="lvl3" href="#csproj-与编译要点">csproj 与编译要点</a><a class="lvl2" href="#打包清单">打包清单</a><a class="lvl2" href="#验证-日志锚点-游戏内">验证（日志锚点 + 游戏内）</a><a class="lvl2" href="#该示例踩的坑">该示例踩的坑</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查模组方块为什么没注册</td><td>ModEntity.cs:430-433（扫描条件）+ 04 页"注册与 ID 分配"</td></tr><tr><td>查某虚方法该不该 override</td><td>04 页虚方法表（116 虚+2 抽象，带调用方行号）</td></tr><tr><td>查全部 236 个钩子</td><td>ModLoader.cs 逐个看注释；派发点全仓搜 <code>ModsManager.HookAction("名字"</code></td></tr><tr><td>加异形方块（门/楼梯）</td><td>04 页"渲染套路"：Initialize 预烘变体表（DoorBlock.cs:21-62）</td></tr><tr><td>让方块可染色</td><td>PaintedCubeBlock.cs:121/:126-140（IPaintableBlock 位编码）</td></tr><tr><td>新方块掉什么/用什么工具挖</td><td>csv 的 DefaultDropContent/RequiredToolLevel 列（示例 1）或 override GetDropValues（Block.cs:426）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="Mod示例-数据驱动.html"><small>上一页 · Mod开发</small><b>Mod示例-数据驱动</b></a><a class="next" href="Mod示例-电力元件.html"><small>下一页 · Mod开发</small><b>Mod示例-电力元件</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#目标">目标</a><a class="lvl2" href="#前置知识">前置知识</a><a class="lvl2" href="#原理-30-秒">原理 30 秒</a><a class="lvl2" href="#制品">制品</a><a class="lvl3" href="#目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</a><a class="lvl3" href="#modinfo-json-完整">modinfo.json（完整）</a><a class="lvl3" href="#exampleglowore-cs-完整-一个文件两个类">ExampleGlowOre.cs（完整，一个文件两个类）</a><a class="lvl3" href="#assets-blocks-glowore-csv-完整">Assets/Blocks/glowore.csv（完整）</a><a class="lvl3" href="#csproj-与编译要点">csproj 与编译要点</a><a class="lvl2" href="#打包清单">打包清单</a><a class="lvl2" href="#验证-日志锚点-游戏内">验证（日志锚点 + 游戏内）</a><a class="lvl2" href="#该示例踩的坑">该示例踩的坑</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT=""; // 站点根相对前缀（按页面深度注入）
 // 主题切换

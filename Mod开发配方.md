@@ -198,6 +198,7 @@
 | 加合成配方 | `CraftingRecipes.xml:64-139`（Materials 节，含 Remains=EmptyBucketBlock 返桶样例） |
 | 加防具 | `Clothes.xml:2-47`（43 条 ClothingData；Slot/Insulation/Layer 全属性面） |
 | 动画分层(走/持/骼/步) | `AnimationTemplates\Human.template.json`+`Animations\Human.json`（layer blendMode+boneMask+驱动器参数三级） |
+| 端到端：加一种可烹饪的食物 | [Mod示例-自定义食物](Mod示例-自定义食物.md)（dll 注册 FoodBlock 子类+csv 营养值+.cr 炉烤配方；营养值是 0~1 小数） |
 
 ## Engine 核心与平台
 

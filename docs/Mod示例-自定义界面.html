@@ -86,6 +86,36 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
 #foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+/* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
+pre.code .k{color:#ff7b72}
+pre.code .t{color:#ffa657}
+pre.code .s{color:#a5d6ff}
+pre.code .c{color:#8b949e;font-style:italic}
+pre.code .n{color:#79c0ff}
+pre.code .a{color:#d2a8ff}
+pre.code .t2{color:#7ee787}
+/* 上一页/下一页 */
+.pn{display:flex;gap:14px;margin:36px 0 6px}
+.pn a{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pn a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(79,70,229,.35)}
+.pn a.next{text-align:right}
+.pn a small{color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px}
+.pn a b{color:var(--acc-ink);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .pnvoid{flex:1}
+/* 首页三入口卡片 */
+.hero{margin:24px 0 4px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
+.hcard:hover::before{opacity:1}
+.hcard .ico{font-size:21px;line-height:1}
+.hcard b{font-size:15.5px;color:var(--ink)}
+.hcard span{font-size:12.5px;color:var(--ink-soft)}
+/* 长表格：内部滚动 + 粘性表头 */
+.tablewrap.tall{max-height:calc(100vh - 150px);overflow:auto}
+.tablewrap.tall th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line-strong)}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
 .deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
 /* ── 交互层 ── */
 #pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0}
@@ -144,14 +174,14 @@ body{background:#fff;color:#000}
 article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><a href="学习路线.html">学习路线</a><div class=sec>Mod 开发 · 13</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><a href="Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="Mod示例-自定义特效.html">Mod示例-自定义特效</a><div class=sec>引擎主线 · 24</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="mod-示例-自定义界面-screen">Mod 示例 · 自定义界面（Screen）</h1>
+</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><a href="学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><a href="Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="mod-示例-自定义界面-screen">Mod 示例 · 自定义界面（Screen）</h1>
 <blockquote>域: SC引擎 · 更新: 2026-11-01 · 状态: 端到端示例；XML+30 行代码做一个原版风格的模组界面，从设置页按钮进入；行号 2026-11-01 实读</blockquote>
 <h2 id="目标">目标</h2>
 <p>做一个模组自己的全屏界面 <code>MyModScreen</code>（原版同款布局：顶栏+返回键+正文区），在<b>设置页加一个按钮</b>点进去，按返回键回上一屏。零自定义美术、零翻译文件。</p>
 <h2 id="前置知识">前置知识</h2>
 <ul><li><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a>：钩子注册窗口与 <code>RegisterHook</code> 写法</li><li><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a>：Screen 契约（Enter/Leave/Update、切换协议）</li><li><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a>：XML 装配与 Update 必调 base 清单</li></ul>
 <h2 id="原理-30-秒">原理 30 秒</h2>
-<ol><li><b>XML 装配</b>：<code>ContentManager.Get&amp;lt;XElement&amp;gt;(&quot;Screens/名&quot;)</code> + <code>LoadContents(this, node)</code> 把 XML 树装进自己（原版样板 SettingsAudioScreen.cs:11-12；装配器 Widget.cs:507-517，逐属性反射赋值+递归建子树，每棵树装配完还发 <code>OnWidgetContentsLoaded</code> 钩子）。mod 的 <code>Assets/Screens/*.xml</code> 在 CombineContent 时剥掉 <code>Assets/</code> 前缀注册进 ContentManager（ModEntity.cs:290-296），同名资源即取即得。</li><li><b>注册进屏表</b>：<code>ScreensManager.AddScreen(name, screen)</code>（ScreensManager.cs:47）。时机用 <code>OnLoadingFinished</code> 钩子往加载队列<b>尾部追加一个动作</b>（LoadingScreen.cs:578-583 传入队列引用；动作泵每轮先清 mod 队列 :700-711）——此刻语言/字体/内容系统全部就绪，和原版屏同等待遇。</li><li><b>进入方式</b>：设置页构造时发 <code>OnSettingsScreenCreated</code> 钩子，mod 交出"按钮→动作"字典（SettingsScreen.cs:32-43），引擎用 <code>AddSettingButton</code> 奇偶分列插进左右两栏并接上点击（:68-71,86-96）——这个钩子切语言重建设置页时还会再发，按钮不丢（ModLoader.cs:1962-1965 注释明说）。</li><li><b>切屏</b>：<code>ScreensManager.SwitchScreen(name)</code> 走淡入动画，Factor 过半才 Enter 新屏、Leave 旧屏（ScreensManager.cs:277-317）；<code>OnSwitchScreen</code>/<code>OnScreenEntered</code>/<code>OnScreenLeaved</code> 三个钩子在切屏链上。</li></ol>
+<ol><li><b>XML 装配</b>：<code>ContentManager.Get&lt;XElement&gt;("Screens/名")</code> + <code>LoadContents(this, node)</code> 把 XML 树装进自己（原版样板 SettingsAudioScreen.cs:11-12；装配器 Widget.cs:507-517，逐属性反射赋值+递归建子树，每棵树装配完还发 <code>OnWidgetContentsLoaded</code> 钩子）。mod 的 <code>Assets/Screens/*.xml</code> 在 CombineContent 时剥掉 <code>Assets/</code> 前缀注册进 ContentManager（ModEntity.cs:290-296），同名资源即取即得。</li><li><b>注册进屏表</b>：<code>ScreensManager.AddScreen(name, screen)</code>（ScreensManager.cs:47）。时机用 <code>OnLoadingFinished</code> 钩子往加载队列<b>尾部追加一个动作</b>（LoadingScreen.cs:578-583 传入队列引用；动作泵每轮先清 mod 队列 :700-711）——此刻语言/字体/内容系统全部就绪，和原版屏同等待遇。</li><li><b>进入方式</b>：设置页构造时发 <code>OnSettingsScreenCreated</code> 钩子，mod 交出"按钮→动作"字典（SettingsScreen.cs:32-43），引擎用 <code>AddSettingButton</code> 奇偶分列插进左右两栏并接上点击（:68-71,86-96）——这个钩子切语言重建设置页时还会再发，按钮不丢（ModLoader.cs:1962-1965 注释明说）。</li><li><b>切屏</b>：<code>ScreensManager.SwitchScreen(name)</code> 走淡入动画，Factor 过半才 Enter 新屏、Leave 旧屏（ScreensManager.cs:277-317）；<code>OnSwitchScreen</code>/<code>OnScreenEntered</code>/<code>OnScreenLeaved</code> 三个钩子在切屏链上。</li></ol>
 <h2 id="制品">制品</h2>
 <h3 id="目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</h3>
 <pre class="code"><code>example-mymenu.scmod
@@ -162,103 +192,103 @@ a{color:inherit}
         └── MyModScreen.xml      ← 界面布局模板（下面全文）</code></pre>
 <h3 id="modinfo-json-完整">modinfo.json（完整）</h3>
 <pre class="code lang-json"><code>{
-    &quot;Name&quot;: &quot;示例：模组界面&quot;,
-    &quot;Version&quot;: &quot;1.0.0&quot;,
-    &quot;ApiVersion&quot;: &quot;1.8&quot;,
-    &quot;Author&quot;: &quot;SC笔记示例&quot;,
-    &quot;Description&quot;: &quot;新增原版风格设置界面并从设置页进入。演示 Screen 注册与设置页按钮钩子。&quot;,
-    &quot;PackageName&quot;: &quot;example-mymenu&quot;,
-    &quot;LoadOrder&quot;: 10000,
-    &quot;GameplayImpactLevel&quot;: &quot;Cosmetic&quot;
+    <span class=a>"Name":</span> <span class=s>"示例：模组界面"</span>,
+    <span class=a>"Version":</span> <span class=s>"1.0.0"</span>,
+    <span class=a>"ApiVersion":</span> <span class=s>"1.8"</span>,
+    <span class=a>"Author":</span> <span class=s>"SC笔记示例"</span>,
+    <span class=a>"Description":</span> <span class=s>"新增原版风格设置界面并从设置页进入。演示 Screen 注册与设置页按钮钩子。"</span>,
+    <span class=a>"PackageName":</span> <span class=s>"example-mymenu"</span>,
+    <span class=a>"LoadOrder":</span> <span class=n>10000</span>,
+    <span class=a>"GameplayImpactLevel":</span> <span class=s>"Cosmetic"</span>
 }</code></pre>
 <h3 id="assets-screens-mymodscreen-xml-完整-逐行注明出处">Assets/Screens/MyModScreen.xml（完整，逐行注明出处）</h3>
-<pre class="code lang-xml"><code>&lt;!-- 根元素名随意（装配器只取它的属性装到 this 上），照抄原版习惯写 Screen；
-     xmlns 指向 Game 命名空间=子元素标签按 Game.* 控件类名解析 --&gt;
-&lt;Screen xmlns=&quot;runtime-namespace:Game&quot;&gt;
+<pre class="code lang-xml"><code><span class=c>&lt;!-- 根元素名随意（装配器只取它的属性装到 this 上），照抄原版习惯写 Screen；
+     xmlns 指向 Game 命名空间=子元素标签按 Game.* 控件类名解析 --&gt;</span>
+<span class=t2>&lt;Screen</span> <span class=a>xmlns</span>=<span class=s>"runtime-namespace:Game"</span><span class=t2>&gt;</span>
 
-  &lt;!-- 全景背景（主菜单同款旋转地形图） --&gt;
-  &lt;PanoramaWidget /&gt;
+  <span class=c>&lt;!-- 全景背景（主菜单同款旋转地形图） --&gt;</span>
+  <span class=t2>&lt;PanoramaWidget</span> <span class=t2>/&gt;</span>
 
-  &lt;!-- 竖向骨架：顶栏 + 正文区（SettingsAudioScreen.xml 同构） --&gt;
-  &lt;StackPanelWidget Direction=&quot;Horizontal&quot;&gt;
+  <span class=c>&lt;!-- 竖向骨架：顶栏 + 正文区（SettingsAudioScreen.xml 同构） --&gt;</span>
+  <span class=t2>&lt;StackPanelWidget</span> <span class=a>Direction</span>=<span class=s>"Horizontal"</span><span class=t2>&gt;</span>
 
-    &lt;!-- 顶栏：Style 展开=关闭键(自动 Name=&quot;TopBar.Back&quot;)+标题槽（Widgets/TopBarContents） --&gt;
-    &lt;CanvasWidget Style=&quot;{Widgets/TopBarContents}&quot;&gt;
-      &lt;LabelWidget Name=&quot;TopBar.Label&quot; Text=&quot;示例面板&quot; /&gt;
-    &lt;/CanvasWidget&gt;
+    <span class=c>&lt;!-- 顶栏：Style 展开=关闭键(自动 Name="TopBar.Back")+标题槽（Widgets/TopBarContents） --&gt;</span>
+    <span class=t2>&lt;CanvasWidget</span> <span class=a>Style</span>=<span class=s>"{Widgets/TopBarContents}"</span><span class=t2>&gt;</span>
+      <span class=t2>&lt;LabelWidget</span> <span class=a>Name</span>=<span class=s>"TopBar.Label"</span> <span class=a>Text</span>=<span class=s>"示例面板"</span> <span class=t2>/&gt;</span>
+    <span class=t2>&lt;/CanvasWidget</span><span class=t2>&gt;</span>
 
-    &lt;!-- 正文区：圆角面板 + 纵向滚动 + 居中堆叠 --&gt;
-    &lt;CanvasWidget Margin=&quot;10, 20&quot;&gt;
-      &lt;BevelledRectangleWidget Style=&quot;{Styles/Area}&quot; /&gt;
-      &lt;ScrollPanelWidget Direction=&quot;Vertical&quot; HorizontalAlignment=&quot;Center&quot; VerticalAlignment=&quot;Center&quot; Margin=&quot;3, 3&quot;&gt;
-        &lt;StackPanelWidget Direction=&quot;Vertical&quot; HorizontalAlignment=&quot;Center&quot; VerticalAlignment=&quot;Center&quot;&gt;
-          &lt;LabelWidget Text=&quot;Hello from MyMod!&quot; Margin=&quot;0, 10&quot; /&gt;
-          &lt;ButtonWidget Name=&quot;MyButton&quot; Text=&quot;点我&quot; Size=&quot;310, 60&quot; Margin=&quot;0, 10&quot; /&gt;
-        &lt;/StackPanelWidget&gt;
-      &lt;/ScrollPanelWidget&gt;
-    &lt;/CanvasWidget&gt;
+    <span class=c>&lt;!-- 正文区：圆角面板 + 纵向滚动 + 居中堆叠 --&gt;</span>
+    <span class=t2>&lt;CanvasWidget</span> <span class=a>Margin</span>=<span class=s>"10, 20"</span><span class=t2>&gt;</span>
+      <span class=t2>&lt;BevelledRectangleWidget</span> <span class=a>Style</span>=<span class=s>"{Styles/Area}"</span> <span class=t2>/&gt;</span>
+      <span class=t2>&lt;ScrollPanelWidget</span> <span class=a>Direction</span>=<span class=s>"Vertical"</span> <span class=a>HorizontalAlignment</span>=<span class=s>"Center"</span> <span class=a>VerticalAlignment</span>=<span class=s>"Center"</span> <span class=a>Margin</span>=<span class=s>"3, 3"</span><span class=t2>&gt;</span>
+        <span class=t2>&lt;StackPanelWidget</span> <span class=a>Direction</span>=<span class=s>"Vertical"</span> <span class=a>HorizontalAlignment</span>=<span class=s>"Center"</span> <span class=a>VerticalAlignment</span>=<span class=s>"Center"</span><span class=t2>&gt;</span>
+          <span class=t2>&lt;LabelWidget</span> <span class=a>Text</span>=<span class=s>"Hello from MyMod!"</span> <span class=a>Margin</span>=<span class=s>"0, 10"</span> <span class=t2>/&gt;</span>
+          <span class=t2>&lt;ButtonWidget</span> <span class=a>Name</span>=<span class=s>"MyButton"</span> <span class=a>Text</span>=<span class=s>"点我"</span> <span class=a>Size</span>=<span class=s>"310, 60"</span> <span class=a>Margin</span>=<span class=s>"0, 10"</span> <span class=t2>/&gt;</span>
+        <span class=t2>&lt;/StackPanelWidget</span><span class=t2>&gt;</span>
+      <span class=t2>&lt;/ScrollPanelWidget</span><span class=t2>&gt;</span>
+    <span class=t2>&lt;/CanvasWidget</span><span class=t2>&gt;</span>
 
-  &lt;/StackPanelWidget&gt;
-&lt;/Screen&gt;</code></pre>
-<ul><li><code>Text=&quot;示例面板&quot;</code> 直接写字面量；写 <code>[文件名:键]</code> 才走语言表查找（LabelWidget.cs:19-26）——中文会经字体回退链正常渲染。</li><li><code>{路径}</code> 花括号=从 ContentManager 取 XML 片段当样式；<code>Widgets/TopBarContents</code> 自带返回键，<code>Styles/Area</code> 是圆角面板底。</li></ul>
+  <span class=t2>&lt;/StackPanelWidget</span><span class=t2>&gt;</span>
+<span class=t2>&lt;/Screen</span><span class=t2>&gt;</span></code></pre>
+<ul><li><code>Text="示例面板"</code> 直接写字面量；写 <code>[文件名:键]</code> 才走语言表查找（LabelWidget.cs:19-26）——中文会经字体回退链正常渲染。</li><li><code>{路径}</code> 花括号=从 ContentManager 取 XML 片段当样式；<code>Widgets/TopBarContents</code> 自带返回键，<code>Styles/Area</code> 是圆角面板底。</li></ul>
 <h3 id="mymodscreen-cs-完整">MyModScreen.cs（完整）</h3>
-<pre class="code lang-csharp"><code>using System.Collections.Generic;
-using System.Xml.Linq;
-using Engine;                                   // ContentManager 所在命名空间
+<pre class="code lang-csharp"><code><span class=k>using</span> <span class=t>System</span>.<span class=t>Collections</span>.<span class=t>Generic</span>;
+<span class=k>using</span> <span class=t>System</span>.<span class=t>Xml</span>.<span class=t>Linq</span>;
+<span class=k>using</span> <span class=t>Engine</span>;                                   <span class=c>// ContentManager 所在命名空间</span>
 
-namespace MyCompany.ExampleMyMenu {
-    public class MyModMenuLoader : ModLoader {
-        public override void __ModInitialize() {                    // 注册窗口内（ModLoader.cs:21）
-            ModsManager.RegisterHook(&quot;OnLoadingFinished&quot;, this);    // 派发点 LoadingScreen.cs:578-583
-            ModsManager.RegisterHook(&quot;OnSettingsScreenCreated&quot;, this); // 派发点 SettingsScreen.cs:32-43
+<span class=k>namespace</span> <span class=t>MyCompany</span>.<span class=t>ExampleMyMenu</span> {
+    <span class=k>public</span> <span class=k>class</span> <span class=t>MyModMenuLoader</span> : <span class=t>ModLoader</span> {
+        <span class=k>public</span> <span class=k>override</span> <span class=k>void</span> __ModInitialize() {                    <span class=c>// 注册窗口内（ModLoader.cs:21）</span>
+            <span class=t>ModsManager</span>.<span class=t>RegisterHook</span>(<span class=s>"OnLoadingFinished"</span>, <span class=k>this</span>);    <span class=c>// 派发点 LoadingScreen.cs:578-583</span>
+            <span class=t>ModsManager</span>.<span class=t>RegisterHook</span>(<span class=s>"OnSettingsScreenCreated"</span>, <span class=k>this</span>); <span class=c>// 派发点 SettingsScreen.cs:32-43</span>
         }
 
-        // 装载尾段：往加载动作队列尾部追加&quot;注册屏&quot;动作（签名照抄 ModLoader.cs:781）
-        public override void OnLoadingFinished(List&lt;Action&gt; actions) {
-            actions.Add(() =&gt; ScreensManager.AddScreen(&quot;MyMod&quot;, new MyModScreen()));   // AddScreen 照抄 LoadingScreen.cs:611 的用法
+        <span class=c>// 装载尾段：往加载动作队列尾部追加"注册屏"动作（签名照抄 ModLoader.cs:781）</span>
+        <span class=k>public</span> <span class=k>override</span> <span class=k>void</span> <span class=t>OnLoadingFinished</span>(<span class=t>List</span>&lt;<span class=t>Action</span>&gt; actions) {
+            actions.<span class=t>Add</span>(() =&gt; <span class=t>ScreensManager</span>.<span class=t>AddScreen</span>(<span class=s>"MyMod"</span>, <span class=k>new</span> <span class=t>MyModScreen</span>()));   <span class=c>// AddScreen 照抄 LoadingScreen.cs:611 的用法</span>
         }
 
-        // 设置页建好了：交出要加的按钮（签名照抄 ModLoader.cs:1968-1970）
-        public override void OnSettingsScreenCreated(SettingsScreen settingsScreen, out Dictionary&lt;ButtonWidget, Action&gt; buttonsToAdd) {
-            buttonsToAdd = new Dictionary&lt;ButtonWidget, Action&gt; {
-                [new BevelledButtonWidget {
-                    Name = &quot;MyModMenuButton&quot;,
-                    Text = &quot;示例面板&quot;,
-                    Style = ContentManager.Get&lt;XElement&gt;(&quot;Styles/ButtonStyle_310x60&quot;),  // 原版设置按钮样式，同 SettingsScreen.cs:107-113
-                    HorizontalAlignment = WidgetAlignment.Center,
-                    VerticalAlignment = WidgetAlignment.Center,
-                    Margin = new Vector2(0f, 5f)
-                }] = () =&gt; ScreensManager.SwitchScreen(&quot;MyMod&quot;)     // 按名切屏，ScreensManager.cs:49
+        <span class=c>// 设置页建好了：交出要加的按钮（签名照抄 ModLoader.cs:1968-1970）</span>
+        <span class=k>public</span> <span class=k>override</span> <span class=k>void</span> <span class=t>OnSettingsScreenCreated</span>(<span class=t>SettingsScreen</span> settingsScreen, <span class=k>out</span> <span class=t>Dictionary</span>&lt;<span class=t>ButtonWidget</span>, <span class=t>Action</span>&gt; buttonsToAdd) {
+            buttonsToAdd = <span class=k>new</span> <span class=t>Dictionary</span>&lt;<span class=t>ButtonWidget</span>, <span class=t>Action</span>&gt; {
+                [<span class=k>new</span> <span class=t>BevelledButtonWidget</span> {
+                    <span class=t>Name</span> = <span class=s>"MyModMenuButton"</span>,
+                    <span class=t>Text</span> = <span class=s>"示例面板"</span>,
+                    <span class=t>Style</span> = <span class=t>ContentManager</span>.<span class=t>Get</span>&lt;<span class=t>XElement</span>&gt;(<span class=s>"Styles/ButtonStyle_310x60"</span>),  <span class=c>// 原版设置按钮样式，同 SettingsScreen.cs:107-113</span>
+                    <span class=t>HorizontalAlignment</span> = <span class=t>WidgetAlignment</span>.<span class=t>Center</span>,
+                    <span class=t>VerticalAlignment</span> = <span class=t>WidgetAlignment</span>.<span class=t>Center</span>,
+                    <span class=t>Margin</span> = <span class=k>new</span> <span class=t>Vector2</span>(<span class=n>0f</span>, <span class=n>5f</span>)
+                }] = () =&gt; <span class=t>ScreensManager</span>.<span class=t>SwitchScreen</span>(<span class=s>"MyMod"</span>)     <span class=c>// 按名切屏，ScreensManager.cs:49</span>
             };
         }
     }
 
-    public class MyModScreen : Screen {
-        public MyModScreen() {
-            XElement node = ContentManager.Get&lt;XElement&gt;(&quot;Screens/MyModScreen&quot;);   // 取 XML（原版样板 SettingsAudioScreen.cs:11）
-            LoadContents(this, node);                              // 装配进自己（Widget.cs:507）
+    <span class=k>public</span> <span class=k>class</span> <span class=t>MyModScreen</span> : <span class=t>Screen</span> {
+        <span class=k>public</span> <span class=t>MyModScreen</span>() {
+            <span class=t>XElement</span> node = <span class=t>ContentManager</span>.<span class=t>Get</span>&lt;<span class=t>XElement</span>&gt;(<span class=s>"Screens/MyModScreen"</span>);   <span class=c>// 取 XML（原版样板 SettingsAudioScreen.cs:11）</span>
+            <span class=t>LoadContents</span>(<span class=k>this</span>, node);                              <span class=c>// 装配进自己（Widget.cs:507）</span>
         }
 
-        public override void Update() {
-            base.Update();                                         // 09 页&quot;Update 必调 base&quot;清单
-            if (Children.Find&lt;ButtonWidget&gt;(&quot;MyButton&quot;).IsClicked) {
-                Children.Find&lt;LabelWidget&gt;(&quot;TopBar.Label&quot;).Text = &quot;点过了！&quot;;   // Find 按名字取控件（SettingsAudioScreen.cs:13）
+        <span class=k>public</span> <span class=k>override</span> <span class=k>void</span> <span class=t>Update</span>() {
+            <span class=k>base</span>.<span class=t>Update</span>();                                         <span class=c>// 09 页"Update 必调 base"清单</span>
+            <span class=k>if</span> (<span class=t>Children</span>.<span class=t>Find</span>&lt;<span class=t>ButtonWidget</span>&gt;(<span class=s>"MyButton"</span>).<span class=t>IsClicked</span>) {
+                <span class=t>Children</span>.<span class=t>Find</span>&lt;<span class=t>LabelWidget</span>&gt;(<span class=s>"TopBar.Label"</span>).<span class=t>Text</span> = <span class=s>"点过了！"</span>;   <span class=c>// Find 按名字取控件（SettingsAudioScreen.cs:13）</span>
             }
-            if (Input.Back || Input.Cancel
-                || Children.Find&lt;ButtonWidget&gt;(&quot;TopBar.Back&quot;).IsClicked) {     // 三通道返回（SettingsAudioScreen.cs:28-30）
-                ScreensManager.SwitchScreen(ScreensManager.PreviousScreen);    // 回上一屏（SettingsAudioScreen.cs:31）
+            <span class=k>if</span> (<span class=t>Input</span>.<span class=t>Back</span> || <span class=t>Input</span>.<span class=t>Cancel</span>
+                || <span class=t>Children</span>.<span class=t>Find</span>&lt;<span class=t>ButtonWidget</span>&gt;(<span class=s>"TopBar.Back"</span>).<span class=t>IsClicked</span>) {     <span class=c>// 三通道返回（SettingsAudioScreen.cs:28-30）</span>
+                <span class=t>ScreensManager</span>.<span class=t>SwitchScreen</span>(<span class=t>ScreensManager</span>.<span class=t>PreviousScreen</span>);    <span class=c>// 回上一屏（SettingsAudioScreen.cs:31）</span>
             }
         }
     }
 }</code></pre>
 <h2 id="打包清单">打包清单</h2>
-<ol><li>dll 在 zip 根层；扩展名小写；<code>__ModInitialize</code> 里只做 RegisterHook（12 页坑表——抛异常全模组连坐）。</li><li>屏类必须 <b>public + 无参构造</b>：切语言时引擎会 <code>Activator.CreateInstance</code> 重建全部屏（ScreensManager.cs:109-112），构造失败会告警并保留旧实例（:114-116），但重建成功的屏才吃得到新语言。</li><li>XML 存 <code>Assets/Screens/</code>，装载后资源名=剥前缀的 <code>Screens/MyModScreen</code>，与 <code>Get&amp;lt;XElement&amp;gt;</code> 的名字一致。</li></ol>
+<ol><li>dll 在 zip 根层；扩展名小写；<code>__ModInitialize</code> 里只做 RegisterHook（12 页坑表——抛异常全模组连坐）。</li><li>屏类必须 <b>public + 无参构造</b>：切语言时引擎会 <code>Activator.CreateInstance</code> 重建全部屏（ScreensManager.cs:109-112），构造失败会告警并保留旧实例（:114-116），但重建成功的屏才吃得到新语言。</li><li>XML 存 <code>Assets/Screens/</code>，装载后资源名=剥前缀的 <code>Screens/MyModScreen</code>，与 <code>Get&lt;XElement&gt;</code> 的名字一致。</li></ol>
 <h2 id="验证">验证</h2>
-<div class=tablewrap><table><thead><tr><th>锚点</th><th>出处</th></tr></thead><tbody><tr><td><code>[示例：模组界面](Version: 1.0.0) Loaded 3 resource files.</code>（modinfo+dll+xml）</td><td>ModEntity.cs:275</td></tr><tr><td>设置页出现"示例面板"按钮（左右两栏交替排布）</td><td>SettingsScreen.cs:91-96</td></tr><tr><td>点按钮→渐变切入"示例面板"屏</td><td>ScreensManager.cs:51-88</td></tr><tr><td>切语言后再开设置页按钮仍在（钩子重发）</td><td>ModLoader.cs:1962-1965</td></tr><tr><td>日志 <code>Entered screen &quot;MyMod&quot;</code>（Verbose 级，开调试日志可见）</td><td>ScreensManager.cs:85</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>锚点</th><th>出处</th></tr></thead><tbody><tr><td><code>[示例：模组界面](Version: 1.0.0) Loaded 3 resource files.</code>（modinfo+dll+xml）</td><td>ModEntity.cs:275</td></tr><tr><td>设置页出现"示例面板"按钮（左右两栏交替排布）</td><td>SettingsScreen.cs:91-96</td></tr><tr><td>点按钮→渐变切入"示例面板"屏</td><td>ScreensManager.cs:51-88</td></tr><tr><td>切语言后再开设置页按钮仍在（钩子重发）</td><td>ModLoader.cs:1962-1965</td></tr><tr><td>日志 <code>Entered screen "MyMod"</code>（Verbose 级，开调试日志可见）</td><td>ScreensManager.cs:85</td></tr></tbody></table></div>
 <h2 id="该示例踩的坑">该示例踩的坑</h2>
 <ul><li><b>按钮死循环报错</b>：<code>AddSettingButton</code> 对同一个 ButtonWidget 实例二次登记抛 <code>InvalidOperationException</code>（SettingsScreen.cs:88-91）——<code>OnSettingsScreenCreated</code> 每次设置页构造都发，字典里必须是<b>新建</b>的按钮实例，别缓存复用。</li><li><b>在 <code>__ModInitialize</code> 里直接 <code>AddScreen</code></b>：此刻内容系统/字体链未就绪，屏构造函数里的 <code>ContentManager.Get</code> 会炸——必须走 <code>OnLoadingFinished</code> 追加动作的时机（本例写法）。同理别在构造函数里碰 <code>ScreensManager.CurrentScreen</code>。</li><li><b>屏不见了（退出世界再回主菜单后）</b>：LoadingScreen.Enter 会清掉除自己外的全部屏（LoadingScreen.cs:674-684），随后的装载动作会重放——<code>OnLoadingFinished</code> 每轮装载重发，本例写法自愈；若你在别的时机注册，重进主菜单后就没了。</li><li><b>XML 改了没生效</b>：检查文件是否真在 <code>Assets/Screens/</code> 下、资源名大小写是否一致；改 dll 后必须<b>重启整个进程</b>（Reboot 不卸载程序集，12 页坑表）。</li><li><b>控件点了没反应</b>：<code>Update()</code> 没调 <code>base.Update()</code>（09 页）；或 <code>Children.Find</code> 的名字和 XML <code>Name</code> 不一致——Find 找不到返回 null，下一行就是空引用。</li><li><b>想在世界内弹窗而不是全屏</b>：别用 Screen，走 Dialog 族（<a href="01-引擎/18-Dialog对话框族.html">18页</a>）；两按钮确认框最小样板 <code>MessageDialog.cs:18-47</code>。</li></ul>
 <h2 id="快查路由">快查路由</h2>
-<div class=tablewrap><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>全代码构建界面（不用 XML）</td><td><code>EditColorDialog.cs:19-136</code>（Canvas+Stack 结构样板）</td></tr><tr><td>控件事件绑定/拖放/焦点</td><td><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a></td></tr><tr><td>从世界内（游戏屏）打开</td><td>17 页"屏层 mod 钩子"节（OnSwitchScreen/OnScreenEntered 等）</td></tr><tr><td>屏间传参</td><td><code>SwitchScreen(name, params)</code> 参数原样进 <code>Enter(object[])</code>（ScreensManager.cs:49,:307）</td></tr><tr><td>原版各屏 XML 模板</td><td>源码仓库 <code>Survivalcraft/Content/Assets/Screens/*.xml</code>（41 个现成布局）</td></tr><tr><td>异步加载列表不卡帧</td><td><code>Screen\PlayScreen.cs:82-118</code>（BusyDialog+Task.Run+Dispatcher 封送）</td></tr></tbody></table></div></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#目标">目标</a><a class="lvl2" href="#前置知识">前置知识</a><a class="lvl2" href="#原理-30-秒">原理 30 秒</a><a class="lvl2" href="#制品">制品</a><a class="lvl3" href="#目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</a><a class="lvl3" href="#modinfo-json-完整">modinfo.json（完整）</a><a class="lvl3" href="#assets-screens-mymodscreen-xml-完整-逐行注明出处">Assets/Screens/MyModScreen.xml（完整，逐行注明出处）</a><a class="lvl3" href="#mymodscreen-cs-完整">MyModScreen.cs（完整）</a><a class="lvl2" href="#打包清单">打包清单</a><a class="lvl2" href="#验证">验证</a><a class="lvl2" href="#该示例踩的坑">该示例踩的坑</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>全代码构建界面（不用 XML）</td><td><code>EditColorDialog.cs:19-136</code>（Canvas+Stack 结构样板）</td></tr><tr><td>控件事件绑定/拖放/焦点</td><td><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a></td></tr><tr><td>从世界内（游戏屏）打开</td><td>17 页"屏层 mod 钩子"节（OnSwitchScreen/OnScreenEntered 等）</td></tr><tr><td>屏间传参</td><td><code>SwitchScreen(name, params)</code> 参数原样进 <code>Enter(object[])</code>（ScreensManager.cs:49,:307）</td></tr><tr><td>原版各屏 XML 模板</td><td>源码仓库 <code>Survivalcraft/Content/Assets/Screens/*.xml</code>（41 个现成布局）</td></tr><tr><td>异步加载列表不卡帧</td><td><code>Screen\PlayScreen.cs:82-118</code>（BusyDialog+Task.Run+Dispatcher 封送）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="Mod示例-自定义生物.html"><small>上一页 · Mod开发</small><b>Mod示例-自定义生物</b></a><a class="next" href="Mod示例-自定义特效.html"><small>下一页 · Mod开发</small><b>Mod示例-自定义特效</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#目标">目标</a><a class="lvl2" href="#前置知识">前置知识</a><a class="lvl2" href="#原理-30-秒">原理 30 秒</a><a class="lvl2" href="#制品">制品</a><a class="lvl3" href="#目录树-scmod-zip-容器">目录树（.scmod = zip 容器）</a><a class="lvl3" href="#modinfo-json-完整">modinfo.json（完整）</a><a class="lvl3" href="#assets-screens-mymodscreen-xml-完整-逐行注明出处">Assets/Screens/MyModScreen.xml（完整，逐行注明出处）</a><a class="lvl3" href="#mymodscreen-cs-完整">MyModScreen.cs（完整）</a><a class="lvl2" href="#打包清单">打包清单</a><a class="lvl2" href="#验证">验证</a><a class="lvl2" href="#该示例踩的坑">该示例踩的坑</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT=""; // 站点根相对前缀（按页面深度注入）
 // 主题切换

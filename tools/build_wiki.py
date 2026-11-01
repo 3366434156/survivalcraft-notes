@@ -23,6 +23,14 @@ SITE_REPO = "https://github.com/3366434156/survivalcraft-notes"
 SITE_URL = "https://3366434156.github.io/survivalcraft-notes/"  # 部署根（404 兜底页跳转用）
 SEC_LABELS = {"总览": "总览", "Mod开发": "Mod 开发", "SC引擎": "引擎主线", "SC引擎·明细": "逐文件明细"}
 
+HERO_HTML = """
+<div class=hero><div class=hero-grid>
+<a class=hcard href="学习路线.html"><span class=ico>🧭</span><b>人是这样上手的</b><span>做 mod / 读引擎 / 查问题，三条路线 + 20 词概念词典</span></a>
+<a class=hcard href="AGENTS.html"><span class=ico>🤖</span><b>agent 从这进</b><span>30 秒心智模型 + 查库协议 8 步，挂全套参考</span></a>
+<a class=hcard href="Mod开发配方.html"><span class=ico>🔎</span><b>直接查任务</b><span>“我想做 X”→ 照抄哪段原版代码（带行号）</span></a>
+</div></div>
+"""
+
 # ---------- 收集源文件 ----------
 def collect_sources():
     pages = []  # (section, src_path, out_rel, order)
@@ -52,6 +60,7 @@ def collect_sources():
         ("Mod开发", "Mod示例-自定义生物.md", 10),
         ("Mod开发", "Mod示例-自定义界面.md", 11),
         ("Mod开发", "Mod示例-自定义特效.md", 12),
+        ("Mod开发", "Mod示例-自定义食物.md", 13),
     ]
     for sec, name, k in moddev:
         p = SC_ROOT / name
@@ -116,7 +125,8 @@ def inline(text, src_file, reg):
     text = text.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;").replace("&amp;amp;", "&amp;")
     spans = []
     def stash(m):
-        spans.append("<code>%s</code>" % html.escape(m.group(1)))
+        # text 入口已整体 escape 过一次（作者实体已在上方还原），此处不能再逃逸——否则 <T> 会显示成 &lt;T&gt;
+        spans.append("<code>%s</code>" % m.group(1))
         return "\x00%d\x00" % (len(spans) - 1)
     text = CODE_RE.sub(stash, text)
     def img(m):
@@ -146,6 +156,54 @@ def inline(text, src_file, reg):
 def slug(t):
     return re.sub(r"[^\w\u4e00-\u9fff]+", "-", t).strip("-").lower()[:48]
 
+# ---------- 构建时语法高亮（零运行时依赖：生成期直接产出带 span 的 HTML）----------
+CS_KWS = frozenset("""abstract as base bool break byte case catch char checked class const continue decimal
+default delegate do double else enum event explicit extern false finally fixed float for foreach get goto if
+implicit in init int interface internal is lock long namespace new null object operator out override params
+private protected public readonly record ref return sealed set short sizeof stackalloc static string struct
+switch this throw true try typeof uint ulong unchecked unsafe ushort using var virtual void volatile when
+where while yield""".split())
+
+_RE_CSHARP = re.compile(
+    r'(?P<comment>//[^\n]*|/\*.*?\*/)'
+    r'|(?P<string>\$?@?"(?:[^"]|"")*"|\$?"(?:[^"\\\n]|\\.)*"|\'(?:[^\'\\\n]|\\.)*\')'
+    r'|(?P<number>\b0[xX][0-9a-fA-F]+\b|\b\d(?:[\d_]*\.?[\d_]*)?[fFdDmMuUlL]*\b)'
+    r'|(?P<word>[A-Za-z_][A-Za-z0-9_]*)', re.S)
+
+_RE_XML = re.compile(
+    r'(?P<comment><!--.*?-->)'
+    r'|(?P<tag><[/?!?]?[\w:.-]*|/?>|\?>)'
+    r'|(?P<string>"[^"]*")'
+    r'|(?P<attr>[\w:.-]+)(?==)', re.S)
+
+_RE_JSON = re.compile(
+    r'(?P<key>"(?:[^"\\]|\\.)*")\s*:'
+    r'|(?P<string>"(?:[^"\\]|\\.)*")'
+    r'|(?P<number>-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)'
+    r'|(?P<kw>\b(?:true|false|null)\b)')
+
+_HL_MAP = {"csharp": _RE_CSHARP, "cs": _RE_CSHARP, "xml": _RE_XML, "json": _RE_JSON}
+
+def highlight(code, lang):
+    pat = _HL_MAP.get((lang or "").lower())
+    if pat is None:
+        return html.escape(code)
+    out, last = [], 0
+    for m in pat.finditer(code):
+        out.append(html.escape(code[last:m.start()], quote=False))
+        g = m.lastgroup
+        if g == "word":
+            w = m.group("word")
+            cls = "k" if w in CS_KWS else ("t" if w[0].isupper() else None)
+            out.append(html.escape(w, quote=False) if cls is None else '<span class=%s>%s</span>' % (cls, html.escape(w, quote=False)))
+        else:
+            cls = {"comment": "c", "string": "s", "number": "n", "word": None,
+                   "tag": "t2", "attr": "a", "key": "a", "kw": "k"}[g]
+            out.append('<span class=%s>%s</span>' % (cls, html.escape(m.group(0), quote=False)))
+        last = m.end()
+    out.append(html.escape(code[last:], quote=False))
+    return "".join(out)
+
 def md_to_html(md_text, src_file, reg):
     lines = md_text.splitlines()
     out, i, n = [], 0, len(lines)
@@ -169,7 +227,7 @@ def md_to_html(md_text, src_file, reg):
                 buf.append(lines[i]); i += 1
             i += 1
             out.append("<pre class=\"code%s\"><code>%s</code></pre>" % (
-                (" lang-" + lang) if lang else "", html.escape("\n".join(buf))))
+                (" lang-" + lang) if lang else "", highlight("\n".join(buf), lang)))
             continue
         if not s:
             flush(); i += 1; continue
@@ -211,7 +269,8 @@ def md_to_html(md_text, src_file, reg):
                     used_ids.add(rid)
                     files.append((rid, raw))
                 trs.append("<tr%s>%s</tr>" % ((' id="%s"' % rid) if rid else "", "".join("<td>%s</td>" % inline(c, src_file, reg) for c in r)))
-            tbl = "<div class=tablewrap><table><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>" % (th, "".join(trs))
+            tbl = '<div class="tablewrap%s"><table><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>' % (
+                " tall" if len(body) > 40 else "", th, "".join(trs))
             if is_filetable:
                 cs = [(raw, rid) for rid, raw in files[fstart:] if ".cs" in raw]
                 if len(cs) >= 3:
@@ -345,6 +404,36 @@ hr{border:none;border-top:1px solid var(--line);margin:30px 0}
 ul,ol{padding-left:1.5em;margin:10px 0}
 li{margin:4px 0}
 #foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+/* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
+pre.code .k{color:#ff7b72}
+pre.code .t{color:#ffa657}
+pre.code .s{color:#a5d6ff}
+pre.code .c{color:#8b949e;font-style:italic}
+pre.code .n{color:#79c0ff}
+pre.code .a{color:#d2a8ff}
+pre.code .t2{color:#7ee787}
+/* 上一页/下一页 */
+.pn{display:flex;gap:14px;margin:36px 0 6px}
+.pn a{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pn a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(79,70,229,.35)}
+.pn a.next{text-align:right}
+.pn a small{color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px}
+.pn a b{color:var(--acc-ink);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .pnvoid{flex:1}
+/* 首页三入口卡片 */
+.hero{margin:24px 0 4px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
+.hcard:hover::before{opacity:1}
+.hcard .ico{font-size:21px;line-height:1}
+.hcard b{font-size:15.5px;color:var(--ink)}
+.hcard span{font-size:12.5px;color:var(--ink-soft)}
+/* 长表格：内部滚动 + 粘性表头 */
+.tablewrap.tall{max-height:calc(100vh - 150px);overflow:auto}
+.tablewrap.tall th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line-strong)}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
 .deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
 /* ── 交互层 ── */
 #pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0}
@@ -508,7 +597,8 @@ def main():
     counts = {}
     for p in pages:
         counts[p["section"]] = counts.get(p["section"], 0) + 1
-    for p in sorted(pages, key=lambda x: (["总览", "Mod开发", "SC引擎", "SC引擎·明细"].index(x["section"]), x["order"])):
+    ordered = sorted(pages, key=lambda x: (["总览", "Mod开发", "SC引擎", "SC引擎·明细"].index(x["section"]), x["order"]))
+    for p in ordered:
         if p["section"] != cur_sec:
             cur_sec = p["section"]
             nav.append('<div class=sec>%s · %d</div>' % (SEC_LABELS[cur_sec], counts[cur_sec]))
@@ -548,13 +638,34 @@ def main():
         # 侧栏导航是全站共用一份（相对站点根），子页必须按深度补 ../ 前缀，否则子页侧栏全 404。
         # 注意替换串不带收口引号——引号要在原 href 值之后闭合
         page_nav = nav_html.replace('<a href="', '<a href="%s' % root_prefix) if root_prefix else nav_html
-        out_path.write_text(page_shell(title, body, page_nav, root_prefix, toc_html, aside_extra), encoding="utf-8")
+        # 上一页/下一页（全站阅读序 = 侧栏顺序）
+        idx = ordered.index(p)
+        def _pnlink(pp, label, nxt):
+            if pp is None:
+                return '<span class=pnvoid></span>'
+            return ('<a class="%s" href="%s%s"><small>%s · %s</small><b>%s</b></a>'
+                    % ("next" if nxt else "prev", root_prefix, pp["out"], label,
+                       html.escape(pp["section"]), html.escape(pp["src"].stem)))
+        pn = '<nav class=pn>%s%s</nav>' % (
+            _pnlink(ordered[idx - 1] if idx > 0 else None, "上一页", False),
+            _pnlink(ordered[idx + 1] if idx < len(ordered) - 1 else None, "下一页", True))
+        page_body = (HERO_HTML + body) if p["out"] == "index.html" else body
+        out_path.write_text(page_shell(title, page_body + pn, page_nav, root_prefix, toc_html, aside_extra), encoding="utf-8")
         text_sample = re.sub(r"[`#>*|\-\[\]()]", "", md)[:26000]
         index_data.append({"t": title, "u": p["out"], "b": text_sample.lower()})
         print("OK", p["out"])
 
     (OUT / "search.json").write_text(json.dumps(index_data, ensure_ascii=False), encoding="utf-8")
     write_404()
+    # 清理改名/删页残留：docs 下不属于本次产物的 html 一律移除（构建器只写不删会留陈旧页）
+    keep = {p["out"] for p in pages} | {"404.html"}
+    for root, dirs, files in os.walk(OUT):
+        for f in files:
+            if f.endswith(".html"):
+                rel = os.path.relpath(os.path.join(root, f), OUT).replace(os.sep, "/")
+                if rel not in keep:
+                    os.remove(os.path.join(root, f))
+                    print("PRUNED", rel)
     for abs_p, rel in IMG_COPIES:
         dst = OUT / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
