@@ -101,7 +101,7 @@
 
 | 基类 | 依据 |
 |---|---|
-| 子类化 `ClickableWidget`/`InventorySlotWidget` 必调 `base.Update()` | `ClickableWidget.cs:22-45`（置 IsClicked/IsTapped）；`InventorySlotWidget.cs:201-329`（点击/长按/拖拽全部） |
+| ~~子类化必调 `base.Update()`~~ **实为不必**：ClickableWidget/InventorySlotWidget 的 Update 都没调 base（`ClickableWidget.cs:22-45`/`InventorySlotWidget.cs:201-329`），`Widget.Update()` 本是空虚方法（Widget.cs:681），子件递归由外部静态遍历驱动，不调 base 不断链；真正 load-bearing 的 base 是 `MeasureOverride/ArrangeOverride`（ContainerWidget.cs:46-66，子件递归本体）与 `UpdateCeases`（:22-26） | 同左 |
 | 其余 32 处 Update 全是叶子控件自有逻辑，无 base 链 | Slider :127、TouchInput :38、DragHost :39、Link :102、ClickText :54、Message :72、Motd :32、Chest :38、Furnace :56、CraftingTable :46、Dispenser :53、CreativeInventory :77、VitalStats :69、Player :25、Fire :23、Clothing :70、Bow :40、Crossbow :44、Musket :40、FurnitureDesign :224、Model :530、PlayerModel :78、MoveRose :31、StarRating :28、RichText :266、LegacyTextBox :139、TextBox :834、Checkbox :60、CommunityToast :88 等 |
 | `MeasureOverride` 相反：部分基类结尾重置 IsDrawRequired，`IsDrawRequired=true` 要写在 base 之后 | `InventorySlotWidget.cs:407-408`、`TextBoxWidget.MeasureOverride:1996`（先设 DesiredSize 再 AutoSize 重算） |
 | `UpdateCeases`（部件停更时机）覆写要处理输入法/动画收尾 | `TextBoxWidget.cs:828-832`、`PlayerModelWidget.cs:166`、`HtmlWidget.cs:101`、`MarkdownWidget.cs:91` |

@@ -1,0 +1,430 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><script>(function(){try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}})()</script><title>Widget 生命周期与自定义控件 · SC 源码笔记</title><style>
+:root{
+--bg:#f8fafc;--sheet:#ffffff;--surface-2:#f1f5f9;--side-bg:#f8fafc;
+--ink:#0f172a;--ink-soft:#475569;--ink-faint:#94a3b8;
+--line:#e6e9f0;--line-strong:#d5dbe5;
+--acc:#4f46e5;--acc-2:#7c3aed;--acc-ink:#4338ca;--acc-soft:#eef2ff;
+--top-bg:rgba(248,250,252,.82);--code-bg:#0f172a;--code-ink:#e2e8f0;
+--shadow:0 1px 2px rgba(2,6,23,.05),0 12px 32px -8px rgba(2,6,23,.10);
+--shadow-sm:0 1px 2px rgba(2,6,23,.06);
+--header-h:58px;--side-w:264px}
+:root[data-theme=dark]{
+--bg:#0a0d14;--sheet:#10141f;--surface-2:#161c2b;--side-bg:#0c101a;
+--ink:#e6e9f0;--ink-soft:#a6afc2;--ink-faint:#64708c;
+--line:#1e2536;--line-strong:#2b3550;
+--acc:#818cf8;--acc-2:#a78bfa;--acc-ink:#a5b4fc;--acc-soft:rgba(99,102,241,.16);
+--top-bg:rgba(10,13,20,.78);--code-bg:#0b101c;--code-ink:#d7dee8;
+--shadow:0 1px 2px rgba(0,0,0,.45),0 14px 36px -10px rgba(0,0,0,.55);
+--shadow-sm:0 1px 2px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px)}
+body{margin:0;font-family:ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",-apple-system,sans-serif;
+color:var(--ink);font-size:15px;line-height:1.8;
+background:radial-gradient(1000px 460px at 78% -12%,rgba(99,102,241,.09),transparent 60%),
+radial-gradient(820px 420px at -8% -4%,rgba(124,58,237,.06),transparent 55%),var(--bg);
+transition:color .2s,background-color .2s}
+::selection{background:var(--acc-soft);color:var(--acc-ink)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+/* 顶栏：玻璃 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
+background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
+#themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
+#themeBtn:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap;border:1px solid var(--line);border-radius:9px;padding:6px 11px;background:var(--surface)}
+#top .gh:hover{color:var(--acc);border-color:var(--acc)}
+/* 布局 */
+#layout{display:flex;min-height:calc(100vh - var(--header-h))}
+#backdrop{display:none}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-size:10.5px;font-weight:700;color:var(--ink-faint);letter-spacing:2.2px;text-transform:uppercase}
+#side .sec:first-child{margin-top:4px}
+#nav a{display:block;padding:5.5px 10px;margin:1px 0;border-radius:8px;color:var(--ink-soft);text-decoration:none;font-size:13.5px;line-height:1.5;transition:background .12s,color .12s}
+#nav a:hover{background:var(--acc-soft);color:var(--acc-ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-ink);font-weight:600;box-shadow:inset 2px 0 0 var(--acc)}
+/* 正文 + 右侧目录 */
+#main{flex:1;min-width:0;padding:32px clamp(16px,3.5vw,44px) 80px}
+#contentrow{display:flex;gap:34px;align-items:flex-start;justify-content:center;max-width:1240px;margin:0 auto}
+article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow);overflow-wrap:break-word}
+h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
+background:linear-gradient(120deg,var(--ink) 25%,var(--acc-ink) 45%,var(--ink) 70%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:h1sh 8s ease-in-out infinite alternate}
+@keyframes h1sh{to{background-position:100% center}}
+@media (prefers-reduced-motion: reduce){h1{animation:none}}
+h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;padding-left:13px;border-bottom:1px solid var(--line);position:relative}
+h2::before{content:"";position:absolute;left:0;top:4px;bottom:13px;width:4px;border-radius:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:.9}
+h3{font-size:16px;font-weight:700;margin:26px 0 10px}
+p{margin:10px 0}
+a{color:var(--acc-ink);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+a.hcard:hover,a.pn a:hover{text-decoration:none} /* 卡片有抬升/辉光反馈，整卡下划线很廉价 */
+/* 正文链接：渐变下划线滑入（卡片/签云/上下页自身有背景，重置之） */
+article a:not(.pn a):not(.chips a):not(.hcard){background:linear-gradient(90deg,var(--acc),var(--acc-2)) left calc(100% - 0px)/0% 1.5px no-repeat;transition:background-size .22s ease}
+article a:not(.pn a):not(.chips a):not(.hcard):hover{background-size:100% 1.5px;text-decoration:none}
+blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:6px 12px 12px 6px;color:var(--ink-soft);font-size:14.5px}
+blockquote p{margin:4px 0}
+code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:break-word}
+:root[data-theme=dark] code{color:#c7d2fe}
+:root[data-theme=dark] article{border-color:rgba(148,163,184,.15);box-shadow:0 20px 48px -20px rgba(0,0,0,.65)}
+:root[data-theme=dark] #top{border-bottom-color:rgba(148,163,184,.13)}
+:root[data-theme=dark] #side{border-right-color:rgba(148,163,184,.1)}
+pre.code{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:var(--shadow-sm)}
+pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);box-shadow:var(--shadow-sm)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
+th{background:var(--surface-2);color:var(--ink);font-weight:600;text-align:left}
+th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:break-word}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--acc-soft)}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+ul,ol{padding-left:1.5em;margin:10px 0}
+li{margin:4px 0}
+#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+/* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
+pre.code .k{color:#ff7b72}
+pre.code .t{color:#ffa657}
+pre.code .s{color:#a5d6ff}
+pre.code .c{color:#8b949e;font-style:italic}
+pre.code .n{color:#79c0ff}
+pre.code .a{color:#d2a8ff}
+pre.code .t2{color:#7ee787}
+/* 上一页/下一页 */
+.pn{display:flex;gap:14px;margin:36px 0 6px}
+.pn a{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pn a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(79,70,229,.35)}
+.pn a.next{text-align:right}
+.pn a small{color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px}
+.pn a b{color:var(--acc-ink);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .pnvoid{flex:1}
+/* 首页三入口卡片 */
+.hero{margin:24px 0 4px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
+.hcard:hover::before{opacity:1}
+.hcard .ico{font-size:21px;line-height:1}
+.hcard b{font-size:15.5px;color:var(--ink)}
+.hcard span{font-size:12.5px;color:var(--ink-soft)}
+/* 长表格：内部滚动 + 粘性表头 */
+.tablewrap.tall{max-height:calc(100vh - 150px);overflow:auto}
+.tablewrap.tall th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line-strong)}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
+.deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
+/* ── 交互层 ── */
+#pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0;box-shadow:0 0 10px rgba(99,102,241,.65)}
+#btt{position:fixed;right:22px;bottom:26px;z-index:18;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--acc);font-size:17px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:all .25s;box-shadow:var(--shadow-sm)}
+#btt.show{opacity:1;pointer-events:auto;transform:none}
+#btt:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);transform:translateY(-2px)}
+pre.code{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:var(--code-ink);border-radius:7px;padding:3px 9px;font-size:11.5px;cursor:pointer;opacity:0;transition:all .18s}
+pre.code:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.15);border-color:var(--acc)}
+.copybtn.ok{color:#4ade80;border-color:rgba(74,222,128,.6)}
+.tablewrap{transition:box-shadow .2s,border-color .2s}
+.tablewrap:hover{border-color:var(--line-strong);box-shadow:0 6px 24px -8px rgba(2,6,23,.18)}
+tr[id] td:first-child{font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:12.5px}
+tr[id] td{transition:background .12s}
+tr[id]:hover td{background:var(--acc-soft)}
+#nav a{transition:background .15s,color .15s,padding-left .15s}
+#nav a:hover{padding-left:15px}
+#tocnav a{transition:color .12s,background .12s,padding-left .15s}
+#tocnav a:hover{padding-left:15px}
+.jumpbox{margin:12px 0 2px}
+.jumpbox summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--acc-ink);background:var(--acc-soft);border:1px solid var(--line);border-radius:9px;padding:5px 12px;display:inline-block;list-style:none;transition:all .15s;user-select:none}
+.jumpbox summary::-webkit-details-marker{display:none}
+.jumpbox summary:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 2px}
+.chips a{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--ink-soft);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px 8px;text-decoration:none;transition:all .12s}
+.chips a:hover{color:var(--acc-ink);border-color:var(--acc);background:var(--acc-soft);transform:translateY(-1px)}
+.rv{opacity:0;transform:translateY(10px)}
+.rv.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
+@media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none}}
+/* 右侧目录 */
+#toc{flex:0 0 224px;position:sticky;top:calc(var(--header-h) + 26px);max-height:calc(100vh - var(--header-h) - 52px);overflow-y:auto;font-size:12.5px;line-height:1.5;padding:4px 0 20px}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ink-faint);margin:8px 10px 10px;text-transform:uppercase}
+#tocnav a{display:block;padding:4px 10px;border-left:2px solid var(--line);color:var(--ink-soft);text-decoration:none;border-radius:0 7px 7px 0;margin:1px 0}
+#tocnav a.lvl3{padding-left:22px;font-size:12px;color:var(--ink-faint)}
+#tocnav a:hover{color:var(--acc);text-decoration:none}
+#tocnav a.active{color:var(--acc-ink);border-left-color:var(--acc);background:var(--acc-soft);font-weight:600}
+@media(max-width:1279px){#toc{display:none}#contentrow{max-width:920px}}
+/* 大屏加宽档：含 40+ 行大表的页(wideart)放得更开，散文页适度加宽 */
+article.wideart{max-width:1060px}
+@media(min-width:1600px){#contentrow{max-width:1580px}#foot{max-width:1580px}article{max-width:960px}article.wideart{max-width:1300px}}
+@media(min-width:2000px){#contentrow{max-width:1720px}#foot{max-width:1720px}article{max-width:1020px}article.wideart{max-width:1420px}body{font-size:15.5px}table{font-size:14px}}
+/* 窄屏 */
+@media(max-width:1024px){
+#burger{display:block}
+#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(2,6,23,.42);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
+#backdrop.show{opacity:1;pointer-events:auto}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:14px 0 36px rgba(2,6,23,.2)}
+#side.open{left:0}
+#top .gh{display:block;font-size:11.5px;padding:6px 9px}
+#top .brand small{display:none}
+.searchwrap{width:min(230px,50vw)}
+.searchwrap kbd{display:none}
+#main{padding:22px clamp(14px,3vw,24px) 70px}
+article{padding:22px 18px 30px;border-radius:14px}
+}
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%),transparent;animation:drift2 36s ease-in-out infinite alternate}
+.b3{width:640px;height:640px;top:36%;left:54%;background:radial-gradient(circle,rgba(217,70,239,.09),transparent 62%);animation:drift3 46s ease-in-out infinite alternate}
+@keyframes drift3{to{transform:translate(-90px,-70px) scale(1.14)}}
+/* 全局噪点纹理：最顶层极淡颗粒，给两主题加胶片质感 */
+html::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.032;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root[data-theme=dark] html::after{opacity:.05}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+/* 语言徽标按语言着色 */
+.codewrap:has(> pre.lang-csharp) .cinfo{color:#79c0ff}
+.codewrap:has(> pre.lang-xml) .cinfo{color:#7ee787}
+.codewrap:has(> pre.lang-json) .cinfo{color:#ffa657}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;box-shadow:0 0 8px rgba(99,102,241,.55);transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
+/* 主题切换圆形揭示（View Transitions；不支持时回退直切） */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1}
+::view-transition-new(root){z-index:2}
+/* 手机档（置于 CSS 末尾保证覆盖上方 searchwrap 宽度）：搜索收成纯图标钮，把宽度让给品牌名 */
+@media(max-width:600px){
+.searchwrap{width:38px;padding:7.5px 0;justify-content:center}
+.searchwrap .ph{display:none}
+#top{gap:8px}
+#top .brand b{font-size:15px;letter-spacing:-.1px;max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+#top .gh{font-size:10.5px;padding:6px 7px}
+}
+/* 手机横滚表：首列吸附，滚动时保留行上下文 */
+@media(max-width:760px){
+.tablewrap th:first-child,.tablewrap td:first-child{position:sticky;left:0;z-index:1;background:var(--sheet);box-shadow:inset -1px 0 0 var(--line)}
+.tablewrap th:first-child{background:var(--surface-2);z-index:2}
+.tablewrap.tall th:first-child{z-index:3}
+.tablewrap tbody tr:hover td:first-child{background:var(--acc-soft)}
+/* 慢设备上逐行瀑布会闪空白：手机端直接整行呈现 */
+.rv tbody tr{animation:none;opacity:1;transform:none}
+}
+@media print{
+#top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
+body{background:#fff;color:#000}
+#main{padding:0}#contentrow{display:block}
+article{box-shadow:none;border:none;max-width:100%}
+a{color:inherit}
+}
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 16</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod开发配方2.html">Mod开发配方2</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../数据格式参考3.html">数据格式参考3</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 29</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><a href="../01-引擎/25-方块实体与容器.html">25-方块实体与容器</a><a href="../01-引擎/26-生物AI与行为.html">26-生物AI与行为</a><a href="../01-引擎/27-地形修改与MovingBlocks.html">27-地形修改与MovingBlocks</a><a href="../01-引擎/28-弹道与远程武器.html">28-弹道与远程武器</a><a href="../01-引擎/29-Widget生命周期与自定义控件.html">29-Widget生命周期与自定义控件</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="widget-生命周期与自定义控件">Widget 生命周期与自定义控件</h1>
+<blockquote>域: SC引擎 · 更新: 2026-11-01 · 状态: 全读(Widget.cs/WidgetInput.cs/ContainerWidget/Canvas/Stack/Grid/Clickable/StarRating/Fire/BlockIcon/ValueBar/BusyBar/ScrollPanel/TextBox/GameWidget 全文，FlexPanel 表头+关键段)</blockquote>
+<h2 id="一句话定位">一句话定位</h2>
+<p>自己写一个 Widget 类时的完整契约：帧内五步全序（输入→Update→Measure→Arrange→Draw）、两遍布局规则、点击从 Screen 流到控件的链路、以及最短可照抄的自定义控件模板。</p>
+<p>源码树按新约定写仓库相对路径（根 = SurvivalcraftAPIProject 仓库根）。</p>
+<h2 id="帧内生命周期全序-带行号">帧内生命周期全序（带行号）</h2>
+<p>驱动方在主循环：<code>Game/Program.cs:298</code> 调 <code>ScreensManager.Update()</code>，<code>Game/Program.cs:328</code> 调 <code>ScreensManager.Draw()</code>。屏幕树根 <code>ScreensManager.RootWidget</code>（CanvasWidget）在 <code>Managers/ScreensManager.cs:196-201</code> 初始化时挂上全局唯一 <code>WidgetInput</code>。</p>
+<p>一帧五步，全部外部驱动，<b>任何一步都不会自动发生</b>：</p>
+<div class="tablewrap"><table><thead><tr><th>步</th><th>入口</th><th>做什么</th></tr></thead><tbody><tr><td>1 输入采集</td><td><code>ScreensManager.Update</code> → <code>Widget.UpdateWidgetsHierarchy(RootWidget)</code>（<code>Managers/ScreensManager.cs:228</code>；<code>Survivalcraft/Widget/Widget.cs:742-748</code>）</td><td>根 WidgetInput.Update() 汇总键鼠/触/手柄/VR 成 Press/Tap/Click/Drag/Hold/Scroll</td></tr><tr><td>2 Update</td><td>同上遍历内（<code>Widget.cs:830-868</code>）</td><td>每个可见启用部件的 <code>Update()</code>（子先父后，见下）</td></tr><tr><td>3 Measure</td><td><code>ScreensManager.Draw</code> → <code>LayoutAndDrawWidgets</code>（<code>Managers/ScreensManager.cs:447-483</code>）→ <code>Widget.LayoutWidgetsHierarchy</code>（<code>Widget.cs:750-753</code>）</td><td><code>root.Measure(availableSize)</code> 自顶向下递归算 DesiredSize</td></tr><tr><td>4 Arrange</td><td>同上 <code>root.Arrange(Vector2.Zero, availableSize)</code></td><td>自顶向下递归定 ActualSize + GlobalTransform/GlobalBounds</td></tr><tr><td>5 Draw</td><td><code>Widget.DrawWidgetsHierarchy</code>（<code>Widget.cs:755-763</code>）</td><td>Collate→分层→渲染（见下）</td></tr></tbody></table></div>
+<p><code>UpdateWidgetsHierarchy</code> 每部件精确顺序（<code>Widget.cs:830-868</code>）：</p>
+<ol><li>门槛：<code>!IsVisible || !IsUpdateEnabled || !IsEnabled</code> 直接跳过整棵子树（831-834）。</li><li>有自己的 <code>WidgetsHierarchyInput</code> 就先 <code>WidgetInput.Update()</code>（836-838，GameWidget/Screen 根才挂）。</li><li><b>子件逆序</b>递归（840-847，<code>for num = Count-1 → 0</code>）：最后一个子件（绘制在最上层）最先 Update。</li><li><code>BeforeWidgetUpdate</code> 钩子 → <code>widget.Update()</code> → <code>AfterWidgetUpdate</code> 钩子（848-864）；<code>Update1</code> 委托非空则整体替代（865-867）。</li></ol>
+<p>推论：<b>子件 Update 先于父件 Update</b>——父件 Update 里读子件状态（如 ScrollPanel 读子件 Measure 结果、面板读槽位状态）拿到的是本帧新值；但父件想让子件看到的变化要等下一帧（或直接改子件属性）。</p>
+<h3 id="update-契约-对-09-页契约的精确化">Update 契约（对 09 页契约的精确化）</h3>
+<p><code>Widget.Update()</code> 是<b>空虚方法</b>（<code>Widget.cs:681</code>），子件递归由外部静态遍历驱动——<b>不调 <code>base.Update()</code> 不会断任何链</b>（原版 <code>ClickableWidget.cs:22</code>、<code>InventorySlotWidget.cs:201</code> 都不调；全目录仅 6 处调 base.Update()）。真正的“必调 base”只有两处：</p>
+<ul><li><code>MeasureOverride</code>/<code>ArrangeOverride</code>：base 实现（<code>ContainerWidget.cs:46-66</code>）才是子件递归本身，容器子类不调 base 也不手写子件 Measure/Arrange，子件就量不到摆不上。</li><li><code>UpdateCeases</code>：<code>ContainerWidget.cs:22-26</code> 向子件传播；重置一次性状态（<code>ClickableWidget.cs:15-20</code> 清 IsPressed/IsClicked/IsTapped）必须调。</li></ul>
+<p><code>UpdateCeases</code> 触发时机：<code>IsVisible=false</code>（<code>Widget.cs:359-365</code>）、<code>IsEnabled=false</code>（368-378）、<code>ChangeParent(null)</code>（620-627）——隐藏/禁用即收尾，读它做状态复位与资源释放（<code>PlayerModelWidget.cs:166-174</code> 清皮肤缓存）。</p>
+<h3 id="draw-契约-裁剪与混合状态谁管">Draw 契约：裁剪与混合状态谁管</h3>
+<ul><li><b>要不要画由 <code>IsDrawRequired</code> 决定</b>（<code>Widget.cs:65-70</code>），默认 false——这就是“自绘不显示”的根源。惯例在 <code>MeasureOverride</code> 里置 true（每帧重设，如 <code>StarRatingWidget.cs:72</code>、<code>FireWidget.cs:15</code>、<code>BusyBarWidget.cs:27</code>、<code>BlockIconWidget.cs:81</code>）。<code>IsOverdrawRequired</code>（79-85）走 <code>Overdraw</code>（<code>Widget.cs:685</code>，画在自己子件之上）。</li><li><b>裁剪</b>：<code>ClampToBounds=true</code> 时 CollateDrawItems 用 GlobalBounds 与父 scissor 求交生成 scissor DrawItem（<code>Widget.cs:52-64</code>），子树继承缩小后的 scissor（71-78 只在 <code>isWidgetInBound || !ClampToBounds</code> 时递归）；切 scissor 靠插入 DrawItem 并提升 Layer 实现（98-120），渲染时 <code>Display.ScissorRectangle</code> 逐项设置（168）。</li><li><b>混合/深度/采样状态</b>：框架不管全局状态，<b>控件自选</b>——建批时传参：<code>dc.PrimitivesRenderer2D.FlatBatch(0, DepthStencilState.None)</code> / <code>TexturedBatch(texture, false, 0, DepthStencilState.None, null, null, SamplerState.X)</code>（<code>ValueBarWidget.cs:86-97</code>、<code>RectangleWidget.cs:90</code>）。批次按 Layer 分层 Flush（124-136），同层同状态批合并。</li><li><b>颜色</b>：<code>ColorTransform</code> 沿树相乘成 <code>GlobalColorTransform</code>（Arrange 时，<code>Widget.cs:659</code>），自绘末尾一律 <code>色 * GlobalColorTransform</code>，换屏淡入淡出（ColorTransform 透明渐变）才对自绘生效。</li><li>顶点全部入 <code>dc.PrimitivesRenderer2D/3D</code> 批后 <code>TransformTriangles(GlobalTransform, count)</code>（<code>StarRatingWidget.cs:68</code>），不要用 Display 级变换。3D 内容进 UI 用 <code>dc.PrimitivesRenderer3D</code>（<code>BlockIconWidget.cs:77</code>、<code>ModelWidget.cs:245</code>）。</li><li>钩子：<code>BeforeWidgetDrawItemRender</code> 可整替原版绘制（<code>Widget.cs:140-156</code>），<code>OnDrawItemAssigned</code>（113-119）。</li></ul>
+<h3 id="hittest-与-isclicked-的关系">HitTest 与 IsClicked 的关系</h3>
+<ul><li><code>HitTest(point)</code>（<code>Widget.cs:687-695</code>）默认实现 = 屏幕点经 <code>InvertedGlobalTransform</code> 逆变换回控件局部，落在 <code>[0,0]-[ActualSize]</code> 内即命中。要非矩形命中就 override 它（如按纹理 alpha）。</li><li><code>HitTestGlobal(point[, predicate])</code>（<code>Widget.cs:808-828</code>）：从根深度优先、<b>子件逆序</b>（最上层先），<code>ClampToBounds</code> 的父不命中则整棵子树跳过（811），自身需 <code>IsHitTestVisible</code>（构造默认 true，<code>Widget.cs:481</code>）。</li><li><b>没有全局“IsClicked”事件</b>。点击判定 = 各控件在 <code>Update()</code> 里轮询共享 <code>WidgetInput</code> 的 <code>Click</code>（<b>Segment2：按下点→抬起点</b>，<code>WidgetInput.cs:806-820</code>）+ 两端 <code>HitTestGlobal==this</code>（<code>ClickableWidget.cs:35-38</code>）。<code>IsClicked/IsTapped/IsPressed</code> 是 <code>ClickableWidget</code> 自己的轮询结果属性（<code>ClickableWidget.cs:5-9</code>），不是基类机制。消费输入防穿透用 <code>Input.Clear()</code>（<code>ScrollPanelWidget.cs:138</code>、<code>SliderWidget.cs:127-162</code> 先例）。</li></ul>
+<h2 id="布局两阶段">布局两阶段</h2>
+<p>测量父→子传“可用空间”，摆放父→子传“矩形格”。<code>DesiredSize</code> 构造默认 <code>Vector2(∞)</code>（<code>Widget.cs:483</code>）——“想占满”；<code>ParentDesiredSize</code> 是 Measure 后换算给父看的值（<code>Widget.cs:637-646</code>）。</p>
+<div class="tablewrap"><table><thead><tr><th>容器</th><th>测量规则</th><th>摆放规则</th></tr></thead><tbody><tr><td>ContainerWidget 默认</td><td>子件各得 <code>parentAvailableSize - margin</code>（<code>ContainerWidget.cs:46-55</code>）</td><td>全部塞进 <code>(0,0)-ActualSize</code> 格，对齐算术决定落点（57-66）</td></tr><tr><td>CanvasWidget</td><td>子件各得 <code>可用 - Position - margin</code>；自身 DesiredSize = max(子 Position+Desired+margin)，<code>Size≥0</code> 时覆盖（<code>CanvasWidget.cs:33-64</code>）</td><td>有 Position 的子件按位摆：有限 DesiredSize 原样，<b>∞ 则吃 <code>ActualSize - Position</code></b>（66-79）；无 Position 走整格对齐</td></tr><tr><td>StackPanelWidget</td><td>有限子件累加 fixed、从可用里扣；<b>∞（fill）子件计入 m_fillCount</b>；无 fill 子件 → 主轴 DesiredSize=fixed，有 → <b>主轴=∞</b>（<code>StackPanelWidget.cs:13-48</code>）</td><td>fill 子件均分 <code>Actual - fixed</code>；每子件格 = 主轴区间 × <b>整条交叉轴</b>，再进对齐算术（50-90）</td></tr><tr><td>GridPanelWidget</td><td>逐格取 <code>max(子 Desired+margin)</code> 定列宽行高，Position 累加，DesiredSize=总尺寸（<code>GridPanelWidget.cs:65-92</code>）</td><td>格矩形 → 对齐算术（94-110）。注意测量不看 IsVisible，隐藏子件仍撑格（09 页已录）</td></tr><tr><td>FlexPanelWidget</td><td>主轴期望恒有限（fill 件 Basis 0，空间分配交给 Grow）；交叉轴滤 ∞/NaN 子件（<code>FlexPanelWidget.cs:56-58</code> 头注）</td><td>grow 件无条件吃满分配区间，shrink 按 shrink×basis 加权（详见 09 页 flex 行）</td></tr></tbody></table></div>
+<p>对齐与 Margin 的最终语义全在 <code>ArrangeChildWidgetInCell</code>（<code>ContainerWidget.cs:68-114</code>）：</p>
+<ul><li>目标尺寸先钳到 <code>格 - margin</code>（∞ 直接取格大小，73-80）。</li><li>Near = 格首 + MarginLeft/Top，尺寸取 DesiredSize（81-84）；Center 居中（85-88）；Far = 格尾 − 尺寸 − MarginRight/Bottom（89-92）；<b>Stretch = 从格首+margin 铺满到格尾</b>（93-96），此时 margin 是两侧收缩量。</li><li><code>WidgetAlignment</code>：Near=0/Center=1/Far=2/Stretch=3（<code>WidgetAlignment.cs:3-6</code>）。</li><li>Margin 是四向独立属性（<code>Widget.cs:419-441</code>），测量阶段即从可用空间扣除——它是“占位”，不是“外边距后仍参与 Stretch”。</li></ul>
+<h2 id="输入路由链">输入路由链</h2>
+<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>text</span></div><pre class="code"><code>OS事件 → Engine.Input.Keyboard/Mouse/Touch/GamePad
+      → WidgetInput.Update()（每屏根一个，WidgetInput.cs:683-703，按 Devices 位分别汇入）
+      → 语义事件: Press/Tap/Click(Segment2)/Drag/Hold/Scroll 挂在 WidgetInput 上（789-857, 939-990）
+      → Widget.Input 属性沿父链上溯取最近 WidgetsHierarchyInput（Widget.cs:296-308）
+      → 控件 Update() 轮询 Input.* + HitTestGlobal 自认命中（拉模型，无事件总线）</code></pre></div>
+<ul><li>触屏直接带命中门槛：按下点须先过 <code>Widget.HitTest</code>（<code>WidgetInput.cs:942</code>，Widget = 挂输入的根）；鼠标无此门槛，命中判定全交给各控件。</li><li>谁挂 WidgetInput：菜单屏根（<code>ScreensManager.cs:199</code>）；游戏内 HUD 由 <code>GameWidget.Update</code> 按设备动态 new 挂到自己（<code>GameWidget.cs:215-231</code>），GuiWidget 靠父链拿到；VR 下 GuiWidget 被摘出树、由 GameWidget 手动 <code>UpdateWidgetsHierarchy(GuiWidget)</code> 驱动（169-190）。</li><li>模态拦截两条线：<b>对话框</b> <code>DialogsManager.ShowDialog</code> 把 Dialog 挂进屏（输入走父链共享，<code>Managers/DialogsManager.cs:63</code>），Hide 时挂 <code>WidgetInputDevice.None</code> 隔绝（94）；<b>游戏内模态面板</b> <code>ComponentGui.ModalPanelWidget</code> 非空或有对话框时，<code>ComponentInput</code> 停止把输入交给世界操作并强制显示鼠标（<code>Component/ComponentInput.cs:136-141</code>）。</li><li>键盘焦点没有树级焦点链：<code>TextBoxWidget</code> 用<b>静态 FocusedTextBox 单例</b>（<code>TextBoxWidget.cs:368-387</code>），被 Click（两端都在框内）命中即 <code>HasFocus=true</code> 并弹输入法（839-870），点框外失焦（871-875），<code>UpdateCeases</code> 收输入法（826-830）。有焦点后直接读 <code>Keyboard.*</code>（943-1000，不走 WidgetInput 语义层）。</li><li>滚轮：<code>Input.Scroll</code>（位置+格数）挂在指针处，<code>ScrollPanelWidget.Update</code> 用 <code>HitTestPanel</code>（<code>HitTestGlobal</code> + 谓词认领子树，<code>ScrollPanelWidget.cs:114-120, 166-176</code>）决定是否滚动并 Clear。</li></ul>
+<h2 id="自定义控件最短全流程-照抄-starratingwidget">自定义控件最短全流程（照抄 StarRatingWidget）</h2>
+<ol><li><b>写类</b>：继承 <code>Widget</code>（纯自绘+自交互）或 <code>CanvasWidget</code>（要装子件）。构造函数设默认外观。</li><li><b>override MeasureOverride</b>：置 <code>IsDrawRequired = true</code>（不画就永远不会画）+ 给有限 <code>DesiredSize</code>（<code>StarRatingWidget.cs:71-74</code>）。</li><li><b>override Draw</b>：从 <code>dc.PrimitivesRenderer2D</code> 要批、Queue 顶点、<code>TransformTriangles(GlobalTransform, count)</code>、色乘 <code>GlobalColorTransform</code>（36-69）。</li><li><b>override Update</b>：轮询 <code>Input.Press/Tap/Click</code> + <code>HitTestGlobal(...) == this</code> 判命中，改状态，需要独占就 <code>Input.Clear()</code>（28-34）。</li><li><b>override UpdateCeases</b>：复位按下的瞬时状态（可选）。</li><li><b>上屏</b>：代码 <code>parent.Children.Add(new XxxWidget())</code>；或 XML 直接写元素——<code>Widget.LoadWidget</code> 反射 <code>FindTypeFromXmlName</code> 构造（<code>Widget.cs:486-505</code>），带 <code>runtime-namespace:</code> 前缀可实例化任意程序集类型（797-806），<code>OnWidgetConstruct</code> 钩子可偷梁换柱（495-501）；属性按名反射赋值，<code>{资源名}</code> 走 ContentManager（564-574），<code>Type.Prop</code> 附着属性调静态 SetXxx（526-555）。</li><li>之后每帧自动进入五步全序，无需再挂任何驱动代码。</li></ol>
+<p>原版最短完整范例：<code>Survivalcraft/Widget/StarRatingWidget.cs</code>（75 行，含测量/交互/自绘/命中全链）；纯交互范例 <code>ClickableWidget.cs</code>（47 行）；XML 组合外壳范例 <code>BitmapButtonWidget.cs</code>（ctor 加载 <code>Widgets/BitmapButtonContents</code> 后 <code>Children.Find&lt;ClickableWidget&gt;("Button.Clickable")</code>）。</p>
+<h2 id="原版范例表-它-override-了什么">原版范例表（它 override 了什么）</h2>
+<div class="tablewrap"><table><thead><tr><th>控件</th><th>基类</th><th>override 点</th><th>学什么</th></tr></thead><tbody><tr><td>StarRatingWidget</td><td>Widget</td><td>Measure(置IsDrawRequired)、Update(轮询Press+HitTestGlobal)、Draw(双quad贴图)</td><td>最小全周期模板</td></tr><tr><td>ClickableWidget</td><td>Widget</td><td>Update(Press/Tap/Click 三态判定)、UpdateCeases(复位)</td><td>点击判定标准写法</td></tr><tr><td>ValueBarWidget</td><td>Widget</td><td>Measure、Draw(Flat/TexturedBatch 按状态传参)</td><td>分段条、批状态选择</td></tr><tr><td>BusyBarWidget</td><td>Widget</td><td>Measure、Draw(Time.RealTime 驱动动画)</td><td>无状态自绘动画</td></tr><tr><td>FireWidget</td><td>CanvasWidget</td><td>Measure(调base+置IsDrawRequired)、Update(粒子推进)、Draw(委托渲染器)</td><td>装饰粒子+ClampToBounds 裁剪</td></tr><tr><td>BlockIconWidget</td><td>Widget</td><td>Draw(PrimitivesRenderer3D + 投影进 GlobalTransform)</td><td>3D 方块进 2D UI</td></tr><tr><td>PlayerModelWidget</td><td>CanvasWidget</td><td>Update(Press 拖转+Input.Clear)、UpdateCeases(释放缓存)</td><td>3D 角色可交互</td></tr><tr><td>ScrollPanelWidget</td><td>ContainerWidget</td><td>Measure/Arrange(自布局)、Update(Drag/Scroll+HitTestPanel 谓词+Clear)、Draw(滚动条)</td><td>自定义布局+输入消费</td></tr></tbody></table></div>
+<h2 id="快查路由">快查路由</h2>
+<div class="tablewrap"><table><thead><tr><th>要做什么</th><th>照抄</th><th>关键行</th></tr></thead><tbody><tr><td>自绘控件不显示</td><td>检查 MeasureOverride 是否置 IsDrawRequired</td><td><code>StarRatingWidget.cs:72</code></td></tr><tr><td>控件点不到</td><td>IsHitTestVisible / 父 ClampToBounds / 子件抢命中</td><td><code>Widget.cs:808-828</code></td></tr><tr><td>点击防穿透</td><td>判定成立后 <code>Input.Clear()</code></td><td><code>ScrollPanelWidget.cs:138</code></td></tr><tr><td>隐藏后状态残留</td><td>override UpdateCeases + 调 base</td><td><code>ClickableWidget.cs:15-20</code></td></tr><tr><td>让子件 ∞ 填满剩余</td><td>StackPanel fill 机制</td><td><code>StackPanelWidget.cs:55-57</code></td></tr><tr><td>控件内 3D 内容</td><td>dc.PrimitivesRenderer3D + GlobalTransform 换算</td><td><code>BlockIconWidget.cs:63-78</code></td></tr><tr><td>XML 自定义控件元素</td><td>runtime-namespace 类型名</td><td><code>Widget.cs:797-806</code></td></tr><tr><td>键盘输入进控件</td><td>静态 FocusedTextBox 模式 + Keyboard 直读</td><td><code>TextBoxWidget.cs:368,839-870</code></td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/28-弹道与远程武器.html"><small>上一页 · SC引擎</small><b>28-弹道与远程武器</b></a><a class="next" href="../01-引擎/明细/02a-子系统明细.html"><small>下一页 · SC引擎·明细</small><b>02a-子系统明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#帧内生命周期全序-带行号">帧内生命周期全序（带行号）</a><a class="lvl3" href="#update-契约-对-09-页契约的精确化">Update 契约（对 09 页契约的精确化）</a><a class="lvl3" href="#draw-契约-裁剪与混合状态谁管">Draw 契约：裁剪与混合状态谁管</a><a class="lvl3" href="#hittest-与-isclicked-的关系">HitTest 与 IsClicked 的关系</a><a class="lvl2" href="#布局两阶段">布局两阶段</a><a class="lvl2" href="#输入路由链">输入路由链</a><a class="lvl2" href="#自定义控件最短全流程-照抄-starratingwidget">自定义控件最短全流程（照抄 StarRatingWidget）</a><a class="lvl2" href="#原版范例表-它-override-了什么">原版范例表（它 override 了什么）</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+const $=s=>document.querySelector(s);
+const ROOT="../"; // 站点根相对前缀（按页面深度注入）
+// 主题切换
+const tbtn=$('#themeBtn');
+function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
+applyTheme(document.documentElement.dataset.theme||'light');
+tbtn.addEventListener('click',()=>{
+  const next=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const vt=document.startViewTransition(()=>applyTheme(next));
+    vt.ready.then(()=>{
+      const r=tbtn.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+      const mr=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+      document.documentElement.animate({clipPath:['circle(0px at '+x+'px '+y+'px)','circle('+mr+'px at '+x+'px '+y+'px)']},{duration:520,easing:'ease-in-out',pseudoElement:'::view-transition-new(root)'});
+    }).catch(()=>{});
+  } else applyTheme(next);
+});
+// ⌘K 命令面板
+let IDX=[];
+fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
+});
+// 移动端侧栏抽屉
+const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
+function setSide(open){side.classList.toggle('open',open);backdrop.classList.toggle('show',open)}
+burger.addEventListener('click',e=>{e.stopPropagation();setSide(!side.classList.contains('open'))});
+document.addEventListener('click',e=>{if(window.innerWidth<=1024&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==burger)setSide(false)});
+backdrop.addEventListener('click',()=>setSide(false));
+// 高亮当前页
+const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
+document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
+const tocLinks=[...document.querySelectorAll('#tocnav a')];
+if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
+  const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
+  const onScroll=()=>{
+    let idx=0;
+    for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
+    tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
+  };
+  document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
+document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
+btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+// 代码块复制按钮
+document.querySelectorAll('pre.code').forEach(pre=>{
+  const b=document.createElement('button');b.className='copybtn';b.textContent='复制';
+  b.addEventListener('click',async()=>{const txt=pre.innerText;let ok=false;
+    try{await navigator.clipboard.writeText(txt);ok=true}catch(e){
+      try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(e2){}}
+    b.textContent=ok?'✓ 已复制':'失败';
+    if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
+  pre.appendChild(b);
+});
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+// Hero 卡片 3D 倾斜（光晕之上的立体层；尊重减少动效）
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+document.querySelectorAll('.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+    el.style.transform='translateY(-3px) perspective(700px) rotateX('+(-py*5).toFixed(2)+'deg) rotateY('+(px*6).toFixed(2)+'deg)';
+  });
+  el.addEventListener('mouseleave',()=>{el.style.transform=''});
+});
+}
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
+</script></body></html>

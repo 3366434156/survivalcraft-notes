@@ -293,7 +293,7 @@
 | 物理 | 实体间挤压/击退 | `ComponentBody.cs:854-945`（HandleAxisCollision）+`InelasticCollision:1288`（非弹性碰撞系数） 〔13〕 |
 | 物理 | 空间查询/射线 | `SubsystemBodies.cs:18`(FindBodiesAroundPoint)/:52(Raycast)+`BodyRaycastResult` 〔13〕 |
 | 物理 | 爆炸 | `SubsystemExplosions`（压力/破坏/点燃链，见 [13页](01-引擎/13-物理与碰撞.md)） 〔13〕 |
-| 物理 | 发射一颗弹道（发射器全流程） | `ComponentDispenser.cs:91-118`（CanFireProjectile 测遮挡出炮口→CreateProjectile 初速 39~41+扰动→OnDispenseShoot 钩子→FireProjectileFast） 〔13〕 |
+| 物理 | 发射一颗弹道（发射器全流程） | `ComponentDispenser.cs:91-118`（CanFireProjectile 测遮挡出炮口→CreateProjectile 初速 39~41+扰动→OnDispenserShoot 钩子→FireProjectileFast） 〔13〕 |
 | 物理 | 触发一次爆炸（起爆方块/纯冲击波） | `DetonatorElectricElement.cs:5-16`（TryExplodeBlock 一行起爆）+`SubsystemSky.cs:258-260`（AddExplosion 末参静音的无声波） 〔13〕 |
 | 物理 | 主动击退/后坐力（施加冲量） | `Attackment.cs:193-198`（命中向+抖动+0.2 上抬配方，ImpulseFactor≤0 早退）+`SubsystemMusketBlockBehavior.cs:199`（-4×射向后坐） 〔13〕 |
 | 物理 | 自定义实体碰撞箱（大小） | `ComponentBody.cs:370`（BoxSize 是模板参数，全仓无 ComponentBody 子类）+`Content\Assets\Database.xml:104`（牛 1.3,1.4,1.3）；蹲伏缩半 StanceBoxSize :122 〔13〕 |

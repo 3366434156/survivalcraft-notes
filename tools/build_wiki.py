@@ -384,13 +384,19 @@ background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px
 #contentrow{display:flex;gap:34px;align-items:flex-start;justify-content:center;max-width:1240px;margin:0 auto}
 article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow);overflow-wrap:break-word}
 h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
-background:linear-gradient(120deg,var(--ink) 30%,var(--acc-ink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+background:linear-gradient(120deg,var(--ink) 25%,var(--acc-ink) 45%,var(--ink) 70%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:h1sh 8s ease-in-out infinite alternate}
+@keyframes h1sh{to{background-position:100% center}}
+@media (prefers-reduced-motion: reduce){h1{animation:none}}
 h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;padding-left:13px;border-bottom:1px solid var(--line);position:relative}
 h2::before{content:"";position:absolute;left:0;top:4px;bottom:13px;width:4px;border-radius:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:.9}
 h3{font-size:16px;font-weight:700;margin:26px 0 10px}
 p{margin:10px 0}
 a{color:var(--acc-ink);text-decoration:none}
 a:hover{text-decoration:underline;text-underline-offset:3px}
+a.hcard:hover,a.pn a:hover{text-decoration:none} /* 卡片有抬升/辉光反馈，整卡下划线很廉价 */
+/* 正文链接：渐变下划线滑入（卡片/签云/上下页自身有背景，重置之） */
+article a:not(.pn a):not(.chips a):not(.hcard){background:linear-gradient(90deg,var(--acc),var(--acc-2)) left calc(100% - 0px)/0% 1.5px no-repeat;transition:background-size .22s ease}
+article a:not(.pn a):not(.chips a):not(.hcard):hover{background-size:100% 1.5px;text-decoration:none}
 blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:6px 12px 12px 6px;color:var(--ink-soft);font-size:14.5px}
 blockquote p{margin:4px 0}
 code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:break-word}
@@ -443,7 +449,7 @@ pre.code .t2{color:#7ee787}
 @media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
 .deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
 /* ── 交互层 ── */
-#pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0}
+#pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0;box-shadow:0 0 10px rgba(99,102,241,.65)}
 #btt{position:fixed;right:22px;bottom:26px;z-index:18;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--acc);font-size:17px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:all .25s;box-shadow:var(--shadow-sm)}
 #btt.show{opacity:1;pointer-events:auto;transform:none}
 #btt:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);transform:translateY(-2px)}
@@ -501,7 +507,13 @@ article{padding:22px 18px 30px;border-radius:14px}
 #layout{position:relative;z-index:1}
 .blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
 .b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
-.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%),transparent;animation:drift2 36s ease-in-out infinite alternate}
+.b3{width:640px;height:640px;top:36%;left:54%;background:radial-gradient(circle,rgba(217,70,239,.09),transparent 62%);animation:drift3 46s ease-in-out infinite alternate}
+@keyframes drift3{to{transform:translate(-90px,-70px) scale(1.14)}}
+/* 全局噪点纹理：最顶层极淡颗粒，给两主题加胶片质感 */
+html::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.032;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root[data-theme=dark] html::after{opacity:.05}
 :root[data-theme=dark] .blob{opacity:.7}
 @keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
 @keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
@@ -544,10 +556,14 @@ article img{cursor:zoom-in;transition:transform .2s}
 .cdot{width:10px;height:10px;border-radius:50%}
 .d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
 .cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+/* 语言徽标按语言着色 */
+.codewrap:has(> pre.lang-csharp) .cinfo{color:#79c0ff}
+.codewrap:has(> pre.lang-xml) .cinfo{color:#7ee787}
+.codewrap:has(> pre.lang-json) .cinfo{color:#ffa657}
 pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
 /* 目录滑动指示器 */
 #tocnav{position:relative}
-.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;box-shadow:0 0 8px rgba(99,102,241,.55);transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
 #tocnav a.active{border-left-color:transparent}
 /* 表格逐行瀑布 */
 .rv tbody tr{opacity:0;transform:translateY(5px)}
@@ -555,6 +571,10 @@ pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
 @keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 #top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
 @media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
+/* 主题切换圆形揭示（View Transitions；不支持时回退直切） */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1}
+::view-transition-new(root){z-index:2}
 /* 手机档（置于 CSS 末尾保证覆盖上方 searchwrap 宽度）：搜索收成纯图标钮，把宽度让给品牌名 */
 @media(max-width:600px){
 .searchwrap{width:38px;padding:7.5px 0;justify-content:center}
@@ -587,7 +607,17 @@ const ROOT=%ROOT%; // 站点根相对前缀（按页面深度注入）
 const tbtn=$('#themeBtn');
 function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
 applyTheme(document.documentElement.dataset.theme||'light');
-tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+tbtn.addEventListener('click',()=>{
+  const next=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const vt=document.startViewTransition(()=>applyTheme(next));
+    vt.ready.then(()=>{
+      const r=tbtn.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+      const mr=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+      document.documentElement.animate({clipPath:['circle(0px at '+x+'px '+y+'px)','circle('+mr+'px at '+x+'px '+y+'px)']},{duration:520,easing:'ease-in-out',pseudoElement:'::view-transition-new(root)'});
+    }).catch(()=>{});
+  } else applyTheme(next);
+});
 // ⌘K 命令面板
 let IDX=[];
 fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
@@ -671,6 +701,17 @@ document.querySelectorAll('.spot,.hcard').forEach(el=>{
     el.style.setProperty('--my',(e.clientY-r.top)+'px');
   });
 });
+// Hero 卡片 3D 倾斜（光晕之上的立体层；尊重减少动效）
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+document.querySelectorAll('.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+    el.style.transform='translateY(-3px) perspective(700px) rotateX('+(-py*5).toFixed(2)+'deg) rotateY('+(px*6).toFixed(2)+'deg)';
+  });
+  el.addEventListener('mouseleave',()=>{el.style.transform=''});
+});
+}
 const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
 document.querySelector('article').addEventListener('click',e=>{
   if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
