@@ -167,6 +167,64 @@ tr[id]:hover td{background:var(--acc-soft)}
 #main{padding:22px clamp(14px,3vw,24px) 70px}
 article{padding:22px 18px 30px;border-radius:14px}
 }
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
 body{background:#fff;color:#000}
@@ -174,7 +232,7 @@ body{background:#fff;color:#000}
 article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../../index.html">README</a><a href="../../AGENTS.html">AGENTS</a><a href="../../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../../Mod开发配方.html">Mod开发配方</a><a href="../../Mod钩子总表.html">Mod钩子总表</a><a href="../../Mod钩子明细.html">Mod钩子明细</a><a href="../../数据格式参考.html">数据格式参考</a><a href="../../数据格式参考2.html">数据格式参考2</a><a href="../../Mod排错手册.html">Mod排错手册</a><a href="../../Mod排错手册2.html">Mod排错手册2</a><a href="../../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../../01-引擎/04-方块系统.html">04-方块系统</a><a href="../../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../../01-引擎/08-音频系统.html">08-音频系统</a><a href="../../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="widget-明细-106-文件全量一行表">Widget 明细（106 文件全量一行表）</h1>
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../../index.html">README</a><a href="../../AGENTS.html">AGENTS</a><a href="../../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../../Mod开发配方.html">Mod开发配方</a><a href="../../Mod钩子总表.html">Mod钩子总表</a><a href="../../Mod钩子明细.html">Mod钩子明细</a><a href="../../数据格式参考.html">数据格式参考</a><a href="../../数据格式参考2.html">数据格式参考2</a><a href="../../Mod排错手册.html">Mod排错手册</a><a href="../../Mod排错手册2.html">Mod排错手册2</a><a href="../../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../../01-引擎/04-方块系统.html">04-方块系统</a><a href="../../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../../01-引擎/08-音频系统.html">08-音频系统</a><a href="../../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="widget-明细-106-文件全量一行表">Widget 明细（106 文件全量一行表）</h1>
 <blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(全文深读106/106；A28 将 71 签名级+3 节选升为全文)  父页: 09-UI与Widget体系.md。每行 = 一个 .cs 文件。格式：文件 | 继承 | 职责/关键成员+行号 | 坑。 路径前缀统一为 <code>E:\SurvivalcraftAPIProject\Survivalcraft\Widget\</code>（下表"路径"列只写文件名）；行号以 2026-10-31 源码为准。 标注：〔深〕=全文深读（本页 106/106 全量深读，已无节选/签名级行）。</blockquote>
 <h2 id="一-根与基础-7">一、根与基础（7）</h2>
 <details class=jumpbox><summary>⚡ 文件快速跳转 · 7</summary><div class=chips><a href="#f-0-深-widget-cs">〔深〕Widget.cs</a><a href="#f-1-深-widgetslist-cs">〔深〕WidgetsList.cs</a><a href="#f-2-深-widgetalignment-cs">〔深〕WidgetAlignment.cs</a><a href="#f-3-深-widgetinput-cs">〔深〕WidgetInput.cs</a><a href="#f-4-深-widgetinputdevice-cs">〔深〕WidgetInputDevice.cs</a><a href="#f-5-深-containerwidget-cs">〔深〕ContainerWidget.cs</a><a href="#f-6-深-canvaswidget-cs">〔深〕CanvasWidget.cs</a></div></details><div class="tablewrap"><table><thead><tr><th>文件</th><th>继承</th><th>职责/关键成员</th><th>坑</th></tr></thead><tbody><tr id="f-0-深-widget-cs"><td>〔深〕Widget.cs</td><td>—</td><td>部件基类全管线：虚方法簇 <code>Update/UpdateCeases/Draw/Overdraw</code> 全空(<code>:679-685</code>)、<code>MeasureOverride:649</code>、<code>ArrangeOverride:677</code>、<code>ChangeParent:620</code>；XML 装载 <code>:491-608</code>；Layer 收集 <code>:42-98</code>；<code>HitTestGlobal:808</code>；钩子 <code>:849-863</code></td><td>DesiredSize 默认 ∞(<code>:483</code>)</td></tr><tr id="f-1-深-widgetslist-cs"><td>〔深〕WidgetsList.cs</td><td>IEnumerable</td><td>Children 实现；<code>Insert:69</code> 防重复+ChangeParent；<code>Find:128-145</code> 递归深度优先按名/类型</td><td>Find 命中即返，同名取先挂者</td></tr><tr id="f-2-深-widgetalignment-cs"><td>〔深〕WidgetAlignment.cs</td><td>enum</td><td>Near=0/Center/Far/Stretch</td><td>Center 忽略 margin</td></tr><tr id="f-3-深-widgetinput-cs"><td>〔深〕WidgetInput.cs</td><td>—</td><td>统一输入聚合：<code>Click:806</code>(Segment2 首尾)、<code>Drag:836</code> 阈值、<code>Hold:841</code>、<code>Clear:671</code>、四设备 Update <code>:683-703</code>、软光标 Draw <code>:705-740</code>、映射名查询 <code>:363-449</code></td><td>读完必 Clear() 吞事件</td></tr><tr id="f-4-深-widgetinputdevice-cs"><td>〔深〕WidgetInputDevice.cs</td><td>enum(Flags)</td><td>键/鼠/触/4手柄/VR + Multi* 组合位(<code>:3-25</code>)</td><td>All 不含 Multi*</td></tr><tr id="f-5-深-containerwidget-cs"><td>〔深〕ContainerWidget.cs</td><td>Widget</td><td>abstract；<code>ArrangeChildWidgetInCell:68-113</code> 对齐算术；<code>WidgetAdded/Removed:42-44</code> 虚钩</td><td>直接 Measure 全部孩子</td></tr><tr id="f-6-深-canvaswidget-cs"><td>〔深〕CanvasWidget.cs</td><td>ContainerWidget</td><td>绝对定位画布：<code>Size:7</code>(-1=自适应)、Measure/Arrange <code>:33-66</code>、<code>SetWidgetPosition</code></td><td>无 Update 覆写</td></tr></tbody></table></div>
@@ -204,7 +262,7 @@ a{color:inherit}
 <h2 id="十-树形与模组-社区管理族-15">十、树形与模组/社区管理族（15）</h2>
 <details class=jumpbox><summary>⚡ 文件快速跳转 · 15</summary><div class=chips><a href="#f-91-深-treeviewwidget-cs">〔深〕TreeViewWidget.cs</a><a href="#f-92-深-moddependencyinfowidget-cs">〔深〕ModDependencyInfoWidget.cs</a><a href="#f-93-深-modsettingitemwidget-cs">〔深〕ModSettingItemWidget.cs</a><a href="#f-94-深-modsmanagecontentitemwidget-cs">〔深〕ModsManageContentItemWidget.cs</a><a href="#f-95-深-community-communitydownloadqueueitemwidget-cs">〔深〕Community/CommunityDownloadQueueItemWidget.cs</a><a href="#f-96-深-community-communitymissingdependencydisplaydat">〔深〕Community/CommunityMissingDependencyDisplayData.cs</a><a href="#f-97-深-community-communitymissingdependencyfilewidget">〔深〕Community/CommunityMissingDependencyFileWidget.cs</a><a href="#f-98-深-community-communitymissingdependencygroupwidge">〔深〕Community/CommunityMissingDependencyGroupWidget.cs</a><a href="#f-99-深-community-communitymissingdependencypackagehea">〔深〕Community/CommunityMissingDependencyPackageHeaderWidget.cs</a><a href="#f-100-深-community-communitymissingdependencypackagewid">〔深〕Community/CommunityMissingDependencyPackageWidget.cs</a><a href="#f-101-深-community-communitymodversiondata-cs">〔深〕Community/CommunityModVersionData.cs</a><a href="#f-102-深-community-communitymodversionfilewidget-cs">〔深〕Community/CommunityModVersionFileWidget.cs</a><a href="#f-103-深-community-communitymodversionwidget-cs">〔深〕Community/CommunityModVersionWidget.cs</a><a href="#f-104-深-community-communitytoastwidget-cs">〔深〕Community/CommunityToastWidget.cs</a><a href="#f-105-深-community-communitytreeviewwidget-cs">〔深〕Community/CommunityTreeViewWidget.cs</a></div></details><div class="tablewrap"><table><thead><tr><th>文件</th><th>继承</th><th>职责/关键成员</th><th>坑</th></tr></thead><tbody><tr id="f-91-深-treeviewwidget-cs"><td>〔深〕TreeViewWidget.cs</td><td>ScrollPanelWidget</td><td>树形列表(三类同文件 404行)：ItemSize=70(<code>:26</code>)；<code>MeasureOverride:39-46</code> 再限子条目测量高=ItemSize；脏标记在 <b>Draw</b> 期消费→<code>UpdateNodes:56-61</code> 全量重建(<code>:48-54</code>)；<code>AddNodeToWidget:63-87</code> 递归展开(每层 +20 缩进<code>:84</code>)+OnClicked 闭包切选中+有子项置脏(<code>:65-79</code>)；<code>ArrangeOverride:89-101</code> ActualSize 变化置脏、逐条 y=n×ItemSize−ScrollPosition、m_visibleItemsCount=总行数；<code>CalculateScrollAreaLength:103</code>=行数×ItemSize；AddRoot/RemoveRoot/RemoveAtTag/Clear(<code>:105-136</code>)；TreeViewNode <code>:143-349</code>(Expanded 无子项拒绝展开<code>:161-172</code>、Selected 受 Selectable 守卫<code>:204-207</code>、EnsureVisible 沿父链展开<code>:291-297</code>、Dispose 连 Icon 的 Image 一起释放<code>:336-348</code>)；TreeViewNodeContentItem <code>:351-404</code>(ctor 装配 "Widgets/TreeViewNodeContentItem"+Margin=缩进+末尾垫 ClickableWidget<code>:386-387</code>、<code>Update:390-403</code> 点击切 Expanded+双回调 OnClicked+node.OnClicked)</td><td>重建在 Draw 期(AddRoot 后同帧 Draw 才生效)；每次全量重建无虚拟化；节点模型增删改不自动置脏(需手动 m_widgetsDirty——CommunityTreeViewWidget.InvalidateRows 补)</td></tr><tr id="f-92-深-moddependencyinfowidget-cs"><td>〔深〕ModDependencyInfoWidget.cs</td><td>FixedSizePanelWidget</td><td>依赖信息行(sealed)：ctor 装配 4 子件(<code>:17-24</code>)；<code>Bind:33-66</code> 一次性绑定(状态标签 5 态 Loaded/PendingRestart/Incompatible/Disabled/Missing<code>:37-43</code>、非 available 红字<code>:46</code>、动作按钮 Missing=查找/Disabled=查看(<code>:47-55</code>)、标题 Margin4 右侧预留 112 宽防长名换行钻按钮下(<code>:50</code>)、版本行无限制显示「任何」<code>:57-60</code>、链接行<code>:61-65</code>)</td><td>IsActionClicked 要求按钮可见(<code>:31</code>)</td></tr><tr id="f-93-深-modsettingitemwidget-cs"><td>〔深〕ModSettingItemWidget.cs</td><td>多类(6 类同文件)</td><td>模组设置项框架(351行)：接口 IModSettingItemWidget <code>:14-31</code>(实现约束=Engine.Widget 子类+无参构造(Factory 反射)+Initialize 仅调用一次<code>:11-13</code>)；基类 UniformSpacingPanelSettingWidget <code>:39-112</code>(Horizontal 方向防 Vertical 主轴 ∞ 期望污染上层 ContentStack 经 layoutTransform 算 NaN 崩整页<code>:37-38,272-274</code>；<code>CommitValue:89-92</code> m_applyingExternalValue 守卫防 widget→Set→event 回环；<code>ApplyExternalValueCore:97-108</code> 入口 Supports 类型预检脏值静默忽略)；BoolButtonSettingWidget <code>:117-156</code>(TextTrue/False 可配+本地化)；EnumSelectionDialogSettingWidget <code>:159-196</code>(弹 ListSelectionDialog)；EnumSliderSettingWidget <code>:199-252</code>(用户配 Min/Max 钳下标域防选不中末项<code>:219-221</code>、Value 须在 Min/Max/Granularity 全就位后再设否则钳/round 错<code>:224-225</code>)；NumberSliderSettingWidget <code>:256-320</code>(DecimalPlaces 0-3 格式串重建<code>:262-268</code>、SlidingCompleted 才 Commit<code>:308-313</code>)；TextBoxSettingWidget <code>:323-350</code>(每帧 Text 变即 Commit<code>:340-345</code>)</td><td>Supports(Type) 分派(enum 用 typeof(Enum).IsAssignableFrom)；IsOperating 供页面轮询识别激活项；第三方重写 CommitValue 须同样查 m_applyingExternalValue(<code>:88</code>)</td></tr><tr id="f-94-深-modsmanagecontentitemwidget-cs"><td>〔深〕ModsManageContentItemWidget.cs</td><td>StackPanelWidget</td><td>模组管理列表项：ctor 装配 5 子件(Icon/DisabledOverlay/Title/Information/Description)(<code>:50-58</code>)；<code>IsDisabled:17-23</code> setter 同时缩图标 48/64</td><td>—（纯模板件）</td></tr><tr id="f-95-深-community-communitydownloadqueueitemwidget-cs"><td>〔深〕Community/CommunityDownloadQueueItemWidget.cs</td><td>CanvasWidget</td><td>下载队列行：ctor 装配 3 子件(<code>:27-33</code>)；<code>ApplySelection:20-25</code> 选中态四色切换(底/描边/标题/详情)</td><td>—（纯模板件）</td></tr><tr id="f-96-深-community-communitymissingdependencydisplaydat"><td>〔深〕Community/CommunityMissingDependencyDisplayData.cs</td><td>—</td><td>3 个 sealed 显示数据类(<code>:2-27</code>)：File(File+FileTitle+MetadataText)/Group(GroupKey+折叠双文案+Files)/Package(Text+DetailText+Link 下载页)</td><td>init-only 纯数据</td></tr><tr id="f-97-深-community-communitymissingdependencyfilewidget"><td>〔深〕Community/CommunityMissingDependencyFileWidget.cs</td><td>FixedSizePanelWidget</td><td>缺失依赖文件行(sealed)：ctor 装配+下载按钮文案(<code>:9-16</code>)；<code>Bind:22-27</code> 绑 File/标题/元数据；<code>IsDownloadClicked:20</code></td><td>下载按钮 IsEnabled 联动 canDownload&amp;&amp;File!=null(<code>:26</code>)</td></tr><tr id="f-98-深-community-communitymissingdependencygroupwidge"><td>〔深〕Community/CommunityMissingDependencyGroupWidget.cs</td><td>FixedSizePanelWidget</td><td>缺失依赖分组(sealed)：<code>Update:30-34</code> toggle 按钮切展开；<code>SetExpanded:36-56</code> 展开时全量重建文件行(清 panel+逐个 new+Bind)；<code>TryGetClickedFile:58-68</code> 轮询行内下载点击</td><td>未 Bind(displayData==null)时 SetExpanded 早退(<code>:37-39</code>)</td></tr><tr id="f-99-深-community-communitymissingdependencypackagehea"><td>〔深〕Community/CommunityMissingDependencyPackageHeaderWidget.cs</td><td>StackPanelWidget</td><td>包头行(sealed)：<code>Bind:15-18</code>(FileGroupSpacer 显隐+标题文本)</td><td>—（纯模板件）</td></tr><tr id="f-100-深-community-communitymissingdependencypackagewid"><td>〔深〕Community/CommunityMissingDependencyPackageWidget.cs</td><td>StackPanelWidget</td><td>包行(sealed)：<code>Bind:19-27</code>(message 面板显隐+LinkWidget 按声明链接显隐、LinkWidget 点击自带开浏览器<code>:23-26</code>)</td><td>—</td></tr><tr id="f-101-深-community-communitymodversiondata-cs"><td>〔深〕Community/CommunityModVersionData.cs</td><td>—</td><td>2 个 sealed 显示数据类(<code>:4-34</code>)：CommunityModVersionDisplayData(版本+VersionKey+兼容性文本+双色+IsCurrent+HasSingleFile/HasExpandableFiles+Files)/CommunityModFileDisplayData(文件+下载量文本)</td><td>init-only 纯数据</td></tr><tr id="f-102-深-community-communitymodversionfilewidget-cs"><td>〔深〕Community/CommunityModVersionFileWidget.cs</td><td>FixedSizePanelWidget</td><td>版本文件行(sealed)：<code>Bind:23-27</code> 绑文件/下载量；<code>IsDownloadClicked:21</code></td><td>—</td></tr><tr id="f-103-深-community-communitymodversionwidget-cs"><td>〔深〕Community/CommunityModVersionWidget.cs</td><td>FixedSizePanelWidget</td><td>版本块(sealed)：<code>Bind:41-55</code>(HasSingleFile→文件行+下载钮、HasExpandableFiles→Files 展开钮带数量)；<code>SetExpanded:57-71</code> 展开时全量重建文件行、IsCurrent 金描边(<code>:70</code>)；<code>TryGetClickedFile:73-88</code>(单文件下载钮优先+行内下载轮询)</td><td>数据未 Bind 时 SetExpanded 走安全空路径(<code>:58</code>)</td></tr><tr id="f-104-深-community-communitytoastwidget-cs"><td>〔深〕Community/CommunityToastWidget.cs</td><td>CanvasWidget(内部sealed)</td><td>提示气泡(124行)：常量 隐藏 −48/可见 40/动画 0.28s(<code>:6-8</code>)；<code>Show:32-57</code>(active 先 Hide；confirm/close 可见性由 action 是否为 null 决定<code>:50-51</code>)；<code>ReserveSpaceForLinks:61-70</code> 右边距预留链接实测宽(长文本不被链接覆盖)；<code>ComputeHiddenMargin:76</code> 按当前 ActualSize.Y 算隐藏位(固定 −48 多行滑不出屏)；<code>Update:88-105</code> easeOutQuad <code>t=1−(1−t)²</code>(<code>:94</code>)+autoHide/close 判定；<code>DismissAndInvoke:108-111</code> 动作实参在 Hide 清场前求值；<code>ClearState:113-123</code></td><td>internal 不可直接 new；Hide 触发 dismissAction(Reset 不触发<code>:84-86</code>)</td></tr><tr id="f-105-深-community-communitytreeviewwidget-cs"><td>〔深〕Community/CommunityTreeViewWidget.cs</td><td>TreeViewWidget</td><td>社区页树(引擎版补丁，69行)：<code>UpdateNodes:52-63</code> override 在重建完成后触发 RowWidgetsRebuilt(try/catch 防异常打断整帧绘制<code>:54-62</code>)；<code>new SelectedNode:25-38</code> 引擎 m_selectedNode 在 Clear/UpdateNodes 时不重置→只在仍可达于 Nodes 树时返回否则 null(<code>ContainsNode:40-50</code>)；<code>InvalidateRows:66-68</code> 手动置脏(节点模型增删改不自动重建)</td><td>TreeViewNode.Icon 是弱引用——任何路径不得让节点 Dispose(共享纹理被销毁；清子树 ClearChildren(false)、清树 Clear(false))(<code>:12-14</code>)；调用方须以本类型静态引用 SelectedNode</td></tr></tbody></table></div>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>找某控件属于哪家族/继承谁</td><td>本页十节小标题 + 每行"继承"列</td></tr><tr><td>查布局算法细节</td><td>二、布局容器族各行 → 09 页"布局"节</td></tr><tr><td>查输入/命中/拖放</td><td>三、交互族 + 09 页"命中测试与输入抽象全链"节</td></tr><tr><td>查文本断行/本地化</td><td>四、文本族 FontTextWidget 行</td></tr><tr><td>查富文本排版/HTML·Markdown 解析口径</td><td>五族各行（RichTextLayout/HtmlToWidgetsBuilder/Css*Parser）</td></tr><tr><td>查富内容（MD/HTML）入口</td><td>五、RichContent 公共 + 09 页"富内容管线"节</td></tr><tr><td>查物品面板绑定哪个组件</td><td>八族各行 Update 行号 → 对应 Component*（跨域另见 01-引擎其它页）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../../01-引擎/明细/08a-音频明细.html"><small>上一页 · SC引擎·明细</small><b>08a-音频明细</b></a><a class="next" href="../../01-引擎/明细/10a-输入相机明细.html"><small>下一页 · SC引擎·明细</small><b>10a-输入相机明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一-根与基础-7">一、根与基础（7）</a><a class="lvl2" href="#二-布局容器族-9">二、布局容器族（9）</a><a class="lvl2" href="#三-交互族-11">三、交互族（11）</a><a class="lvl2" href="#四-文本族-4">四、文本族（4）</a><a class="lvl2" href="#五-富文本与富内容族-22">五、富文本与富内容族（22）</a><a class="lvl3" href="#richtext-6">RichText（6）</a><a class="lvl3" href="#html-9">Html（9）</a><a class="lvl3" href="#markdown-4">Markdown（4）</a><a class="lvl3" href="#richcontent-公共-3">RichContent 公共（3）</a><a class="lvl2" href="#六-图元显示族-11">六、图元显示族（11）</a><a class="lvl2" href="#七-hud-视口-屏内显示族-10">七、HUD/视口/屏内显示族（10）</a><a class="lvl2" href="#八-物品与功能方块面板族-14">八、物品与功能方块面板族（14）</a><a class="lvl2" href="#九-手持武器族-3">九、手持武器族（3）</a><a class="lvl2" href="#十-树形与模组-社区管理族-15">十、树形与模组/社区管理族（15）</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>找某控件属于哪家族/继承谁</td><td>本页十节小标题 + 每行"继承"列</td></tr><tr><td>查布局算法细节</td><td>二、布局容器族各行 → 09 页"布局"节</td></tr><tr><td>查输入/命中/拖放</td><td>三、交互族 + 09 页"命中测试与输入抽象全链"节</td></tr><tr><td>查文本断行/本地化</td><td>四、文本族 FontTextWidget 行</td></tr><tr><td>查富文本排版/HTML·Markdown 解析口径</td><td>五族各行（RichTextLayout/HtmlToWidgetsBuilder/Css*Parser）</td></tr><tr><td>查富内容（MD/HTML）入口</td><td>五、RichContent 公共 + 09 页"富内容管线"节</td></tr><tr><td>查物品面板绑定哪个组件</td><td>八族各行 Update 行号 → 对应 Component*（跨域另见 01-引擎其它页）</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../../01-引擎/明细/08a-音频明细.html"><small>上一页 · SC引擎·明细</small><b>08a-音频明细</b></a><a class="next" href="../../01-引擎/明细/10a-输入相机明细.html"><small>下一页 · SC引擎·明细</small><b>10a-输入相机明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一-根与基础-7">一、根与基础（7）</a><a class="lvl2" href="#二-布局容器族-9">二、布局容器族（9）</a><a class="lvl2" href="#三-交互族-11">三、交互族（11）</a><a class="lvl2" href="#四-文本族-4">四、文本族（4）</a><a class="lvl2" href="#五-富文本与富内容族-22">五、富文本与富内容族（22）</a><a class="lvl3" href="#richtext-6">RichText（6）</a><a class="lvl3" href="#html-9">Html（9）</a><a class="lvl3" href="#markdown-4">Markdown（4）</a><a class="lvl3" href="#richcontent-公共-3">RichContent 公共（3）</a><a class="lvl2" href="#六-图元显示族-11">六、图元显示族（11）</a><a class="lvl2" href="#七-hud-视口-屏内显示族-10">七、HUD/视口/屏内显示族（10）</a><a class="lvl2" href="#八-物品与功能方块面板族-14">八、物品与功能方块面板族（14）</a><a class="lvl2" href="#九-手持武器族-3">九、手持武器族（3）</a><a class="lvl2" href="#十-树形与模组-社区管理族-15">十、树形与模组/社区管理族（15）</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT="../../"; // 站点根相对前缀（按页面深度注入）
 // 主题切换
@@ -212,25 +270,36 @@ const tbtn=$('#themeBtn');
 function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
 applyTheme(document.documentElement.dataset.theme||'light');
 tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
-// 搜索
+// ⌘K 命令面板
 let IDX=[];
 fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
-const box=$('#search'),res=$('#sres');
-box.addEventListener('input',()=>{
-  const q=box.value.trim().toLowerCase();
-  if(!q){res.style.display='none';return}
-  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
-  res.innerHTML=hits.map(p=>{
-    const i=p.b.toLowerCase().indexOf(q);
-    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
-    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
-  }).join('')||'<a>无命中</a>';
-  res.style.display='block';
-});
-document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
-  if(e.key==='Escape'){res.style.display='none'}
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
 });
 // 移动端侧栏抽屉
 const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
@@ -241,20 +310,24 @@ backdrop.addEventListener('click',()=>setSide(false));
 // 高亮当前页
 const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
 document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
-// 右侧目录：滚动高亮
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
 const tocLinks=[...document.querySelectorAll('#tocnav a')];
 if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
   const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
   const onScroll=()=>{
     let idx=0;
     for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
     tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
   };
   document.addEventListener('scroll',onScroll,{passive:true});onScroll();
 }
-// 阅读进度条 + 回到顶部
-const pbar=$('#pbar'),btt=$('#btt');
-function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600)}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
 document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
 btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 // 代码块复制按钮
@@ -267,7 +340,24 @@ document.querySelectorAll('pre.code').forEach(pre=>{
     if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
   pre.appendChild(b);
 });
-// 区块滚动淡入
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
-document.querySelectorAll('article > .tablewrap, article > blockquote, article > pre.code').forEach(el=>{el.classList.add('rv');io.observe(el)});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
 </script></body></html>

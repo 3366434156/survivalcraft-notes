@@ -167,6 +167,64 @@ tr[id]:hover td{background:var(--acc-soft)}
 #main{padding:22px clamp(14px,3vw,24px) 70px}
 article{padding:22px 18px 30px;border-radius:14px}
 }
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
 body{background:#fff;color:#000}
@@ -174,7 +232,7 @@ body{background:#fff;color:#000}
 article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="世界与地形生成">世界与地形生成</h1>
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="世界与地形生成">世界与地形生成</h1>
 <blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(TerrainUpdater/TerrainChunk/TCGFlat/TerrainSerializer14/129/22/23)；抽样(TCG21/22/23/24 按生成阶段深读关键段，明细见 05a)</blockquote>
 <h2 id="一句话定位">一句话定位</h2>
 <p>区块 16×256×16 按 NotLoaded→四趟内容→光照→顶点→Valid 十态状态机在后台线程逐格推进；五代生成器(21/22/23/24/Flat)同接口不同地形公式；无 Biome 类，气候=每列温度/湿度。</p>
@@ -182,7 +240,7 @@ a{color:inherit}
 <div class="tablewrap"><table><thead><tr><th>符号(类/文件)</th><th>绝对路径</th><th>职责</th></tr></thead><tbody><tr id="f-0-terrainupdater"><td><code>TerrainUpdater</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainUpdater.cs</td><td>区块分配/卸载、十态状态机、光照与顶点阶段(1339行)</td></tr><tr id="f-1-terrainchunk"><td><code>TerrainChunk</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainChunk.cs</td><td>单区块数据：Cells/Shafts/几何/笔刷补画(248行全读)</td></tr><tr id="f-2-terrainchunkstate"><td><code>TerrainChunkState</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainChunkState.cs</td><td>10 个状态枚举</td></tr><tr id="f-3-terrain"><td><code>Terrain</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\Terrain.cs</td><td>区块哈希表(:155/:176/:195)、value 位编码(:64-72)</td></tr><tr id="f-4-subsystemterrain"><td><code>SubsystemTerrain</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Subsystem\SubsystemTerrain.cs</td><td>SetCell 总入口、生成器选型(:550-584)、序列化器挂载(:523)、Save(:587-605)</td></tr><tr id="f-5-iterraincontentsgenerator"><td><code>ITerrainContentsGenerator</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\ITerrainContentsGenerator.cs</td><td>13 成员接口：4 计算函数+4 趟+OceanLevel(26行全读)</td></tr><tr id="f-6-terraincontentsgenerator21"><td><code>TerrainContentsGenerator21</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainContentsGenerator21.cs</td><td>2.1 前后双参分支、自带 Random/OldRandom(2627行)</td></tr><tr id="f-7-terraincontentsgenerator22"><td><code>TerrainContentsGenerator22</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainContentsGenerator22.cs</td><td>硬编码参数版、山地 ridged 直出(2365行)</td></tr><tr id="f-8-terraincontentsgenerator23"><td><code>TerrainContentsGenerator23</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainContentsGenerator23.cs</td><td>首个 ChunkGenerationStep 列表版、 Cairns/MaxBedrockHeight(2469行)</td></tr><tr id="f-9-terraincontentsgenerator24"><td><code>TerrainContentsGenerator24</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainContentsGenerator24.cs</td><td>2.4 生成器：TG* 参数+钩子+Sort(2437行)</td></tr><tr id="f-10-terraincontentsgeneratorflat"><td><code>TerrainContentsGeneratorFlat</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainContentsGeneratorFlat.cs</td><td>平面世界：单趟铺柱+岸线粗糙噪声(161行全读)</td></tr><tr id="f-11-terrainserializer23"><td><code>TerrainSerializer23</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainSerializer23.cs</td><td>唯一在用序列化器：Region 存储+RLE+Deflate(783行全读)</td></tr><tr id="f-12-terrainserializer22-129-14"><td><code>TerrainSerializer22/129/14</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainSerializer*.cs</td><td>老格式，仅版本转换器用(全读)</td></tr><tr id="f-13-chunkgenerationstep"><td><code>ChunkGenerationStep</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\ChunkGenerationStep.cs</td><td>步骤对象：ShouldGenerate/GenerateOrder/Name</td></tr><tr id="f-14-terrainbrush"><td><code>TerrainBrush</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\TerrainBrush.cs</td><td>矿/洞/树形状模板；AddBox(:166)、PaintFastSelective(:214)</td></tr><tr id="f-15-simplexnoise"><td><code>SimplexNoise</code></td><td>E:\SurvivalcraftAPIProject\Survivalcraft\Game\SimplexNoise.cs</td><td>OctavedNoise(:732 1D/:745 2D/:764 3D)</td></tr><tr id="f-16-百科四篇"><td>百科四篇</td><td>插件版模组百科《16-worldgen》</td><td>terrain-hooks/gen-steps/ore-deposits/natural-terrain</td></tr></tbody></table></div>
 <h2 id="核心机制">核心机制</h2>
 <h3 id="世界初始化流程">世界初始化流程</h3>
-<pre class="code"><code>启动(LoadingScreen.cs 顺序)：
+<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>text</span></div><pre class="code"><code>启动(LoadingScreen.cs 顺序)：
   :467 解析mod设置 → :471 OnLoadingStart → :500-511 .xdb合并 → :531-533 BlocksManager.Initialize
   → :535 CraftingRecipesManager.Initialize → :537-547 WorldsManager 等管理器
 进入世界：
@@ -191,14 +249,14 @@ a{color:inherit}
   → SubsystemTerrain.Initialize：
       :523 先挂 TerrainSerializer23(唯一存档后端，老格式只被 VersionConverter 读)
       :550-584 再按 WorldSettings.OriginalSerializationVersion 选生成器：
-        ≤2.1→TCG21 | 2.2→TCG22 | 2.3→TCG23 | 其余→TCG24 | FlatContinent/FlatIsland→TCGFlat</code></pre>
+        ≤2.1→TCG21 | 2.2→TCG22 | 2.3→TCG23 | 其余→TCG24 | FlatContinent/FlatIsland→TCGFlat</code></pre></div>
 <p><code>TerrainGenerationMode</code> 只有 4 值(Continent/Island/FlatContinent/FlatIsland，TerrainGenerationMode.cs:3-8)。<b>老存档与平面世界没有步骤列表</b>，<code>TerrainContentsGenerator24Initialize</code> 钩子不触发。TCG24 构造(:280-362)：读 <code>m_seed</code>(:176) → 种子派生 4 个噪声域偏移(:290-293) → 填 <code>TG*</code> 参数默认值(:294-323) → 注册全部原版步骤(:325-351) → 模组钩子(:352-358) → <b>最后</b>才对 4 个步骤列表 <code>Sort()</code>(:359-362)。</p>
 <h3 id="区块模型与存取">区块模型与存取</h3>
 <ul><li><code>TerrainChunk</code>：Size=16、Height=256(:13/:17)；<code>Cells[Size*Size*Height]</code>(:61)，线性索引 <code>y | x&lt;&lt;8 | z&lt;&lt;12</code>(:138-141)；<code>Shafts[256]</code>(:63)存每列温度/湿度/顶底高度/阳光高(:199-237)。<code>Origin=Coords*16</code>(:82)。</li><li>value 打包同方块页：contents 低 10 位、light 10-13、data 14+(Terrain.cs:64-72)。</li><li>存储：<code>Terrain.m_allChunks</code> 哈希表，<code>GetChunkAtCoords</code>(:155)、<code>AllocateChunk</code>(:176)、<code>FreeChunk</code>(:195)。</li></ul>
 <h3 id="区块加载-卸载-allocateandfreechunks-terrainupdater-cs-">区块加载/卸载(AllocateAndFreeChunks，TerrainUpdater.cs:459-515)</h3>
 <ul><li><b>卸载</b>：玩家视野圈外(<code>IsChunkInRange</code> :447)的区块 → <code>ToFreeChunks</code> 钩子(:465-472) → 全部行为 <code>OnChunkDiscarding</code>(:478) → <code>TerrainSerializer.SaveChunk</code>(:480) → <code>FreeChunk</code>(:481)。</li><li><b>加载</b>：范围内缺的 → <code>AllocateChunk</code>(:494) + 邻域状态降级(自身降 NotLoaded、8 邻降 InvalidLight，:495-496)。</li><li>驱动：<code>Task.Run(ThreadUpdateFunction)</code> 后台线程(:345/:548)；<code>SettingsManager.MultithreadedTerrainUpdate=false</code> 时同步跑(:331-342)；镜头前 6 格的区块在 <code>PrepareForDrawing</code>(:392-414) 同步等完。降级接口 <code>DowngradeChunkNeighborhoodState/DowngradeAllChunksState</code>(:416-445) 用于运行时改方块后倒回重算。</li></ul>
 <h3 id="生成管线-十态状态机-updatechunksinglestep-terrainupdater-">生成管线：十态状态机(UpdateChunkSingleStep，TerrainUpdater.cs:651-810)</h3>
-<pre class="code"><code>NotLoaded →[读档成功:653-667→InvalidLight, 标 WasUpgraded]→；[新块]→ InvalidContents1
+<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>text</span></div><pre class="code"><code>NotLoaded →[读档成功:653-667→InvalidLight, 标 WasUpgraded]→；[新块]→ InvalidContents1
 InvalidContents1/2/3/4 → GenerateChunkContentsPass1..4(:669-701)
   pass4 末尾触发 OnTerrainContentsGenerated 钩子(:702-708)
 → InvalidLight(阳光柱+高度 :716-724, GenerateChunkSunLightAndHeight :812)
@@ -206,7 +264,7 @@ InvalidContents1/2/3/4 → GenerateChunkContentsPass1..4(:669-701)
    GetEmittedLightAmount :901；传播 :748)
 → InvalidVertices1(再等 8 邻 :758-767；GenerateChunkVertices(chunk,0) :772 + 钩子 :773)
 → InvalidVertices2(:788-807, GenerateChunkVertices(chunk,1), NewGeometryData=true)
-→ Valid</code></pre>
+→ Valid</code></pre></div>
 <p>内容四趟<b>不等邻居</b>；光照/顶点两阶段才等(:727-736/:758-767)。<code>NotifyBlockBehaviors</code>(:1299-1322) 在 State≥InvalidVertices1 时触发(:382-389)：<code>OnChunkInitialized</code> 全局广播 + 逐格 <code>OnBlockGenerated</code>(contents≠0 才调)。</p>
 <h3 id="四趟内容-tcg24-噪声-地表材料-装饰">四趟内容(TCG24, 噪声→地表材料→装饰)</h3>
 <div class="tablewrap"><table><thead><tr><th>趟</th><th>步骤(GenerateOrder 升序)</th><th>锚点</th></tr></thead><tbody><tr><td>pass1/2(各半区 z∈[0,8)/[8,16))</td><td>1000 <code>GenerateSurfaceParameters</code>(温度/湿度入 Shafts)、2000 <code>GenerateTerrain</code>(3D 密度场)</td><td>:325-329</td></tr><tr><td>pass3</td><td>100 <code>GenerateCaves</code>、200 <code>GeneratePockets</code>、300 <code>GenerateMinerals</code>、400 <code>GenerateSurface</code>、500 <code>PropagateFluidsDownwards</code></td><td>:331-335</td></tr><tr><td>pass4(15 步)</td><td>100 草与植物、200 倒木、300 树、400 仙人掌、500 南瓜、600 海带、700 海草、800 底吸、900 陷阱、1000 常春藤、1100 坟墓、1200 石冢、1300 雪与冰、1400 基岩与空气、1500 流体顶面</td><td>:337-351</td></tr></tbody></table></div>
@@ -216,18 +274,18 @@ InvalidContents1/2/3/4 → GenerateChunkContentsPass1..4(:669-701)
 <div class="tablewrap"><table><thead><tr><th>维度</th><th>TCG21</th><th>TCG22</th><th>TCG23</th><th>TCG24</th></tr></thead><tbody><tr><td>构造参数</td><td>按 <code>OriginalSerializationVersion</code> 三分支(空串/<code>&lt;2.1</code>/其余，:515/:543/:571)，老分支偏移取 <code>OldRandom(100+seed)</code>(:513)</td><td>单分支硬编码(:275-319)</td><td>同22，微调(:281-324)</td><td>TG* 字段+mod 钩子可改</td></tr><tr><td>海角 m_oceanCorner</td><td>噪声岸线 <code>OldRandom</code> 2000-4000(:516/:544) 或 <code>(random,-100,-100)</code>(:573)</td><td>固定 <code>(-200,-200)</code>(:284)</td><td>固定(:290)</td><td>同23(:247)</td></tr><tr><td>山地因子</td><td>`1-</td><td>2n-1</td><td>` 手工归一(:676-680)</td><td>ridged 噪声直出 :395-403</td></tr><tr><td>丘陵/山带分档</td><td><code>(factor-0.6)/0.4</code> 线性(:694-695)</td><td><code>Squish</code>+TGHillsPercentage/TGMountainsPercentage(:417-418)</td><td>同22</td><td>同22+TG* 可调</td></tr><tr><td>温湿公式</td><td>TGNewBiomeNoise 双分支(:714-764)，2.1 前噪声频率 0.0006/0.0008</td><td>单公式 3f*noise-1.1/-0.9(:438-458)</td><td>同22</td><td>同22</td></tr><tr><td>煤 y 区间</td><td>5-80(:1008)</td><td>5-200(:768-773)</td><td>5-200(:822-827)</td><td>5-200</td></tr><tr><td>硝石</td><td>3+2f 条，y 50-70(:1026-1032)</td><td>3+3f 条，y 50-90(:789-794)</td><td>同22(:843-848)</td><td>同22</td></tr><tr><td>雪线</td><td>无(GenerateSurface 不出冰)</td><td>高处冻结→IceBlock(62)(:721-728)</td><td>同22</td><td>同22</td></tr><tr><td>步骤列表</td><td>无(直接函数调用 :629-661)</td><td>无</td><td><code>ChunkGenerationStep1-4</code>+钩子+Sort(:255-258/:326-365)</td><td>同23+更多 TG*</td></tr><tr><td>独有内容</td><td>自带 Random/OldRandom(:6/:106)</td><td>ScoreSpawnPosition 按 StartingPositionMode 加减分(:499-540)</td><td>GenerateLogs/GenerateTrees 拆两步(:339-340)、GenerateCairns(:1917)、<code>MaxBedrockHeight=4</code>(:252/:1292)、FindCoarseSpawnPosition 钩子(:394-401)</td><td>湍流门控、TG* 全参数化</td></tr><tr><td>笔刷种子</td><td><code>Random(17)</code>(:2171)</td><td><code>Random(17)</code>(:1934)</td><td><code>Random(17)</code>(:2031)</td><td><b><code>Random(24)</code>(:1984)</b></td></tr></tbody></table></div>
 <p>TCGFlat(:23-45 全读)：无 pass3/4 空实现(:104-106)；pass1 一次铺整柱——陆内 <code>k&lt;TerrainLevel</code> 铺 TerrainBlockIndex(表层)+<code>k&lt;2</code> 基岩、<code>k&lt;=OceanLevel</code> 铺海洋块(:70-95)；OceanLevel=<code>TerrainLevel+SeaLevelOffset</code>(:21)；岸线只是 4 条粗糙噪声扰动(:108-128)；温湿=常数 12+世界偏移(:132-134)；CalculateHeight 恒等于 TerrainLevel(:130)。</p>
 <h3 id="区块持久化链-terrainserializer">区块持久化链 TerrainSerializer</h3>
-<pre class="code"><code>SubsystemTerrain.Initialize :523  TerrainSerializer = new TerrainSerializer23(dirName)  // 2.4 唯一后端
+<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>text</span></div><pre class="code"><code>SubsystemTerrain.Initialize :523  TerrainSerializer = new TerrainSerializer23(dirName)  // 2.4 唯一后端
 运行时：TerrainUpdater 卸载 :480 SaveChunk(chunk)
 退出：SubsystemTerrain.Save :587-605  等 UpdateEvent → 遍历 AllocatedChunks 全部 SaveChunk
 老格式：TerrainSerializer14/129/22 仅被 VersionConverter10To14/21To22/22To23 读写
-  (VersionConverter22To23.cs:75-76 用 TS22 读→TS23 写完成升级)</code></pre>
+  (VersionConverter22To23.cs:75-76 用 TS22 读→TS23 写完成升级)</code></pre></div>
 <ul><li><b>存档门槛</b>：<code>SaveChunk</code> 仅在 <code>State &gt; InvalidContents4 &amp;&amp; ModificationCounter &gt; 0</code> 时落盘(TerrainSerializer23.cs:593-599；22:58-64 同)——半生成区块不存。</li><li><b>RegionFileStorage(默认，TerrainSerializer23.cs:278-564)</b>：每 16×16 区块一个文件 <code>Regions{suffix}/Region X,Y.dat</code>(:445)；头=FourCC "RGN1"(:305)+256 目录项×8 字节(offset,size)(:294-296)；数据区自 2052 起(:300)，每条目前置 4 字节 "CHK1"(:307/:518)；条目间留 1024 字节余量(:287/:561)，放不下就整文件经 tmp 重建再换名(:382-442)；单 Region 上限 256MB(:541)、句柄 LRU 100(:285/:473-475)。</li><li><b>SingleFileStorage(备用)</b>：单文件 <code>Chunks32fs.dat</code>(:25)；文件头 786444 字节=魔数 0xDEADBEEF(:27)+NodeSize(:31)+空闲链头(:8)+65536 个 12 字节区块描述符(:35-37)；节点 1024 字节成链表，节点头打包"下一节点偏移或末段长度"(:236-252)；加载沿链拼接(:102-112)。</li><li><b>压缩(TerrainSerializer23.cs:652-724)</b>：先 256 字节 Shafts(每列 <code>温度&lt;&lt;4|湿度</code> 挤进一字节 :656-659)；再按 y→x→z 序对整格 value(光清零 :665)做 RLE——游程长度藏进 light 位(≤15：4 字节 <code>count-1</code>；≤271：5 字节 :750-764)；最后 Deflate Fastest(:688/:766-773)。解压若未精确填满 16×256×16 则抛"Corrupt chunk data"(:719-723)。</li><li><b>老格式对比</b>：TS22 <code>Chunks32h.dat</code> 定长槽 263184 字节(4 格 value=4B + 256 shaft=1KB)，TOC 65537 项(:21/:40/:49)；TS129 <code>Chunks32.dat</code> 同构但 ChunkSizeY=128(:13)；TS14 <code>Chunks.dat</code> 格子仅 2 字节(:98-100)。</li><li><b>笔刷补画</b>：TCG23/24 画树时 <code>chunk.AddBrushPaint</code> 记录(TCG23:1274、TCG24:1230)，<code>TerrainChunk.AddBrushPaint/ApplyBrushPaints</code>(:239/:243)——但全项目无调用方，当前是<b>闲置 API</b>。</li></ul>
 <h2 id="坑与对策">坑与对策</h2>
 <ul><li><b>步骤异常全静默</b>：ErrorLogged 挂在步骤对象上只报一次(TCG24:2423-2436)，之后所有区块所有异常无声。对策：委托内自包 try/catch+计数日志，给步骤起 Name。</li><li><b>四趟内跨区块读写</b>：邻居可能还没生成。对策：只用 <code>chunk.Get/SetCellValueFast</code>，跨区结构学原版"3×3 邻域各自画自己那片+种子只由 (i,j) 派生"。</li><li><b>挂到钩子里的步骤才会被排序</b>：<code>TerrainContentsGenerator24Initialize</code>(:352-358) 在 Sort 前；之后(如 OnProjectLoaded)Add 不排序。对策：自己 <code>Sort((a,b)=&gt;a.GenerateOrder.CompareTo(b.GenerateOrder))</code>。</li><li><b>老存档/平面世界钩子不触发</b>：生成器选型看 <code>OriginalSerializationVersion</code>(SubsystemTerrain.cs:551-584)。测试地形模组要新建 2.4 常规世界。</li><li><b><code>TGWater=false</code> 是死字段</b>：只声明无读取点，海洋照生成。</li><li><b>SeaLevelOffset 漂移矿脉</b>：<code>OceanLevel=64+offset</code>(:252) 而矿 y 区间硬编码，改海平面会改变矿相对深度。</li><li><b>清空原版笔刷池</b>：矿笔刷按整值比较宿主(PaintFastSelective :214-236)，<code>Int(0,-1)</code> 返回 0 → <code>m_coalBrushes[0]</code> 越界，异常被吞全进程只报一次。对策：清空同时补自己的笔刷。</li><li><b>OnTerrainContentsGenerated 在子线程</b>(:345/:548)：别碰 GL/UI/FindSubsystem；只操作 chunk 的 Fast 接口。</li><li><b>矿刷宿主是"整值"不是 contents</b>：煤宿主=Granite(3)、铁/硫磺/钻石/锗=Basalt(67)、硝石=Sandstone(4)——带 data/light 的格子永远画不上；想兼容染色/元数据格要自己写 Painter。</li><li><b>跨版本笔刷种子不同</b>：21/22/23=Random(17)，24=Random(24)(上表末行)——同一世界种子在 2.3 与 2.4 生成器下矿物形状不同，别用 2.3 存档验 2.4 矿表。</li></ul>
 <h2 id="原版范例">原版范例</h2>
 <div class="tablewrap"><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>自定义整套地形生成器</td><td>抄 <code>TerrainContentsGenerator23</code>：实现 13 成员接口 + 4 个 <code>List&lt;ChunkGenerationStep&gt;</code>(TCG23:255-258)+构造尾 Sort(:362-365)——最简可排版的正宗结构</td></tr><tr><td>加一个生成步骤</td><td>TCG23:326-352 注册表样式：<code>new ChunkGenerationStep(order, chunk=&gt;...)</code> + ShouldGenerate 开关；见 05a 阶段表</td></tr><tr><td>矿脉/ pocket 形状随机化</td><td>TCG21 <code>CreateBrushes</code>(:2170-2626)：Random 固定种子→随机游走 AddBox→Compile；矿刷见 :2172-2296、水/岩浆囊 :2545-2595</td></tr><tr><td>跨区块无缝矿脉</td><td>TCG21 <code>GenerateMinerals</code>(:991-1056)：3×3 邻域+<code>new Random(m_seed+i+119*j)</code>+burn-in，各区块只画落进自己的格子</td></tr><tr><td>洞穴蠕虫式挖掘</td><td>TCG21 <code>GenerateCaves</code>(:1152-1266)：CavePoint 方向扰动+5 类转向概率+34 格半径出界判定+每 20 步比对 CalculateHeight 防冒头</td></tr><tr><td>植被按气候分布</td><td>TCG21 <code>GenerateGrassAndPlants</code>(:1467-1494)+<code>PlantsManager.GenerateRandomPlantValue</code>；树密度双层噪声 :1281-1293</td></tr><tr><td>让水面下流体自动补齐/标记顶面</td><td><code>PropagateFluidsDownwards</code>(:2125-2145) 与 <code>UpdateFluidIsTop</code>(:2147-2168) 两条自上而下扫描，平面世界也复用(TCGFlat:100-102/:138-160)</td></tr><tr><td>区块压缩存档格式</td><td>TerrainSerializer23 <code>CompressChunkData/DecompressChunkData</code>(:652-724)：shaft 字节+light 位藏游程+Deflate</td></tr><tr><td>平面世界快速铺地形</td><td>TCGFlat <code>GenerateChunkContentsPass1</code>(:61-98)：一重循环写整列，无中间态</td></tr></tbody></table></div>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>加生成步骤/关原版步骤</td><td>本页四趟表+TCG24:325-362；实操百科 16-worldgen/02-gen-steps.md</td></tr><tr><td>加一种矿/调原版矿量</td><td>TCG21:2170(CreateBrushes 矿刷表)+:991(GenerateMinerals)；钩子 OnTerrainBrushesCreated(TCG24:2415)；明细见 05a 矿表</td></tr><tr><td>查区块卡在哪个阶段</td><td>TerrainChunkState.cs 十态+本页状态机；统计开关 TerrainUpdater <code>LogTerrainUpdateStats</code></td></tr><tr><td>查运行时改方块会触发什么</td><td>SubsystemTerrain.SetCell → ProcessModifiedCells(:66) → ChangeCellToBehavior(:396-426)；降级接口 TerrainUpdater:416-445</td></tr><tr><td>查一个格子为什么长这样</td><td>温湿度: pass1(TCG24:569)；地表材料: GenerateSurface(TCG24:701-726)；材料分层: TCG24:658-687；TCG21 旧公式见 05a</td></tr><tr><td>查模组地形钩子全集</td><td>百科 16-worldgen/01-terrain-hooks.md(5 个地形钩子+3 个渲染钩子)；生成器钩子挂点 TCG23:353-361/TCG24:352-358</td></tr><tr><td>查生成器参数(TG*)语义</td><td>TCG24:192-244 字段区、:294-323 默认值；三代默认值对照见上表与 05a</td></tr><tr><td>查 .xdb 里 Chunks 文件是哪种格式</td><td>本页持久化链+TerrainSerializer23.cs(:25/:305/:445)；老格式对应表在 05a 序列化器节</td></tr><tr><td>自己写地形生成器从哪下手</td><td>原版范例第 1 行；接口契约 ITerrainContentsGenerator.cs(13 成员)；状态机不用改(TerrainUpdater 只认 4 个 Pass)</td></tr><tr><td>查矿在什么 y/什么石头里</td><td>本页坑与对策倒数第 2 条+05a 矿脉表(含逐代 y 区间差异)</td></tr><tr><td>查洞穴为什么到 58 高度以下才分叉</td><td>TCG21:1237-1249(Y&lt;58 才分支，&gt;Height+1 强制终止 :1257-1262)</td></tr><tr><td>噪声输出域/周期</td><td>SimplexNoise.cs:745(2D，输出[0,1]，256/frequency 格周期)；ridged=:761</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/04-方块系统.html"><small>上一页 · SC引擎</small><b>04-方块系统</b></a><a class="next" href="../01-引擎/06-渲染管线与着色器.html"><small>下一页 · SC引擎</small><b>06-渲染管线与着色器</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#核心机制">核心机制</a><a class="lvl3" href="#世界初始化流程">世界初始化流程</a><a class="lvl3" href="#区块模型与存取">区块模型与存取</a><a class="lvl3" href="#区块加载-卸载-allocateandfreechunks-terrainupdater-cs-">区块加载/卸载(AllocateAndFreeChunks，TerrainUpdater.cs:459-515)</a><a class="lvl3" href="#生成管线-十态状态机-updatechunksinglestep-terrainupdater-">生成管线：十态状态机(UpdateChunkSingleStep，TerrainUpdater.cs:651-810)</a><a class="lvl3" href="#四趟内容-tcg24-噪声-地表材料-装饰">四趟内容(TCG24, 噪声→地表材料→装饰)</a><a class="lvl3" href="#生成器三代演进-21-22-23-flat-差异对照">生成器三代演进 21→22→23(+Flat)差异对照</a><a class="lvl3" href="#区块持久化链-terrainserializer">区块持久化链 TerrainSerializer</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav><details class=jumpbox open><summary>⚡ 文件速跳 · 11</summary><div class=chips><a href="明细/05a-地形生成明细.html#f-0-terraincontentsgenerator21-cs">TerrainContentsGenerator21.cs</a><a href="明细/05a-地形生成明细.html#f-1-terraincontentsgenerator22-cs">TerrainContentsGenerator22.cs</a><a href="明细/05a-地形生成明细.html#f-2-terraincontentsgenerator23-cs">TerrainContentsGenerator23.cs</a><a href="明细/05a-地形生成明细.html#f-3-terraincontentsgenerator24-cs">TerrainContentsGenerator24.cs</a><a href="明细/05a-地形生成明细.html#f-4-terraincontentsgeneratorflat-cs">TerrainContentsGeneratorFlat.cs</a><a href="明细/05a-地形生成明细.html#f-5-terrainserializer23-22-129-14-cs">TerrainSerializer23/22/129/14.cs</a><a href="明细/05a-地形生成明细.html#f-6-iterraincontentsgenerator-cs">ITerrainContentsGenerator.cs</a><a href="明细/05a-地形生成明细.html#f-8-terrainserializer14-cs">TerrainSerializer14.cs</a><a href="明细/05a-地形生成明细.html#f-9-terrainserializer129-cs">TerrainSerializer129.cs</a><a href="明细/05a-地形生成明细.html#f-10-terrainserializer22-cs">TerrainSerializer22.cs</a><a href="明细/05a-地形生成明细.html#f-11-terrainserializer23-cs">TerrainSerializer23.cs</a></div></details></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>加生成步骤/关原版步骤</td><td>本页四趟表+TCG24:325-362；实操百科 16-worldgen/02-gen-steps.md</td></tr><tr><td>加一种矿/调原版矿量</td><td>TCG21:2170(CreateBrushes 矿刷表)+:991(GenerateMinerals)；钩子 OnTerrainBrushesCreated(TCG24:2415)；明细见 05a 矿表</td></tr><tr><td>查区块卡在哪个阶段</td><td>TerrainChunkState.cs 十态+本页状态机；统计开关 TerrainUpdater <code>LogTerrainUpdateStats</code></td></tr><tr><td>查运行时改方块会触发什么</td><td>SubsystemTerrain.SetCell → ProcessModifiedCells(:66) → ChangeCellToBehavior(:396-426)；降级接口 TerrainUpdater:416-445</td></tr><tr><td>查一个格子为什么长这样</td><td>温湿度: pass1(TCG24:569)；地表材料: GenerateSurface(TCG24:701-726)；材料分层: TCG24:658-687；TCG21 旧公式见 05a</td></tr><tr><td>查模组地形钩子全集</td><td>百科 16-worldgen/01-terrain-hooks.md(5 个地形钩子+3 个渲染钩子)；生成器钩子挂点 TCG23:353-361/TCG24:352-358</td></tr><tr><td>查生成器参数(TG*)语义</td><td>TCG24:192-244 字段区、:294-323 默认值；三代默认值对照见上表与 05a</td></tr><tr><td>查 .xdb 里 Chunks 文件是哪种格式</td><td>本页持久化链+TerrainSerializer23.cs(:25/:305/:445)；老格式对应表在 05a 序列化器节</td></tr><tr><td>自己写地形生成器从哪下手</td><td>原版范例第 1 行；接口契约 ITerrainContentsGenerator.cs(13 成员)；状态机不用改(TerrainUpdater 只认 4 个 Pass)</td></tr><tr><td>查矿在什么 y/什么石头里</td><td>本页坑与对策倒数第 2 条+05a 矿脉表(含逐代 y 区间差异)</td></tr><tr><td>查洞穴为什么到 58 高度以下才分叉</td><td>TCG21:1237-1249(Y&lt;58 才分支，&gt;Height+1 强制终止 :1257-1262)</td></tr><tr><td>噪声输出域/周期</td><td>SimplexNoise.cs:745(2D，输出[0,1]，256/frequency 格周期)；ridged=:761</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/04-方块系统.html"><small>上一页 · SC引擎</small><b>04-方块系统</b></a><a class="next" href="../01-引擎/06-渲染管线与着色器.html"><small>下一页 · SC引擎</small><b>06-渲染管线与着色器</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#核心机制">核心机制</a><a class="lvl3" href="#世界初始化流程">世界初始化流程</a><a class="lvl3" href="#区块模型与存取">区块模型与存取</a><a class="lvl3" href="#区块加载-卸载-allocateandfreechunks-terrainupdater-cs-">区块加载/卸载(AllocateAndFreeChunks，TerrainUpdater.cs:459-515)</a><a class="lvl3" href="#生成管线-十态状态机-updatechunksinglestep-terrainupdater-">生成管线：十态状态机(UpdateChunkSingleStep，TerrainUpdater.cs:651-810)</a><a class="lvl3" href="#四趟内容-tcg24-噪声-地表材料-装饰">四趟内容(TCG24, 噪声→地表材料→装饰)</a><a class="lvl3" href="#生成器三代演进-21-22-23-flat-差异对照">生成器三代演进 21→22→23(+Flat)差异对照</a><a class="lvl3" href="#区块持久化链-terrainserializer">区块持久化链 TerrainSerializer</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav><details class=jumpbox open><summary>⚡ 文件速跳 · 11</summary><div class=chips><a href="明细/05a-地形生成明细.html#f-0-terraincontentsgenerator21-cs">TerrainContentsGenerator21.cs</a><a href="明细/05a-地形生成明细.html#f-1-terraincontentsgenerator22-cs">TerrainContentsGenerator22.cs</a><a href="明细/05a-地形生成明细.html#f-2-terraincontentsgenerator23-cs">TerrainContentsGenerator23.cs</a><a href="明细/05a-地形生成明细.html#f-3-terraincontentsgenerator24-cs">TerrainContentsGenerator24.cs</a><a href="明细/05a-地形生成明细.html#f-4-terraincontentsgeneratorflat-cs">TerrainContentsGeneratorFlat.cs</a><a href="明细/05a-地形生成明细.html#f-5-terrainserializer23-22-129-14-cs">TerrainSerializer23/22/129/14.cs</a><a href="明细/05a-地形生成明细.html#f-6-iterraincontentsgenerator-cs">ITerrainContentsGenerator.cs</a><a href="明细/05a-地形生成明细.html#f-8-terrainserializer14-cs">TerrainSerializer14.cs</a><a href="明细/05a-地形生成明细.html#f-9-terrainserializer129-cs">TerrainSerializer129.cs</a><a href="明细/05a-地形生成明细.html#f-10-terrainserializer22-cs">TerrainSerializer22.cs</a><a href="明细/05a-地形生成明细.html#f-11-terrainserializer23-cs">TerrainSerializer23.cs</a></div></details></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT="../"; // 站点根相对前缀（按页面深度注入）
 // 主题切换
@@ -235,25 +293,36 @@ const tbtn=$('#themeBtn');
 function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
 applyTheme(document.documentElement.dataset.theme||'light');
 tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
-// 搜索
+// ⌘K 命令面板
 let IDX=[];
 fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
-const box=$('#search'),res=$('#sres');
-box.addEventListener('input',()=>{
-  const q=box.value.trim().toLowerCase();
-  if(!q){res.style.display='none';return}
-  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
-  res.innerHTML=hits.map(p=>{
-    const i=p.b.toLowerCase().indexOf(q);
-    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
-    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
-  }).join('')||'<a>无命中</a>';
-  res.style.display='block';
-});
-document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
-  if(e.key==='Escape'){res.style.display='none'}
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
 });
 // 移动端侧栏抽屉
 const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
@@ -264,20 +333,24 @@ backdrop.addEventListener('click',()=>setSide(false));
 // 高亮当前页
 const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
 document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
-// 右侧目录：滚动高亮
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
 const tocLinks=[...document.querySelectorAll('#tocnav a')];
 if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
   const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
   const onScroll=()=>{
     let idx=0;
     for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
     tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
   };
   document.addEventListener('scroll',onScroll,{passive:true});onScroll();
 }
-// 阅读进度条 + 回到顶部
-const pbar=$('#pbar'),btt=$('#btt');
-function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600)}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
 document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
 btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 // 代码块复制按钮
@@ -290,7 +363,24 @@ document.querySelectorAll('pre.code').forEach(pre=>{
     if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
   pre.appendChild(b);
 });
-// 区块滚动淡入
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
-document.querySelectorAll('article > .tablewrap, article > blockquote, article > pre.code').forEach(el=>{el.classList.add('rv');io.observe(el)});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
 </script></body></html>

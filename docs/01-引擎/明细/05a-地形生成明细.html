@@ -167,6 +167,64 @@ tr[id]:hover td{background:var(--acc-soft)}
 #main{padding:22px clamp(14px,3vw,24px) 70px}
 article{padding:22px 18px 30px;border-radius:14px}
 }
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
 body{background:#fff;color:#000}
@@ -174,7 +232,7 @@ body{background:#fff;color:#000}
 article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../../index.html">README</a><a href="../../AGENTS.html">AGENTS</a><a href="../../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../../Mod开发配方.html">Mod开发配方</a><a href="../../Mod钩子总表.html">Mod钩子总表</a><a href="../../Mod钩子明细.html">Mod钩子明细</a><a href="../../数据格式参考.html">数据格式参考</a><a href="../../数据格式参考2.html">数据格式参考2</a><a href="../../Mod排错手册.html">Mod排错手册</a><a href="../../Mod排错手册2.html">Mod排错手册2</a><a href="../../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../../01-引擎/04-方块系统.html">04-方块系统</a><a href="../../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../../01-引擎/08-音频系统.html">08-音频系统</a><a href="../../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="地形生成明细-tcg21-22-23-24-flat-逐阶段-序列化器逐文件">地形生成明细（TCG21/22/23/24/Flat 逐阶段 + 序列化器逐文件）</h1>
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../../index.html">README</a><a href="../../AGENTS.html">AGENTS</a><a href="../../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../../Mod开发配方.html">Mod开发配方</a><a href="../../Mod钩子总表.html">Mod钩子总表</a><a href="../../Mod钩子明细.html">Mod钩子明细</a><a href="../../数据格式参考.html">数据格式参考</a><a href="../../数据格式参考2.html">数据格式参考2</a><a href="../../Mod排错手册.html">Mod排错手册</a><a href="../../Mod排错手册2.html">Mod排错手册2</a><a href="../../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../../01-引擎/04-方块系统.html">04-方块系统</a><a href="../../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../../01-引擎/08-音频系统.html">08-音频系统</a><a href="../../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="地形生成明细-tcg21-22-23-24-flat-逐阶段-序列化器逐文件">地形生成明细（TCG21/22/23/24/Flat 逐阶段 + 序列化器逐文件）</h1>
 <blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 抽样(TCG21/22/23 按阶段深读全部 26 步关键段；TCG24 2437 行关键段；TCGFlat/TerrainSerializer14/129/22/23 全读；TCG21 嵌套 Random/OldRandom/Grid2d/Grid3d 全读)</blockquote>
 <h2 id="一句话定位">一句话定位</h2>
 <p>主页面 05 的底账：五代生成器逐阶段逐文件行号、矿/洞/树参数全表、序列化器字节格式，查行号先来这里。</p>
@@ -208,7 +266,7 @@ a{color:inherit}
 <h2 id="原版范例">原版范例</h2>
 <div class="tablewrap"><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>换/扩展区块存档格式</td><td>TerrainSerializer23 的 IStorage 双实现(:16/:278)：存档逻辑(压缩/门槛)与存储后端解耦，模仿接口自插</td></tr><tr><td>手工读写 Chunks 文件(工具链)</td><td>RegionFileStorage.ReadDirectoryEntry/ReadData(:490-499/:480-488)：目录 8B 项+CHK1 前缀即全部结构</td></tr><tr><td>大数据 RLE</td><td>CompressChunkData(:652-689)：光位藏游程+271 上限拆段，配 WriteRleValueToBuffer(:750-764)</td></tr><tr><td>坐标派生确定性随机</td><td>各步骤 <code>new Random(m_seed + i + N*j)</code>(N 互质错开：119/71/9973/3943/1991/2210…)；Graves 用 <code>MathUtils.Hash</code> 包装(TCG22:1669)</td></tr></tbody></table></div>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某步骤在 TCG21/22/23 的行号</td><td>本页 TCG21 逐阶段表→22/23 差异表(同函数名行号往 21 对应段就近找)</td></tr><tr><td>查矿 y 区间/宿主逐代差异</td><td>本页 TCG21 矿表+22 差异行(:754-820)</td></tr><tr><td>查洞穴转向/分叉概率</td><td>TCG21 GenerateCaves :1196-1249 概率清单</td></tr><tr><td>查 26 步注册处(2.3/2.4)</td><td>TCG23:326-352 / TCG24:325-351</td></tr><tr><td>查存档文件名与魔数</td><td>本页序列化器四代表(:25/:305/:307)</td></tr><tr><td>查平面世界怎么铺块</td><td>TCGFlat Pass1 :61-98</td></tr><tr><td>查出生点选择算法</td><td>TCG21 ScoreSpawnPosition :772-805(简版)/TCG22 :468-540(难度版)</td></tr><tr><td>查 Random 类算法</td><td>TCG21:6-104(Java LCG)/:106-252(.NET 老克隆)</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../../01-引擎/明细/04a-方块明细.html"><small>上一页 · SC引擎·明细</small><b>04a-方块明细</b></a><a class="next" href="../../01-引擎/明细/06a-渲染管线明细.html"><small>下一页 · SC引擎·明细</small><b>06a-渲染管线明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#tcg21-逐阶段行号表-2627-行-按生成阶段标注">TCG21 逐阶段行号表（2627 行，按生成阶段标注）</a><a class="lvl3" href="#嵌套基础设施-全读">嵌套基础设施（全读）</a><a class="lvl3" href="#构造与出生点">构造与出生点</a><a class="lvl3" href="#地形计算函数">地形计算函数</a><a class="lvl3" href="#四趟步骤-函数调用版-无步骤列表">四趟步骤（函数调用版，无步骤列表）</a><a class="lvl3" href="#tcg21-矿表-paintfastselective-宿主-整值">TCG21 矿表（PaintFastSelective 宿主=整值）</a><a class="lvl2" href="#tcg22-与-tcg21-差异点-仅列不同-余同-tcg21-结构">TCG22 与 TCG21 差异点（仅列不同，余同 TCG21 结构）</a><a class="lvl2" href="#tcg23-与-tcg22-差异点">TCG23 与 TCG22 差异点</a><a class="lvl2" href="#tcgflat-全读摘要-161-行">TCGFlat 全读摘要（161 行）</a><a class="lvl2" href="#terrainserializer-四代逐文件表-全部全读">TerrainSerializer 四代逐文件表（全部全读）</a><a class="lvl2" href="#状态机与序列化器交接点">状态机与序列化器交接点</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>查某步骤在 TCG21/22/23 的行号</td><td>本页 TCG21 逐阶段表→22/23 差异表(同函数名行号往 21 对应段就近找)</td></tr><tr><td>查矿 y 区间/宿主逐代差异</td><td>本页 TCG21 矿表+22 差异行(:754-820)</td></tr><tr><td>查洞穴转向/分叉概率</td><td>TCG21 GenerateCaves :1196-1249 概率清单</td></tr><tr><td>查 26 步注册处(2.3/2.4)</td><td>TCG23:326-352 / TCG24:325-351</td></tr><tr><td>查存档文件名与魔数</td><td>本页序列化器四代表(:25/:305/:307)</td></tr><tr><td>查平面世界怎么铺块</td><td>TCGFlat Pass1 :61-98</td></tr><tr><td>查出生点选择算法</td><td>TCG21 ScoreSpawnPosition :772-805(简版)/TCG22 :468-540(难度版)</td></tr><tr><td>查 Random 类算法</td><td>TCG21:6-104(Java LCG)/:106-252(.NET 老克隆)</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../../01-引擎/明细/04a-方块明细.html"><small>上一页 · SC引擎·明细</small><b>04a-方块明细</b></a><a class="next" href="../../01-引擎/明细/06a-渲染管线明细.html"><small>下一页 · SC引擎·明细</small><b>06a-渲染管线明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#tcg21-逐阶段行号表-2627-行-按生成阶段标注">TCG21 逐阶段行号表（2627 行，按生成阶段标注）</a><a class="lvl3" href="#嵌套基础设施-全读">嵌套基础设施（全读）</a><a class="lvl3" href="#构造与出生点">构造与出生点</a><a class="lvl3" href="#地形计算函数">地形计算函数</a><a class="lvl3" href="#四趟步骤-函数调用版-无步骤列表">四趟步骤（函数调用版，无步骤列表）</a><a class="lvl3" href="#tcg21-矿表-paintfastselective-宿主-整值">TCG21 矿表（PaintFastSelective 宿主=整值）</a><a class="lvl2" href="#tcg22-与-tcg21-差异点-仅列不同-余同-tcg21-结构">TCG22 与 TCG21 差异点（仅列不同，余同 TCG21 结构）</a><a class="lvl2" href="#tcg23-与-tcg22-差异点">TCG23 与 TCG22 差异点</a><a class="lvl2" href="#tcgflat-全读摘要-161-行">TCGFlat 全读摘要（161 行）</a><a class="lvl2" href="#terrainserializer-四代逐文件表-全部全读">TerrainSerializer 四代逐文件表（全部全读）</a><a class="lvl2" href="#状态机与序列化器交接点">状态机与序列化器交接点</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT="../../"; // 站点根相对前缀（按页面深度注入）
 // 主题切换
@@ -216,25 +274,36 @@ const tbtn=$('#themeBtn');
 function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
 applyTheme(document.documentElement.dataset.theme||'light');
 tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
-// 搜索
+// ⌘K 命令面板
 let IDX=[];
 fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
-const box=$('#search'),res=$('#sres');
-box.addEventListener('input',()=>{
-  const q=box.value.trim().toLowerCase();
-  if(!q){res.style.display='none';return}
-  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
-  res.innerHTML=hits.map(p=>{
-    const i=p.b.toLowerCase().indexOf(q);
-    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
-    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
-  }).join('')||'<a>无命中</a>';
-  res.style.display='block';
-});
-document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
-  if(e.key==='Escape'){res.style.display='none'}
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
 });
 // 移动端侧栏抽屉
 const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
@@ -245,20 +314,24 @@ backdrop.addEventListener('click',()=>setSide(false));
 // 高亮当前页
 const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
 document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
-// 右侧目录：滚动高亮
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
 const tocLinks=[...document.querySelectorAll('#tocnav a')];
 if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
   const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
   const onScroll=()=>{
     let idx=0;
     for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
     tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
   };
   document.addEventListener('scroll',onScroll,{passive:true});onScroll();
 }
-// 阅读进度条 + 回到顶部
-const pbar=$('#pbar'),btt=$('#btt');
-function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600)}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
 document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
 btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 // 代码块复制按钮
@@ -271,7 +344,24 @@ document.querySelectorAll('pre.code').forEach(pre=>{
     if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
   pre.appendChild(b);
 });
-// 区块滚动淡入
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
-document.querySelectorAll('article > .tablewrap, article > blockquote, article > pre.code').forEach(el=>{el.classList.add('rv');io.observe(el)});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
 </script></body></html>

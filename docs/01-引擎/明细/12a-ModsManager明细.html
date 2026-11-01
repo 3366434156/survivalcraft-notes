@@ -167,6 +167,64 @@ tr[id]:hover td{background:var(--acc-soft)}
 #main{padding:22px clamp(14px,3vw,24px) 70px}
 article{padding:22px 18px 30px;border-radius:14px}
 }
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
 body{background:#fff;color:#000}
@@ -174,7 +232,7 @@ body{background:#fff;color:#000}
 article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../../index.html">README</a><a href="../../AGENTS.html">AGENTS</a><a href="../../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../../Mod开发配方.html">Mod开发配方</a><a href="../../Mod钩子总表.html">Mod钩子总表</a><a href="../../Mod钩子明细.html">Mod钩子明细</a><a href="../../数据格式参考.html">数据格式参考</a><a href="../../数据格式参考2.html">数据格式参考2</a><a href="../../Mod排错手册.html">Mod排错手册</a><a href="../../Mod排错手册2.html">Mod排错手册2</a><a href="../../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../../01-引擎/04-方块系统.html">04-方块系统</a><a href="../../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../../01-引擎/08-音频系统.html">08-音频系统</a><a href="../../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="modsmanager-域明细-一行一文件">ModsManager 域明细（一行一文件）</h1>
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../../index.html">README</a><a href="../../AGENTS.html">AGENTS</a><a href="../../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../../Mod开发配方.html">Mod开发配方</a><a href="../../Mod钩子总表.html">Mod钩子总表</a><a href="../../Mod钩子明细.html">Mod钩子明细</a><a href="../../数据格式参考.html">数据格式参考</a><a href="../../数据格式参考2.html">数据格式参考2</a><a href="../../Mod排错手册.html">Mod排错手册</a><a href="../../Mod排错手册2.html">Mod排错手册2</a><a href="../../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../../01-引擎/04-方块系统.html">04-方块系统</a><a href="../../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../../01-引擎/08-音频系统.html">08-音频系统</a><a href="../../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="modsmanager-域明细-一行一文件">ModsManager 域明细（一行一文件）</h1>
 <blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(72/72 文件, 16,876 行) 主页: 01-引擎\12-ModAPI与加载链.md。行号以 2026-10-31 源码为准。行数=总行数；ModLoader.cs &gt;2000 行分段读完，其余全文读。</blockquote>
 <h2 id="顶级目录-e-survivalcraftapiproject-survivalcraft-mod">顶级目录（E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\，24 文件）</h2>
 <details class=jumpbox><summary>⚡ 文件快速跳转 · 24</summary><div class=chips><a href="#f-0-modsmanager-cs">ModsManager.cs</a><a href="#f-1-modloader-cs">ModLoader.cs</a><a href="#f-2-modentity-cs">ModEntity.cs</a><a href="#f-3-survivalcraftmodentity-cs">SurvivalCraftModEntity.cs</a><a href="#f-4-fastdebugmodentity-cs">FastDebugModEntity.cs</a><a href="#f-5-survivalcraftmodloader-cs">SurvivalCraftModLoader.cs</a><a href="#f-6-modinfo-cs">ModInfo.cs</a><a href="#f-7-moddisablereason-cs">ModDisableReason.cs</a><a href="#f-8-modsettingsmanager-cs">ModSettingsManager.cs</a><a href="#f-9-modsettingsparser-cs">ModSettingsParser.cs</a><a href="#f-10-modsettingelement-cs">ModSettingElement.cs</a><a href="#f-11-modsettingitemwidgetfactory-cs">ModSettingItemWidgetFactory.cs</a><a href="#f-12-modsettinglocalizer-cs">ModSettingLocalizer.cs</a><a href="#f-13-languagecontrol-cs">LanguageControl.cs</a><a href="#f-14-jsinterface-cs">JsInterface.cs</a><a href="#f-15-jsmodloader-cs">JsModLoader.cs</a><a href="#f-16-jsonmodelreader-cs">JsonModelReader.cs</a><a href="#f-17-objmodelreader-cs">ObjModelReader.cs</a><a href="#f-18-mtllibstruct-cs">MtllibStruct.cs</a><a href="#f-19-onlinejsonreader-cs">OnlineJsonReader.cs</a><a href="#f-20-apiupdatemanager-cs">APIUpdateManager.cs</a><a href="#f-21-communityservermanager-cs">CommunityServerManager.cs</a><a href="#f-22-fileassociationmanager-cs">FileAssociationManager.cs</a><a href="#f-23-standardcreaturespawnrule-cs">StandardCreatureSpawnRule.cs</a></div></details><div class="tablewrap"><table><thead><tr><th>文件</th><th>行数</th><th>职责与实读要点</th></tr></thead><tbody><tr id="f-0-modsmanager-cs"><td>ModsManager.cs</td><td>1426</td><td>全域静态门面：常量(API 1.9.5.1/游戏 2.4.0.0)、钩子表(:111,133-214)、DeserializeJson(:219)、拓扑排序(:543)、RescanModsAsync(:644)、TryCreateModEntity(:806)、CombineClo/Cr/DataBase(:938/:969/:1083)、ClassSubstitutes(:1049-1212)、TryParseVersionRange(:1214)、加固包(:1291-1399)</td></tr><tr id="f-1-modloader-cs"><td>ModLoader.cs</td><td>2338</td><td>抽象 Loader，236 个 public virtual 成员；主 Loader 专属拦截 GetModFiles/GetModFile(:31-46)；VitalStats 六连钩子(:2138-2250)；屏幕/对话框替换 OnSwitchScreen/OnShowDialog(:2257/:2264)；字体链三钩子(:2324-2337)</td></tr><tr id="f-2-modentity-cs"><td>ModEntity.cs</td><td>562</td><td>模组实体：InitResources 五道禁用判定(:233-269)、icon 两段加载(:70-91)、GetFiles/GetFile 拦截管线(:98-160)、HandleAssembly 四类发现(:406-442)、CheckDependencies 依赖环双杀(:486-492)、Equals=包名+版本(:548)</td></tr><tr id="f-3-survivalcraftmodentity-cs"><td>SurvivalCraftModEntity.cs</td><td>159</td><td>原版实体：注册 19 个 IContentReader(:13-40)、Content.zip 外置 app:/Content.zip 优先否则内嵌资源(:50-58)、LoadOrder=int.MinValue(:68)、原版 Block 必须有 public static int Index(:100-114)、LoadOrder 后注册 14 个方块分类(:143-158)</td></tr><tr id="f-4-fastdebugmodentity-cs"><td>FastDebugModEntity.cs</td><td>129</td><td>散文件虚拟模组：包名 ctor 里 "debug"/默认 "fastdebug"(:11/:127)；递归收 Mods/ 下全部非 .scmod 文件(:36-51)；SafeMode 只出默认 modinfo(:17-19)</td></tr><tr id="f-5-survivalcraftmodloader-cs"><td>SurvivalCraftModLoader.cs</td><td>253</td><td>原版自身 Loader：__ModInitialize 注册 9 钩子(:15-26)、InitKeyCompatibleGroups 5 组(:28-39)、GetCameraList 调试相机(:41-47)、ManageCameras 挂条件委托(:49-61)、玩家名牌矢量字体绘制(:130-210)、TextBoxWidget Overdraw 层调整(:233-245)</td></tr><tr id="f-6-modinfo-cs"><td>ModInfo.cs</td><td>94</td><td>modinfo 模型：LoadOrder 枚举 Survivalcraft=int.MinValue/ThemeMod=-16384/Default=0/HelpfulMod=16384(:5-10)、DependencyDetails 富信息(:53)、RawSettings 延迟解析(:76)、GetHashCode=Name+PackageName+Version(:78)</td></tr><tr id="f-7-moddisablereason-cs"><td>ModDisableReason.cs</td><td>9</td><td>禁用原因枚举：Unknown/Manually/NoModInfo/DependencyError/Duplicated/InvalidPackageName</td></tr><tr id="f-8-modsettingsmanager-cs"><td>ModSettingsManager.cs</td><td>454</td><td>ModSettings.xml 存取；Combined*Settings 三表合并(:42-84)；LoadModSettings 灌键位/手柄/相机(:86-164)；数据驱动 Get/TryGet/Set→OnModSettingChanged 精准分发(:232-324)；RegisterAllDataDriven(:332)；s_loaded 竞态门闩(:39-40,:169)</td></tr><tr id="f-9-modsettingsparser-cs"><td>ModSettingsParser.cs</td><td>165</td><td>Settings JSON→描述符：Page/Item/Separator/Label 判定(:31-53)、ResolveType 简单名补 Game. 前缀(:93-102)、GetDefaultWidgetType 按值类型选 Widget(:23-29)、ResolveWidget 5 内置+全限定名自定义(:133-148)</td></tr><tr id="f-10-modsettingelement-cs"><td>ModSettingElement.cs</td><td>31</td><td>四描述符类：ModSettingPage/ModSettingItem/ModSettingSeparator/ModSettingLabel；Item.CachedPath=包名/Id链(:22)</td></tr><tr id="f-11-modsettingitemwidgetfactory-cs"><td>ModSettingItemWidgetFactory.cs</td><td>41</td><td>Widget 实例化→Supports 校验→回退默认→双双失败跳过+Log(:10-23)</td></tr><tr id="f-12-modsettinglocalizer-cs"><td>ModSettingLocalizer.cs</td><td>62</td><td>文案四档：整体[]token→id链默认键→Id 兜底→字面量(:12-36)；enum 成员键 ModSettings.包名.枚举名.成员名(:41-47)</td></tr><tr id="f-13-languagecontrol-cs"><td>LanguageControl.cs</td><td>473</td><td>loadJson 深合并(:180-238)、Get 回退英文表(:266-282)、TryGetBlock 支持 Name:data 回退 Name:0(:350-361)、ChangeLanguage 全屏重建+CraftingRecipesManager.Initialize 重跑(:371-406)、GetEnumDisplayName 统一键 Enums.枚举名.成员名(:340)</td></tr><tr id="f-14-jsinterface-cs"><td>JsInterface.cs</td><td>616</td><td>Jint AllowClr+DebugMode(:33-38)、app:init.js 外置优先(:41-48)、handlers 数组约定(keyDown/keyUp/frame/:70-102)、HTTP 远程控制 DEBUG 28256 全卡/RELEASE 回环随机口(:228-240)、iOS 分支 JSContext(:347-616)</td></tr><tr id="f-15-jsmodloader-cs"><td>JsModLoader.cs</td><td>186</td><td>JS 钩子桥：C# 分支桥 8 钩子(OnMinerDig/OnMinerPlace/OnPlayerSpawned/OnPlayerDead/ProcessAttackment/CalculateCreatureInjuryAmount/OnProjectLoaded/OnProjectDisposed)(:9-94)</td></tr><tr id="f-16-jsonmodelreader-cs"><td>JsonModelReader.cs</td><td>344</td><td><b>Load 抛"JsonModel功能暂时下线"</b>(:98)，正文全为注释遗留实现；JsonModel 类带 FirstPerson/InHand 偏移字段(:335-344)</td></tr><tr id="f-17-objmodelreader-cs"><td>ObjModelReader.cs</td><td>234</td><td>.obj→Model：mtllib 经 ContentManager(:102)、usemtl 定贴图(:129)、f 面强制三角(:141-143)、法线→CellFace 决定绕序(:157-158)、AppendMesh 逐 Mesh 建骨(:169-215)</td></tr><tr id="f-18-mtllibstruct-cs"><td>MtllibStruct.cs</td><td>30</td><td>.mtl 解析：newmtl+map_Kd→材质名→贴图路径表</td></tr><tr id="f-19-onlinejsonreader-cs"><td>OnlineJsonReader.cs</td><td>22</td><td>静态 HttpClient，GetJsonFromUrlAsync(url)→JsonDocument</td></tr><tr id="f-20-apiupdatemanager-cs"><td>APIUpdateManager.cs</td><td>248</td><td>AtomGit release 查最新 API 版本(:94-102)、版本比较=点分 uint(:68-86)、DTO 字段名反序列化敏感三连警告(:126-248)</td></tr><tr id="f-21-communityservermanager-cs"><td>CommunityServerManager.cs</td><td>208</td><td>社区服务器注册表：DefaultOriginal(scresdir.appspot.com)/DefaultChinese(api.survivalcraft.cn)、CurrentApiBaseUrl 归一化唯一读取口(:126-145)、切服清缓存+AuthSessionManager.OnServerSwitched(:179-189)</td></tr><tr id="f-22-fileassociationmanager-cs"><td>FileAssociationManager.cs</td><td>143</td><td>Windows 文件关联：.scworld/.scbtex/.scskin/.scfpack/.scmod 五扩展 ProgId 注册表写入/校验/注销(:31-138)</td></tr><tr id="f-23-standardcreaturespawnrule-cs"><td>StandardCreatureSpawnRule.cs</td><td>111</td><td>CreatureType 封装：构造签名 (SubsystemCreatureSpawn, ValuesDictionary) 即注册协议(:34)；条件=温度/湿度/AboveTopBlock/海岸距离/脚下方块类型(:61-107)；Blocks 分号分隔按短类名解析(:51-56)</td></tr></tbody></table></div>
@@ -193,7 +251,7 @@ a{color:inherit}
 <h2 id="community-settings-1-文件">Community\Settings\（1 文件）</h2>
 <div class="tablewrap"><table><thead><tr><th>文件</th><th>行数</th><th>职责与实读要点</th></tr></thead><tbody><tr id="f-65-communitymodsettingsstate-cs"><td>CommunityModSettingsState.cs</td><td>133</td><td>屏筛选状态(文件类型/排序/节)持久化 state.json；惰性门闩 EnsureLoaded(:80-95)；重启直达目标已改走 Settings.xml 不入此文件(:8-9)</td></tr></tbody></table></div>
 <h2 id="community-transfers-6-文件">Community\Transfers\（6 文件）</h2>
-<details class=jumpbox><summary>⚡ 文件快速跳转 · 6</summary><div class=chips><a href="#f-66-transfermanager-cs">TransferManager.cs</a><a href="#f-67-downloadqueuemanager-cs">DownloadQueueManager.cs</a><a href="#f-68-modpackdownloader-cs">ModpackDownloader.cs</a><a href="#f-69-remotemodpackinstaller-cs">RemoteModpackInstaller.cs</a><a href="#f-70-modpackconflictmanager-cs">ModpackConflictManager.cs</a><a href="#f-71-idownloadfeedbackreporter-cs">IDownloadFeedbackReporter.cs</a></div></details><div class="tablewrap"><table><thead><tr><th>文件</th><th>行数</th><th>职责与实读要点</th></tr></thead><tbody><tr id="f-66-transfermanager-cs"><td>TransferManager.cs</td><td>34</td><td>传输静态域：下载器/上传提供者/队列持久化/反馈客户端/来源解析器；字段声明顺序即初始化顺序勿反转(:5-6)</td></tr><tr id="f-67-downloadqueuemanager-cs"><td>DownloadQueueManager.cs</td><td>272</td><td>队列状态机：Pending/Running/Pausing/Paused/AwaitingOverwriteConfirmation/Completed/Failed/Canceled；URL+文件名未完成项去重(:49-55)；旧格式明文 Token 检测即重写(:200-207)；读方法无锁依赖"变更全在主线程"约定(:82-85)</td></tr><tr id="f-68-modpackdownloader-cs"><td>ModpackDownloader.cs</td><td>234</td><td>子项批预取(4)串行导入：批大小=内存峰值设计(Android 约束 :3-5)；被取代请求 Interrupted 标记(:48-53)；撞本地同名跳过不计成败(:187-196)</td></tr><tr id="f-69-remotemodpackinstaller-cs"><td>RemoteModpackInstaller.cs</td><td>227</td><td>清单整合包预检(冲突谈判 Skip/Overwrite/SkipAll/OverwriteAll :46-112)+导入两阶段；await 点后复查 isCurrentRequest(:177-182)；首因原则只留首个 LastError(:131/:144)</td></tr><tr id="f-70-modpackconflictmanager-cs"><td>ModpackConflictManager.cs</td><td>51</td><td>后台线程→主线程冲突对话框桥：TaskCompletionSource+TryMarkRequestDisplayed 防重复弹</td></tr><tr id="f-71-idownloadfeedbackreporter-cs"><td>IDownloadFeedbackReporter.cs</td><td>4</td><td>下载反馈上报接口</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../../01-引擎/明细/11a-序列化明细.html"><small>上一页 · SC引擎·明细</small><b>11a-序列化明细</b></a><a class="next" href="../../01-引擎/明细/15a-电学元件明细.html"><small>下一页 · SC引擎·明细</small><b>15a-电学元件明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#顶级目录-e-survivalcraftapiproject-survivalcraft-mod">顶级目录（E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\，24 文件）</a><a class="lvl2" href="#community-根-e-survivalcraftapiproject-survivalcr">Community 根（E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\Community\，7 文件）</a><a class="lvl2" href="#community-authentication-2-文件">Community\Authentication\（2 文件）</a><a class="lvl2" href="#community-community-10-文件">Community\Community\（10 文件）</a><a class="lvl2" href="#community-downloads-5-文件">Community\Downloads\（5 文件）</a><a class="lvl2" href="#community-localresources-14-文件">Community\LocalResources\（14 文件）</a><a class="lvl2" href="#community-modpacks-3-文件">Community\Modpacks\（3 文件）</a><a class="lvl2" href="#community-settings-1-文件">Community\Settings\（1 文件）</a><a class="lvl2" href="#community-transfers-6-文件">Community\Transfers\（6 文件）</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
+<details class=jumpbox><summary>⚡ 文件快速跳转 · 6</summary><div class=chips><a href="#f-66-transfermanager-cs">TransferManager.cs</a><a href="#f-67-downloadqueuemanager-cs">DownloadQueueManager.cs</a><a href="#f-68-modpackdownloader-cs">ModpackDownloader.cs</a><a href="#f-69-remotemodpackinstaller-cs">RemoteModpackInstaller.cs</a><a href="#f-70-modpackconflictmanager-cs">ModpackConflictManager.cs</a><a href="#f-71-idownloadfeedbackreporter-cs">IDownloadFeedbackReporter.cs</a></div></details><div class="tablewrap"><table><thead><tr><th>文件</th><th>行数</th><th>职责与实读要点</th></tr></thead><tbody><tr id="f-66-transfermanager-cs"><td>TransferManager.cs</td><td>34</td><td>传输静态域：下载器/上传提供者/队列持久化/反馈客户端/来源解析器；字段声明顺序即初始化顺序勿反转(:5-6)</td></tr><tr id="f-67-downloadqueuemanager-cs"><td>DownloadQueueManager.cs</td><td>272</td><td>队列状态机：Pending/Running/Pausing/Paused/AwaitingOverwriteConfirmation/Completed/Failed/Canceled；URL+文件名未完成项去重(:49-55)；旧格式明文 Token 检测即重写(:200-207)；读方法无锁依赖"变更全在主线程"约定(:82-85)</td></tr><tr id="f-68-modpackdownloader-cs"><td>ModpackDownloader.cs</td><td>234</td><td>子项批预取(4)串行导入：批大小=内存峰值设计(Android 约束 :3-5)；被取代请求 Interrupted 标记(:48-53)；撞本地同名跳过不计成败(:187-196)</td></tr><tr id="f-69-remotemodpackinstaller-cs"><td>RemoteModpackInstaller.cs</td><td>227</td><td>清单整合包预检(冲突谈判 Skip/Overwrite/SkipAll/OverwriteAll :46-112)+导入两阶段；await 点后复查 isCurrentRequest(:177-182)；首因原则只留首个 LastError(:131/:144)</td></tr><tr id="f-70-modpackconflictmanager-cs"><td>ModpackConflictManager.cs</td><td>51</td><td>后台线程→主线程冲突对话框桥：TaskCompletionSource+TryMarkRequestDisplayed 防重复弹</td></tr><tr id="f-71-idownloadfeedbackreporter-cs"><td>IDownloadFeedbackReporter.cs</td><td>4</td><td>下载反馈上报接口</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../../01-引擎/明细/11a-序列化明细.html"><small>上一页 · SC引擎·明细</small><b>11a-序列化明细</b></a><a class="next" href="../../01-引擎/明细/15a-电学元件明细.html"><small>下一页 · SC引擎·明细</small><b>15a-电学元件明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#顶级目录-e-survivalcraftapiproject-survivalcraft-mod">顶级目录（E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\，24 文件）</a><a class="lvl2" href="#community-根-e-survivalcraftapiproject-survivalcr">Community 根（E:\SurvivalcraftAPIProject\Survivalcraft\ModsManager\Community\，7 文件）</a><a class="lvl2" href="#community-authentication-2-文件">Community\Authentication\（2 文件）</a><a class="lvl2" href="#community-community-10-文件">Community\Community\（10 文件）</a><a class="lvl2" href="#community-downloads-5-文件">Community\Downloads\（5 文件）</a><a class="lvl2" href="#community-localresources-14-文件">Community\LocalResources\（14 文件）</a><a class="lvl2" href="#community-modpacks-3-文件">Community\Modpacks\（3 文件）</a><a class="lvl2" href="#community-settings-1-文件">Community\Settings\（1 文件）</a><a class="lvl2" href="#community-transfers-6-文件">Community\Transfers\（6 文件）</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT="../../"; // 站点根相对前缀（按页面深度注入）
 // 主题切换
@@ -201,25 +259,36 @@ const tbtn=$('#themeBtn');
 function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
 applyTheme(document.documentElement.dataset.theme||'light');
 tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
-// 搜索
+// ⌘K 命令面板
 let IDX=[];
 fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
-const box=$('#search'),res=$('#sres');
-box.addEventListener('input',()=>{
-  const q=box.value.trim().toLowerCase();
-  if(!q){res.style.display='none';return}
-  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
-  res.innerHTML=hits.map(p=>{
-    const i=p.b.toLowerCase().indexOf(q);
-    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
-    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
-  }).join('')||'<a>无命中</a>';
-  res.style.display='block';
-});
-document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
-  if(e.key==='Escape'){res.style.display='none'}
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
 });
 // 移动端侧栏抽屉
 const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
@@ -230,20 +299,24 @@ backdrop.addEventListener('click',()=>setSide(false));
 // 高亮当前页
 const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
 document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
-// 右侧目录：滚动高亮
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
 const tocLinks=[...document.querySelectorAll('#tocnav a')];
 if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
   const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
   const onScroll=()=>{
     let idx=0;
     for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
     tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
   };
   document.addEventListener('scroll',onScroll,{passive:true});onScroll();
 }
-// 阅读进度条 + 回到顶部
-const pbar=$('#pbar'),btt=$('#btt');
-function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600)}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
 document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
 btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 // 代码块复制按钮
@@ -256,7 +329,24 @@ document.querySelectorAll('pre.code').forEach(pre=>{
     if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
   pre.appendChild(b);
 });
-// 区块滚动淡入
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
-document.querySelectorAll('article > .tablewrap, article > blockquote, article > pre.code').forEach(el=>{el.classList.add('rv');io.observe(el)});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
 </script></body></html>

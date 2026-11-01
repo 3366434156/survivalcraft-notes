@@ -167,6 +167,64 @@ tr[id]:hover td{background:var(--acc-soft)}
 #main{padding:22px clamp(14px,3vw,24px) 70px}
 article{padding:22px 18px 30px;border-radius:14px}
 }
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
 body{background:#fff;color:#000}
@@ -174,7 +232,7 @@ body{background:#fff;color:#000}
 article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><a href="学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><a href="Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="mod-排错手册-按症状查-前半">Mod 排错手册（按症状查 · 前半）</h1>
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="index.html">README</a><a href="AGENTS.html">AGENTS</a><a href="学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="Mod开发配方.html">Mod开发配方</a><a href="Mod钩子总表.html">Mod钩子总表</a><a href="Mod钩子明细.html">Mod钩子明细</a><a href="数据格式参考.html">数据格式参考</a><a href="数据格式参考2.html">数据格式参考2</a><a href="Mod排错手册.html">Mod排错手册</a><a href="Mod排错手册2.html">Mod排错手册2</a><a href="Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="Mod示例-代码方块.html">Mod示例-代码方块</a><a href="Mod示例-电力元件.html">Mod示例-电力元件</a><a href="Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="01-引擎/04-方块系统.html">04-方块系统</a><a href="01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="01-引擎/07-粒子系统.html">07-粒子系统</a><a href="01-引擎/08-音频系统.html">08-音频系统</a><a href="01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="01-引擎/10-输入与相机.html">10-输入与相机</a><a href="01-引擎/11-存档持久化.html">11-存档持久化</a><a href="01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="01-引擎/15-电学与机构.html">15-电学与机构</a><a href="01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="mod-排错手册-按症状查-前半">Mod 排错手册（按症状查 · 前半）</h1>
 <blockquote>域: SC引擎 · 更新: 2026-11-01 · 状态: 汇编自 01-引擎 23 个主线页"坑与对策"+明细页坑列，按症状重组去重（共 250 条，本文件 1-4 类 127 条）· 后半: <a href="Mod排错手册2.html">Mod排错手册2.md</a>（渲染/音频/UI/电力/世界/数值）</blockquote>
 <h2 id="怎么用">怎么用</h2>
 <p>AI 视角：先按自己观察到的现象对号入座找大类 → 逐行比对"症状"列 → 按对策处理；详址含 file:line 的直接开源码核对。详址约定：<code>N页</code> = <code>E:\数据\生存战争系列\SC完全学习笔记\01-引擎\N-主题.md</code>；源码行号省略根前缀 <code>E:\SurvivalcraftAPIProject\</code>。</p>
@@ -186,7 +244,7 @@ a{color:inherit}
 <div class="tablewrap"><table><thead><tr><th>症状</th><th>根因</th><th>对策</th><th>详址</th></tr></thead><tbody><tr><td>读档崩 <code>InvalidCastException: Unable to cast Single to Int32</code></td><td>GetValue/TryGetValue 只硬拆箱不做数值转换</td><td>写读统一类型；修后按 object 读兼容旧档</td><td>11页 · ValuesDictionary.cs:40/:82-89</td></tr><tr><td>读档崩 <code>Required value "key" not found</code></td><td>GetValue 缺键抛；Count=0 的袋子整个不存在</td><td>用带默认值重载；Load 不假设袋子存在</td><td>11页 · ValuesDictionary.cs:38-43</td></tr><tr><td>进世界后随机崩，弹日志对话框回主菜单</td><td>Program.Run 顶层 catch：任何更新异常 → 回 MainMenu+弹日志+DisposeProject</td><td>游戏内开 ViewGameLogDialog 看栈；更新逻辑自包 try/catch</td><td>01页 · Program.cs:308-322</td></tr><tr><td>地形/光照/保存钩子里崩（GL 或 FindSubsystem）</td><td>OnTerrainContentsGenerated/GenerateChunkLightSources/保存第 4 步起在后台线程</td><td>只操作 chunk Fast 接口；碰 UI/GL 一律 Dispatcher.Dispatch</td><td>05页/14页/11页</td></tr><tr><td>保存时弹"无法保存"且文件没写</td><td>ProjectXmlSave/OnProjectXmlSaved 钩子抛异常即中止写盘</td><td>钩子内 try/catch；碰主线程对象用 Dispatch 包裹</td><td>11页 · GameManager.cs:139-157</td></tr><tr><td>Dispatcher 里执行的动作失败但等待方无感知</td><td>action 抛异常只记日志不外抛，waitUntilCompleted 也照样放行</td><td>需要结果的自己 try/catch 包住并回传状态</td><td>21页 · Dispatcher.cs:27-29</td></tr><tr><td>清空原版矿笔刷后地图生成静默异常</td><td>笔刷按整值比较宿主，Int(0,-1) 返 0 → m_coalBrushes[0] 越界，异常被吞全进程只报一次</td><td>清空同时补自己的笔刷</td><td>05页 · TerrainBrush.cs:214-236</td></tr><tr><td>自定义区块大数据读取炸</td><td>Region 条目 1MB 上限判损坏</td><td>大数据别塞进单区块存档</td><td>05a · TerrainSerializer23.cs:494-496</td></tr><tr><td>存档里有 sbyte 值抛 <code>IHumanReadableConverter for type System.SByte not found</code>，char 值空串抛 IndexOutOfRange</td><td>sbyte 是唯一没有 HRC 转换器的基元；CharHumanReadableConverter <code>data[0]</code> 无保护</td><td>改用 byte/int；char 写前判空</td><td>11页坑表</td></tr><tr><td>弹 MessageDialog 直接抛 InvalidOperationException</td><td>两个按钮文本都空（至少一按钮校验）</td><td>至少给一个按钮文本</td><td>18页 · MessageDialog.cs:42-45</td></tr><tr><td>SwitchScreen("名字") 抛 ArgumentNullException</td><td>m_screens 注册表查不到（忘了 AddScreen）</td><td>mod 自建 Screen 先 AddScreen 再 Switch</td><td>01页 · ScreensManager.cs:62-64</td></tr><tr><td>启动早期调 Dispatcher.Dispatch 抛 InvalidOperationException</td><td>Window.Run 之前 Dispatcher 未初始化</td><td>mod 代码只从 __ModInitialize 之后执行</td><td>01页 · Dispatcher.cs:39-41</td></tr><tr><td>对文字格 Measure(Vector2(0,∞)) 崩游戏（OOM）</td><td>断行零推进死循环（部分路径钳 1 防护，直调不受保护）</td><td>传 ∞ 或钳最小宽</td><td>09页 · FontTextWidget.cs:748-749</td></tr><tr><td>竖排 UniformSpacingPanel 放进竖排 StackPanel 崩整页</td><td>主轴 DesiredSize=∞ 污染上层，arrange 算 NaN</td><td>均分行容器一律 Horizontal</td><td>09页 · ModSettingItemWidget.cs:272-274</td></tr><tr><td>切语言后崩/界面行为错乱</td><td>RebuildAllScreens 反射重建全部 Screen：字段状态丢、静态事件未退订</td><td>自定义 Screen 必须无参构造+可重入；静态事件退订放 override Dispose（Rebuild 不调 Leave）</td><td>17页 · ScreensManager.cs:100-159</td></tr><tr><td>换字体后返回游戏黑屏无输入</td><td>GameScreen 被重建成空壳（世界绑定屏不可重建）</td><td>仿写 Rebuild 时照抄 SettingsFontScreen 的 preserve 谓词</td><td>17页 · SettingsFontScreen.cs:378-382</td></tr><tr><td>Enter 里 Task.Run 回填控件崩</td><td>跨线程碰控件</td><td>Dispatcher.Dispatch 回主线（PlayScreen.cs:91-115 样板）</td><td>17页坑表</td></tr><tr><td>读 PlayerInput.ValuesDictionaryForMods 抛 NRE</td><td><code>m_playerInput = default</code> 绕过 struct 初始化器，每帧变 null</td><td>每帧判空再写</td><td>10页 · PlayerInput.cs:6/:72</td></tr><tr><td>GamePad 访问抛 ArgumentOutOfRange</td><td>index 出 0..3、deadZone 不在 [0,1)</td><td>先 IsConnected；deadZone 用 [0,1)</td><td>10页 · GamePad.cs:294-300</td></tr><tr><td>改 RasterizerState 等状态对象抛 "Object was attached to a device"</td><td>LockOnFirstUse 首次绑定后锁定不可变</td><td>自建新状态对象一次赋值到位；别改预设</td><td>06页 · LockOnFirstUse.cs:2-10</td></tr><tr><td>着色器 Construct 抛 "Attribute has no semantic defined"/"Associated SamplerState is not set"</td><td>缺语义头/Sampler 元数据注释</td><td>每个顶点属性一行 <code>&lt;Semantic/&gt;</code>，每个 sampler 纹理一行 <code>&lt;Sampler/&gt;</code>（抄 AlphaTested.vsh:50-52）</td><td>06页 · Shader.cs:310-346</td></tr><tr><td>GetParameter 抛 "Parameter not found"</td><td>uniform 被 GL 链接器裁掉（声明未用）或名字错</td><td>用 <code>GetParameter(name, true)</code> 拿 Null 参数，或确保 uniform 被读写</td><td>06页 · Shader.cs:47-50</td></tr><tr><td>抛 "Too many simultaneous textures"</td><td>一个 Shader 的纹理 uniform 超 GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS</td><td>合并纹理图集或减 uniform</td><td>06页 · GLWrapper.cs:910-912</td></tr><tr><td>ASTC 纹理调普通 SetData 抛 Invalid</td><td>压缩纹理基类 SetData 全封死</td><td>读 .astc 头自解析后走专用重载；mip 离线生成</td><td>06页 · CompressedTexture2D.cs:62-90</td></tr><tr><td>第二次打开同一文件抛 IOException</td><td>Storage.OpenFile 恒 FileShare.Read</td><td>长驻写句柄自管生命周期</td><td>21页 · Storage.cs:156</td></tr><tr><td>Android 上相对路径抛异常</td><td>ProcessPath 未知前缀（含无前缀）抛</td><td>跨平台路径显式 <code>app:</code>/<code>data:</code> 开头</td><td>21页 · Storage.cs:445-478</td></tr><tr><td>窗口未开时读写 Window 属性抛 InvalidOperationException</td><td>m_view==null 门禁</td><td>先 Window.IsCreated</td><td>21页 · Window.cs:813-819</td></tr><tr><td>Android 上 SIMD 批量变换抛 PlatformNotSupportedException</td><td>Vector128.IsHardwareAccelerated 在 MonoVM 恒 true 但会落进 SSE 分支</td><td>外门用 `AdvSimd.IsSupported</td><td></td></tr><tr><td>InventoryBase.AddSlotItems 抛 InvalidOperationException</td><td>value 不符/超容都 throw</td><td>批量塞格先查 GetSlotCapacity</td><td>03页 · ComponentInventoryBase.cs:170-180</td></tr><tr><td>生物模板进世界抛 Required component</td><td>ComponentCreature 硬依赖六件套（Body/Health/Spawn/CreatureSounds/CreatureModel/Locomotion）</td><td>模板挂全；CreatureModel 必须给具体子类</td><td>03页 · ComponentCreature.cs:42-47</td></tr><tr><td>建档后改 PlayerClass 抛异常</td><td>PlayerData 已加入 PlayersData 后 setter 抛</td><td>建档前定好职业</td><td>16页 · PlayerData.cs:89-97</td></tr><tr><td>切语言后衣物槽 KeyNotFound</td><td>ClothingSlot.Initialize 重调，Clear 重建后旧实体引用失效</td><td>只补缺失部位，不 Clear</td><td>16页 · ClothingSlot.cs:22-30</td></tr><tr><td>后台线程枚举内容列表崩</td><td>主线程列表 Clear()+Add 竞态</td><td>Dispatcher.Dispatch(waitUntilCompleted:true) 封送</td><td>20页 · ExternalContentManager.Analyze.cs:138-154</td></tr><tr><td>多线程解析同一资产互相改流位置</td><td>ContentInfo.Duplicate() 不是复制，只复位共享流 Position</td><td>照 ImageReader 的 InUse 自旋+缓存回取模式</td><td>20页 · ContentManager.cs:35-43</td></tr><tr><td>旧图片工具链抛异常</td><td>LegacyImage.GenerateMipmaps 奇数尺寸 throw；Image.Slice 宽&gt;2×高 throw</td><td>mipmap 用 2 的幂；转换前确认尺寸或改像素循环</td><td>19页 · LegacyImage.cs:66-69、Image.cs:84</td></tr><tr><td>ViewWidget 挂到非 GameWidget 父抛 InvalidOperationException</td><td>ChangeParent 校验父类型</td><td>只挂 GameWidget</td><td>09a · ViewWidget.cs:24-32</td></tr><tr><td>含 CFF2 可变字体的环境构建字体链抛 NotSupportedException</td><td>EngineSharpAstroSource 不认 CFF2-only 字体</td><td>匹配期 FontLocator.Probe 拒收；建链侧已有整链降级兜底</td><td>19页 · EngineSharpAstroLoader.cs:55-58</td></tr></tbody></table></div>
 <h2 id="四-存档数据类-存不上-读不回-串数据">四、存档数据类（存不上 / 读不回 / 串数据）</h2>
 <div class="tablewrap"><table><thead><tr><th>症状</th><th>根因</th><th>对策</th><th>详址</th></tr></thead><tbody><tr><td>改了值没存上</td><td>本次 Save 一个键都没写（Count=0 整个子字典不落盘）；或忘调 base.Save/Load 漏父类字段</td><td>Save 至少写一个键；Load/Save 成对调 base</td><td>11页 · Project.cs:290-292</td></tr><tr><td>Save 里读不到上次存档的值</td><td>Save 的参数是新建空袋</td><td>从 this.ValuesDictionary 读旧值再写新袋</td><td>11页 · Entity.cs:218-220</td></tr><tr><td>同实体两个同名组件数据互相覆盖</td><td>存档按组件名写键，同名顶键；同类型多实例也查不出</td><td>组件名唯一；多实例用带名 FindComponent</td><td>03页 · Entity.cs:222/:171</td></tr><tr><td>删模组后方块变空气/生物消失</td><td>模板或组件 Class 没了：实体模板找不到整包丢（仅警告 Ignoring invalid entity）；组件按 IsOptional 分崩/静默</td><td>模板 Guid 永久固定；设计 IsOptional 决定崩档还是静默；Load 带默认值</td><td>11页 · EntityDataList.cs:20-25</td></tr><tr><td>在 ProjectXmlSave 里加顶层 <code>&lt;Subsystems&gt;</code>/<code>&lt;Entities&gt;</code> 后数据丢失</td><td>ProjectData.Save 用 FindChildElement 取文档顺序第一个同名节点，引擎那份被无视</td><td>钩子里只改已有节点/挂到别的子树</td><td>11页 · ProjectData.cs:56-65</td></tr><tr><td>模组设置换了存档还是旧的</td><td>所有模组设置合在全局 ModSettings.xml，与存档无关</td><td>每世界数据走 Subsystem.Save/Load</td><td>11页坑表</td></tr><tr><td>读档后火焰全部重新烧</td><td>火焰燃烧进度 FireData 纯内存不存档</td><td>自己在 behavior 里持久化进度</td><td>02页坑表</td></tr><tr><td>实体卸载再回来自定义数据丢了</td><td>Despawn 打包时不带 mod 数据</td><td>钩子 OnSaveSpawnData/OnReadSpawnData 读写 SpawnEntityData.Data</td><td>02页 · SubsystemSpawn.cs:242/259</td></tr><tr><td>运行时改世界种子/地形参数没存上</td><td>WorldSettings.Save(liveModifiableParametersOnly:true) 不写种子与地形参数</td><td>改种子只能走建档路径</td><td>16页 · WorldSettings.cs:134-163</td></tr><tr><td>覆盖导入世界/内容后档坏了</td><td>直接覆盖没有回滚</td><td>用 TransactionalFileReplacement.OverwriteWithRollback（先备份失败还原）</td><td>20页 · ExternalContentManager.Import.cs:95-119</td></tr><tr><td>挂在 SettingsManager 上的临时值被写进 Settings.xml</td><td>保存反射枚举全部 public static 可写属性</td><td>临时状态别做成它的 public static 可写属性</td><td>20页 · SettingsManager.cs:1096-1147</td></tr><tr><td>坏档区块"消失"被静默重生成</td><td>LoadChunk 除 IOException 外异常吞掉并当"有档但空"处理</td><td>数据异常先查 chunk 序列化；重要数据别只存区块</td><td>05a · TerrainSerializer23.cs:626-630</td></tr><tr><td>手改存档/模板后枚举值不识别、bool 抛</td><td>枚举 Enum.Parse 大小写敏感；XML 轨 bool 只认 True/False</td><td>照原格式大小写写</td><td>11页 · EnumHumanReadableConverter.cs:7</td></tr><tr><td>第二次进世界钩子逻辑重复执行</td><td>EntityComponentsInitialized/BeforeSubsystemsAndEntitiesLoad 是静态事件且 Dispose 不清，N 次进世界派发 N 次</td><td>钩子里按 project/entity 去重或挪去 OnProjectLoaded</td><td>11页/02页 · Project.cs:84-86</td></tr><tr><td>存档坏了打不开</td><td>引擎三级回滚：Project.xml → Project.bak → 内置 RecoveryProject 现造</td><td>知道机制即可；自己写档也照 MoveFileSafely 备份-替换-回滚</td><td>11页 · WorldsManager.cs:65-95</td></tr><tr><td>手改存档 XML string 键字典后对不上</td><td>Archive 轨 string 键经 XmlConvert.EncodeLocalName 变元素名</td><td>特殊字符键避开或换分号协议串</td><td>11页 · XmlOutputArchive.cs:117</td></tr><tr><td>想让值跨进程重启还认得出实体</td><td>IdToEntityMap 是空壳且加载路径传 null</td><td>引用实体用 EntityReference（id:/name:，跨重载存活）</td><td>11页 · EntityReference.cs</td></tr></tbody></table></div>
-<p>（五~十大类与"还查不到？"路由见 <a href="Mod排错手册2.html">Mod排错手册2.md</a>）</p><nav class=pn><a class="prev" href="数据格式参考2.html"><small>上一页 · Mod开发</small><b>数据格式参考2</b></a><a class="next" href="Mod排错手册2.html"><small>下一页 · Mod开发</small><b>Mod排错手册2</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#怎么用">怎么用</a><a class="lvl2" href="#一-加载失败类-mod-没装上-资源读不到-加载中断">一、加载失败类（mod 没装上 / 资源读不到 / 加载中断）</a><a class="lvl2" href="#二-写了不生效类-代码-数据写了-现象没出现">二、写了不生效类（代码/数据写了，现象没出现）</a><a class="lvl2" href="#三-崩溃与异常类-抛异常-闪退-静默失败">三、崩溃与异常类（抛异常 / 闪退 / 静默失败）</a><a class="lvl2" href="#四-存档数据类-存不上-读不回-串数据">四、存档数据类（存不上 / 读不回 / 串数据）</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
+<p>（五~十大类与"还查不到？"路由见 <a href="Mod排错手册2.html">Mod排错手册2.md</a>）</p><nav class=pn><a class="prev" href="数据格式参考2.html"><small>上一页 · Mod开发</small><b>数据格式参考2</b></a><a class="next" href="Mod排错手册2.html"><small>下一页 · Mod开发</small><b>Mod排错手册2</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#怎么用">怎么用</a><a class="lvl2" href="#一-加载失败类-mod-没装上-资源读不到-加载中断">一、加载失败类（mod 没装上 / 资源读不到 / 加载中断）</a><a class="lvl2" href="#二-写了不生效类-代码-数据写了-现象没出现">二、写了不生效类（代码/数据写了，现象没出现）</a><a class="lvl2" href="#三-崩溃与异常类-抛异常-闪退-静默失败">三、崩溃与异常类（抛异常 / 闪退 / 静默失败）</a><a class="lvl2" href="#四-存档数据类-存不上-读不回-串数据">四、存档数据类（存不上 / 读不回 / 串数据）</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT=""; // 站点根相对前缀（按页面深度注入）
 // 主题切换
@@ -194,25 +252,36 @@ const tbtn=$('#themeBtn');
 function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
 applyTheme(document.documentElement.dataset.theme||'light');
 tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
-// 搜索
+// ⌘K 命令面板
 let IDX=[];
 fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
-const box=$('#search'),res=$('#sres');
-box.addEventListener('input',()=>{
-  const q=box.value.trim().toLowerCase();
-  if(!q){res.style.display='none';return}
-  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
-  res.innerHTML=hits.map(p=>{
-    const i=p.b.toLowerCase().indexOf(q);
-    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
-    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
-  }).join('')||'<a>无命中</a>';
-  res.style.display='block';
-});
-document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
-  if(e.key==='Escape'){res.style.display='none'}
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
 });
 // 移动端侧栏抽屉
 const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
@@ -223,20 +292,24 @@ backdrop.addEventListener('click',()=>setSide(false));
 // 高亮当前页
 const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
 document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
-// 右侧目录：滚动高亮
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
 const tocLinks=[...document.querySelectorAll('#tocnav a')];
 if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
   const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
   const onScroll=()=>{
     let idx=0;
     for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
     tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
   };
   document.addEventListener('scroll',onScroll,{passive:true});onScroll();
 }
-// 阅读进度条 + 回到顶部
-const pbar=$('#pbar'),btt=$('#btt');
-function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600)}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
 document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
 btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 // 代码块复制按钮
@@ -249,7 +322,24 @@ document.querySelectorAll('pre.code').forEach(pre=>{
     if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
   pre.appendChild(b);
 });
-// 区块滚动淡入
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
-document.querySelectorAll('article > .tablewrap, article > blockquote, article > pre.code').forEach(el=>{el.classList.add('rv');io.observe(el)});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
 </script></body></html>

@@ -167,6 +167,64 @@ tr[id]:hover td{background:var(--acc-soft)}
 #main{padding:22px clamp(14px,3vw,24px) 70px}
 article{padding:22px 18px 30px;border-radius:14px}
 }
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
 body{background:#fff;color:#000}
@@ -174,7 +232,7 @@ body{background:#fff;color:#000}
 article{box-shadow:none;border:none;max-width:100%}
 a{color:inherit}
 }
-</style></head><body><div id=pbar></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap><input id=search placeholder='搜索…（按 / 聚焦）'><div id=sres></div></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article><h1 id="dialog-对话框族">Dialog 对话框族</h1>
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 14</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 24</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="dialog-对话框族">Dialog 对话框族</h1>
 <blockquote>域: SC引擎 · 更新: 2026-10-31 · 状态: 全读(57/57 全文深读，最大 542 行)</blockquote>
 <h2 id="一句话定位">一句话定位</h2>
 <p>Dialog 目录级域：模态对话框容器（遮罩/动画/生命周期）、消息/列表/文本输入/进度框与各编辑器的构造与关闭约定。</p>
@@ -200,7 +258,7 @@ a{color:inherit}
 <h2 id="原版范例">原版范例</h2>
 <div class="tablewrap"><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>两按钮消息/确认框</td><td>MessageDialog.cs:18-47——ctor 填 4 文本+handler，最通用样板</td></tr><tr><td>列表选择（含定制行）</td><td>ListSelectionDialog.cs:23-57 基类 + SelectGameModeDialog.cs:5-20（继承换条目工厂与 ContentSize）</td></tr><tr><td>文本输入框</td><td>TextBoxDialog.cs:19-34——HasFocus=true + Enter 提交，一行起</td></tr><tr><td>三按钮以上选择框</td><td>CommunityImportOverwriteDialog.cs:19-49——MessageDialog 只有两按钮，多按钮自建</td></tr><tr><td>可取消进度框</td><td>CancellableBusyDialog.cs:38-78——配 WebManager.Post 的 progress 参数</td></tr><tr><td>无 XML 全代码对话框</td><td>EditColorDialog.cs:19-136——Canvas 定尺寸 + DialogArea 底板 + Stack 布局</td></tr><tr><td>运行时组装菜单/统计行</td><td>GameMenuDialog.cs:475-482（Tuple 菜单）、:520-541（AddStat 动态行）</td></tr><tr><td>嵌套对话框（框上弹框）</td><td>EditColorDialog.cs:139-166——<code>ShowDialog(this, new TextBoxDialog(...))</code> parent 传 this</td></tr><tr><td>滚动到底才允许确认</td><td>BulletinDialog.cs:58-63——ScrollPosition ≥ 80% 才显示 OK</td></tr><tr><td>点框外关闭</td><td>DownloadContentFromLinkDialog.cs:26-43——Tap 不在框内即关</td></tr><tr><td>每帧轮询的任务队列框</td><td>CommunityDownloadQueueDialog.cs:72-96——IDownloadQueueDialogHost 抽象 + Refresh 全量刷</td></tr><tr><td>重启确认 + 静态便捷入口</td><td>RestartConfirmDialog.cs:14-51——回调返回 true 才真重启（Window.Restart）</td></tr></tbody></table></div>
 <h2 id="快查路由">快查路由</h2>
-<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>弹个提示/确认</td><td><code>new MessageDialog(大字,小字,按钮1,按钮2,handler)</code> + <code>DialogsManager.ShowDialog(null, 框)</code></td></tr><tr><td>让玩家从列表选一项</td><td>ListSelectionDialog（字符串行用第 2 ctor，定制行走 itemWidgetFactory）</td></tr><tr><td>让玩家输入一段文字</td><td>TextBoxDialog；取消时 handler 收 null 要判空</td></tr><tr><td>显示耗时操作进度</td><td>CancellableBusyDialog + CancellableProgress；完成后把取消键文本改 OK</td></tr><tr><td>拦截/监听所有弹窗</td><td><code>OnShowDialog</code>/<code>OnHideDialog</code> 钩子（DialogsManager.cs:47-53,80-86）</td></tr><tr><td>自定义一个对话框</td><td>照"构造模式"节：XML 模板 + Find 改装，或照 EditColorDialog 全代码</td></tr><tr><td>关闭对话框</td><td><code>DialogsManager.HideDialog(dialog)</code>；自己框内用 <code>Dismiss()</code> 三件套</td></tr><tr><td>判断当前有没有模态框</td><td><code>DialogsManager.HasDialogsOrAnimations(parent)</code>；严格判定照 CommunityFiltersDialog.cs:167-185</td></tr><tr><td>做多按钮分支选择</td><td>CommunityImportOverwriteDialog（三按钮）/ CommunityModpackFileConflictDialog（五按钮）模式</td></tr><tr><td>查某对话框类细节</td><td><code>18a-Dialog明细.md</code> 定位文件 → 直接跳源码</td></tr><tr><td>部件布局/输入/XML 属性</td><td>另见 <code>09-UI与Widget体系.md</code>（本页不重复）</td></tr><tr><td>GameMenu 加自己的菜单项</td><td>GameMenuDialog.cs:379-483 的 ListSelectionDialog 菜单模式；钩子另见 09 页注入节</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/17-Screen屏幕族.html"><small>上一页 · SC引擎</small><b>17-Screen屏幕族</b></a><a class="next" href="../01-引擎/19-媒体动画与VR.html"><small>下一页 · SC引擎</small><b>19-媒体动画与VR</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#家族概览-根-43-community-14-57-个-cs">家族概览（根 43 + Community 14 = 57 个 .cs）</a><a class="lvl2" href="#核心机制">核心机制</a><a class="lvl3" href="#生命周期-挂树即开-动画播完才摘">生命周期：挂树即开、动画播完才摘</a><a class="lvl3" href="#输入与关闭-每帧轮询而非事件">输入与关闭：每帧轮询而非事件</a><a class="lvl3" href="#构造模式-xml-模板改装-vs-全代码构建">构造模式：XML 模板改装 vs 全代码构建</a><a class="lvl3" href="#进度与取消-cancellableprogress-协作链">进度与取消：CancellableProgress 协作链</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav><details class=jumpbox open><summary>⚡ 文件速跳 · 57</summary><div class=chips><a href="明细/18a-Dialog明细.html#f-0-dialog-cs">Dialog.cs</a><a href="明细/18a-Dialog明细.html#f-1-suredialog-cs">SureDialog.cs</a><a href="明细/18a-Dialog明细.html#f-2-messagedialogbutton-cs">MessageDialogButton.cs</a><a href="明细/18a-Dialog明细.html#f-3-messagedialog-cs">MessageDialog.cs</a><a href="明细/18a-Dialog明细.html#f-4-listselectiondialog-cs">ListSelectionDialog.cs</a><a href="明细/18a-Dialog明细.html#f-5-textboxdialog-cs">TextBoxDialog.cs</a><a href="明细/18a-Dialog明细.html#f-6-busydialog-cs">BusyDialog.cs</a><a href="明细/18a-Dialog明细.html#f-7-cancellablebusydialog-cs">CancellableBusyDialog.cs</a><a href="明细/18a-Dialog明细.html#f-8-spawndialog-cs">SpawnDialog.cs</a><a href="明细/18a-Dialog明细.html#f-9-gamemenudialog-cs">GameMenuDialog.cs</a><a href="明细/18a-Dialog明细.html#f-10-buildfurnituredialog-cs">BuildFurnitureDialog.cs</a><a href="明细/18a-Dialog明细.html#f-11-bulletindialog-cs">BulletinDialog.cs</a><a href="明细/18a-Dialog明细.html#f-12-levelfactordialog-cs">LevelFactorDialog.cs</a><a href="明细/18a-Dialog明细.html#f-13-keyboardhelpdialog-cs">KeyboardHelpDialog.cs</a><a href="明细/18a-Dialog明细.html#f-14-gamepadhelpdialog-cs">GamepadHelpDialog.cs</a><a href="明细/18a-Dialog明细.html#f-15-selectgamemodedialog-cs">SelectGameModeDialog.cs</a><a href="明细/18a-Dialog明细.html#f-16-selectexternalcontentproviderdialog-cs">SelectExternalContentProviderDialog.cs</a><a href="明细/18a-Dialog明细.html#f-17-selectexternalcontenttypedialog-cs">SelectExternalContentTypeDialog.cs</a><a href="明细/18a-Dialog明细.html#f-18-selectclasssubstitutedialog-cs">SelectClassSubstituteDialog.cs</a><a href="明细/18a-Dialog明细.html#f-19-selectcommunityserverdialog-cs">SelectCommunityServerDialog.cs</a><a href="明细/18a-Dialog明细.html#f-20-runjsdialog-cs">RunJsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-21-remotecontroldialog-cs">RemoteControlDialog.cs</a><a href="明细/18a-Dialog明细.html#f-22-viewgamelogdialog-cs">ViewGameLogDialog.cs</a><a href="明细/18a-Dialog明细.html#f-23-downloadcontentfromlinkdialog-cs">DownloadContentFromLinkDialog.cs</a><a href="明细/18a-Dialog明细.html#f-24-externalcontentlinkdialog-cs">ExternalContentLinkDialog.cs</a><a href="明细/18a-Dialog明细.html#f-25-editworldseeddialog-cs">EditWorldSeedDialog.cs</a><a href="明细/18a-Dialog明细.html#f-26-editsigndialog-cs">EditSignDialog.cs</a><a href="明细/18a-Dialog明细.html#f-27-editmemorybankdialog-cs">EditMemoryBankDialog.cs</a><a href="明细/18a-Dialog明细.html#f-28-editmemorybankdialogapi-cs">EditMemoryBankDialogAPI.cs</a><a href="明细/18a-Dialog明细.html#f-29-edittruthtabledialog-cs">EditTruthTableDialog.cs</a><a href="明细/18a-Dialog明细.html#f-30-editvoltageleveldialog-cs">EditVoltageLevelDialog.cs</a><a href="明细/18a-Dialog明细.html#f-31-editpistondialog-cs">EditPistonDialog.cs</a><a href="明细/18a-Dialog明细.html#f-32-editadjustabledelaygatedialog-cs">EditAdjustableDelayGateDialog.cs</a><a href="明细/18a-Dialog明细.html#f-33-editcolordialog-cs">EditColorDialog.cs</a><a href="明细/18a-Dialog明细.html#f-34-editpalettedialog-cs">EditPaletteDialog.cs</a><a href="明细/18a-Dialog明细.html#f-35-logindialog-cs">LoginDialog.cs</a><a href="明细/18a-Dialog明细.html#f-36-morecommunitylinkdialog-cs">MoreCommunityLinkDialog.cs</a><a href="明细/18a-Dialog明细.html#f-37-publishcommunitylinkdialog-cs">PublishCommunityLinkDialog.cs</a><a href="明细/18a-Dialog明细.html#f-38-ratecommunitycontentdialog-cs">RateCommunityContentDialog.cs</a><a href="明细/18a-Dialog明细.html#f-39-reportcommunitycontentdialog-cs">ReportCommunityContentDialog.cs</a><a href="明细/18a-Dialog明细.html#f-40-moddetailsdialog-cs">ModDetailsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-41-modpackdetailsdialog-cs">ModpackDetailsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-42-editcommunityserverinfodialog-cs">EditCommunityServerInfoDialog.cs</a><a href="明细/18a-Dialog明细.html#f-43-community-communitydownloaddialog-cs">Community/CommunityDownloadDialog.cs</a><a href="明细/18a-Dialog明细.html#f-44-community-communitydownloadfailuredialog-cs">Community/CommunityDownloadFailureDialog.cs</a><a href="明细/18a-Dialog明细.html#f-45-community-communitydownloadqueuedialog-cs">Community/CommunityDownloadQueueDialog.cs</a><a href="明细/18a-Dialog明细.html#f-46-community-communityfiltersdialog-cs">Community/CommunityFiltersDialog.cs</a><a href="明细/18a-Dialog明细.html#f-47-community-communityimportoverwritedialog-cs">Community/CommunityImportOverwriteDialog.cs</a><a href="明细/18a-Dialog明细.html#f-48-community-communitylogindialog-cs">Community/CommunityLoginDialog.cs</a><a href="明细/18a-Dialog明细.html#f-49-community-communitymissingdependenciesdialog-cs">Community/CommunityMissingDependenciesDialog.cs</a><a href="明细/18a-Dialog明细.html#f-50-community-communitymodreviewdialog-cs">Community/CommunityModReviewDialog.cs</a><a href="明细/18a-Dialog明细.html#f-51-community-communitymodversionsdialog-cs">Community/CommunityModVersionsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-52-community-communitymodpackfileconflictdialog-cs">Community/CommunityModpackFileConflictDialog.cs</a><a href="明细/18a-Dialog明细.html#f-53-community-communitypostdetailsdialog-cs">Community/CommunityPostDetailsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-54-community-editdownloadsourceinfodialog-cs">Community/EditDownloadSourceInfoDialog.cs</a><a href="明细/18a-Dialog明细.html#f-55-community-restartconfirmdialog-cs">Community/RestartConfirmDialog.cs</a><a href="明细/18a-Dialog明细.html#f-56-community-selectdownloadsourcedialog-cs">Community/SelectDownloadSourceDialog.cs</a></div></details></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><button id=btt aria-label=回到顶部>↑</button><script>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>弹个提示/确认</td><td><code>new MessageDialog(大字,小字,按钮1,按钮2,handler)</code> + <code>DialogsManager.ShowDialog(null, 框)</code></td></tr><tr><td>让玩家从列表选一项</td><td>ListSelectionDialog（字符串行用第 2 ctor，定制行走 itemWidgetFactory）</td></tr><tr><td>让玩家输入一段文字</td><td>TextBoxDialog；取消时 handler 收 null 要判空</td></tr><tr><td>显示耗时操作进度</td><td>CancellableBusyDialog + CancellableProgress；完成后把取消键文本改 OK</td></tr><tr><td>拦截/监听所有弹窗</td><td><code>OnShowDialog</code>/<code>OnHideDialog</code> 钩子（DialogsManager.cs:47-53,80-86）</td></tr><tr><td>自定义一个对话框</td><td>照"构造模式"节：XML 模板 + Find 改装，或照 EditColorDialog 全代码</td></tr><tr><td>关闭对话框</td><td><code>DialogsManager.HideDialog(dialog)</code>；自己框内用 <code>Dismiss()</code> 三件套</td></tr><tr><td>判断当前有没有模态框</td><td><code>DialogsManager.HasDialogsOrAnimations(parent)</code>；严格判定照 CommunityFiltersDialog.cs:167-185</td></tr><tr><td>做多按钮分支选择</td><td>CommunityImportOverwriteDialog（三按钮）/ CommunityModpackFileConflictDialog（五按钮）模式</td></tr><tr><td>查某对话框类细节</td><td><code>18a-Dialog明细.md</code> 定位文件 → 直接跳源码</td></tr><tr><td>部件布局/输入/XML 属性</td><td>另见 <code>09-UI与Widget体系.md</code>（本页不重复）</td></tr><tr><td>GameMenu 加自己的菜单项</td><td>GameMenuDialog.cs:379-483 的 ListSelectionDialog 菜单模式；钩子另见 09 页注入节</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/17-Screen屏幕族.html"><small>上一页 · SC引擎</small><b>17-Screen屏幕族</b></a><a class="next" href="../01-引擎/19-媒体动画与VR.html"><small>下一页 · SC引擎</small><b>19-媒体动画与VR</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#目录地图">目录地图</a><a class="lvl2" href="#家族概览-根-43-community-14-57-个-cs">家族概览（根 43 + Community 14 = 57 个 .cs）</a><a class="lvl2" href="#核心机制">核心机制</a><a class="lvl3" href="#生命周期-挂树即开-动画播完才摘">生命周期：挂树即开、动画播完才摘</a><a class="lvl3" href="#输入与关闭-每帧轮询而非事件">输入与关闭：每帧轮询而非事件</a><a class="lvl3" href="#构造模式-xml-模板改装-vs-全代码构建">构造模式：XML 模板改装 vs 全代码构建</a><a class="lvl3" href="#进度与取消-cancellableprogress-协作链">进度与取消：CancellableProgress 协作链</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav><details class=jumpbox open><summary>⚡ 文件速跳 · 57</summary><div class=chips><a href="明细/18a-Dialog明细.html#f-0-dialog-cs">Dialog.cs</a><a href="明细/18a-Dialog明细.html#f-1-suredialog-cs">SureDialog.cs</a><a href="明细/18a-Dialog明细.html#f-2-messagedialogbutton-cs">MessageDialogButton.cs</a><a href="明细/18a-Dialog明细.html#f-3-messagedialog-cs">MessageDialog.cs</a><a href="明细/18a-Dialog明细.html#f-4-listselectiondialog-cs">ListSelectionDialog.cs</a><a href="明细/18a-Dialog明细.html#f-5-textboxdialog-cs">TextBoxDialog.cs</a><a href="明细/18a-Dialog明细.html#f-6-busydialog-cs">BusyDialog.cs</a><a href="明细/18a-Dialog明细.html#f-7-cancellablebusydialog-cs">CancellableBusyDialog.cs</a><a href="明细/18a-Dialog明细.html#f-8-spawndialog-cs">SpawnDialog.cs</a><a href="明细/18a-Dialog明细.html#f-9-gamemenudialog-cs">GameMenuDialog.cs</a><a href="明细/18a-Dialog明细.html#f-10-buildfurnituredialog-cs">BuildFurnitureDialog.cs</a><a href="明细/18a-Dialog明细.html#f-11-bulletindialog-cs">BulletinDialog.cs</a><a href="明细/18a-Dialog明细.html#f-12-levelfactordialog-cs">LevelFactorDialog.cs</a><a href="明细/18a-Dialog明细.html#f-13-keyboardhelpdialog-cs">KeyboardHelpDialog.cs</a><a href="明细/18a-Dialog明细.html#f-14-gamepadhelpdialog-cs">GamepadHelpDialog.cs</a><a href="明细/18a-Dialog明细.html#f-15-selectgamemodedialog-cs">SelectGameModeDialog.cs</a><a href="明细/18a-Dialog明细.html#f-16-selectexternalcontentproviderdialog-cs">SelectExternalContentProviderDialog.cs</a><a href="明细/18a-Dialog明细.html#f-17-selectexternalcontenttypedialog-cs">SelectExternalContentTypeDialog.cs</a><a href="明细/18a-Dialog明细.html#f-18-selectclasssubstitutedialog-cs">SelectClassSubstituteDialog.cs</a><a href="明细/18a-Dialog明细.html#f-19-selectcommunityserverdialog-cs">SelectCommunityServerDialog.cs</a><a href="明细/18a-Dialog明细.html#f-20-runjsdialog-cs">RunJsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-21-remotecontroldialog-cs">RemoteControlDialog.cs</a><a href="明细/18a-Dialog明细.html#f-22-viewgamelogdialog-cs">ViewGameLogDialog.cs</a><a href="明细/18a-Dialog明细.html#f-23-downloadcontentfromlinkdialog-cs">DownloadContentFromLinkDialog.cs</a><a href="明细/18a-Dialog明细.html#f-24-externalcontentlinkdialog-cs">ExternalContentLinkDialog.cs</a><a href="明细/18a-Dialog明细.html#f-25-editworldseeddialog-cs">EditWorldSeedDialog.cs</a><a href="明细/18a-Dialog明细.html#f-26-editsigndialog-cs">EditSignDialog.cs</a><a href="明细/18a-Dialog明细.html#f-27-editmemorybankdialog-cs">EditMemoryBankDialog.cs</a><a href="明细/18a-Dialog明细.html#f-28-editmemorybankdialogapi-cs">EditMemoryBankDialogAPI.cs</a><a href="明细/18a-Dialog明细.html#f-29-edittruthtabledialog-cs">EditTruthTableDialog.cs</a><a href="明细/18a-Dialog明细.html#f-30-editvoltageleveldialog-cs">EditVoltageLevelDialog.cs</a><a href="明细/18a-Dialog明细.html#f-31-editpistondialog-cs">EditPistonDialog.cs</a><a href="明细/18a-Dialog明细.html#f-32-editadjustabledelaygatedialog-cs">EditAdjustableDelayGateDialog.cs</a><a href="明细/18a-Dialog明细.html#f-33-editcolordialog-cs">EditColorDialog.cs</a><a href="明细/18a-Dialog明细.html#f-34-editpalettedialog-cs">EditPaletteDialog.cs</a><a href="明细/18a-Dialog明细.html#f-35-logindialog-cs">LoginDialog.cs</a><a href="明细/18a-Dialog明细.html#f-36-morecommunitylinkdialog-cs">MoreCommunityLinkDialog.cs</a><a href="明细/18a-Dialog明细.html#f-37-publishcommunitylinkdialog-cs">PublishCommunityLinkDialog.cs</a><a href="明细/18a-Dialog明细.html#f-38-ratecommunitycontentdialog-cs">RateCommunityContentDialog.cs</a><a href="明细/18a-Dialog明细.html#f-39-reportcommunitycontentdialog-cs">ReportCommunityContentDialog.cs</a><a href="明细/18a-Dialog明细.html#f-40-moddetailsdialog-cs">ModDetailsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-41-modpackdetailsdialog-cs">ModpackDetailsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-42-editcommunityserverinfodialog-cs">EditCommunityServerInfoDialog.cs</a><a href="明细/18a-Dialog明细.html#f-43-community-communitydownloaddialog-cs">Community/CommunityDownloadDialog.cs</a><a href="明细/18a-Dialog明细.html#f-44-community-communitydownloadfailuredialog-cs">Community/CommunityDownloadFailureDialog.cs</a><a href="明细/18a-Dialog明细.html#f-45-community-communitydownloadqueuedialog-cs">Community/CommunityDownloadQueueDialog.cs</a><a href="明细/18a-Dialog明细.html#f-46-community-communityfiltersdialog-cs">Community/CommunityFiltersDialog.cs</a><a href="明细/18a-Dialog明细.html#f-47-community-communityimportoverwritedialog-cs">Community/CommunityImportOverwriteDialog.cs</a><a href="明细/18a-Dialog明细.html#f-48-community-communitylogindialog-cs">Community/CommunityLoginDialog.cs</a><a href="明细/18a-Dialog明细.html#f-49-community-communitymissingdependenciesdialog-cs">Community/CommunityMissingDependenciesDialog.cs</a><a href="明细/18a-Dialog明细.html#f-50-community-communitymodreviewdialog-cs">Community/CommunityModReviewDialog.cs</a><a href="明细/18a-Dialog明细.html#f-51-community-communitymodversionsdialog-cs">Community/CommunityModVersionsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-52-community-communitymodpackfileconflictdialog-cs">Community/CommunityModpackFileConflictDialog.cs</a><a href="明细/18a-Dialog明细.html#f-53-community-communitypostdetailsdialog-cs">Community/CommunityPostDetailsDialog.cs</a><a href="明细/18a-Dialog明细.html#f-54-community-editdownloadsourceinfodialog-cs">Community/EditDownloadSourceInfoDialog.cs</a><a href="明细/18a-Dialog明细.html#f-55-community-restartconfirmdialog-cs">Community/RestartConfirmDialog.cs</a><a href="明细/18a-Dialog明细.html#f-56-community-selectdownloadsourcedialog-cs">Community/SelectDownloadSourceDialog.cs</a></div></details></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
 const $=s=>document.querySelector(s);
 const ROOT="../"; // 站点根相对前缀（按页面深度注入）
 // 主题切换
@@ -208,25 +266,36 @@ const tbtn=$('#themeBtn');
 function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
 applyTheme(document.documentElement.dataset.theme||'light');
 tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
-// 搜索
+// ⌘K 命令面板
 let IDX=[];
 fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
-const box=$('#search'),res=$('#sres');
-box.addEventListener('input',()=>{
-  const q=box.value.trim().toLowerCase();
-  if(!q){res.style.display='none';return}
-  const hits=IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,20);
-  res.innerHTML=hits.map(p=>{
-    const i=p.b.toLowerCase().indexOf(q);
-    const snip=i>=0?p.b.slice(Math.max(0,i-20),i+50):'';
-    return `<a href="${ROOT}${p.u}">${p.t}<span class=snip>…${snip}…</span></a>`
-  }).join('')||'<a>无命中</a>';
-  res.style.display='block';
-});
-document.addEventListener('click',e=>{if(!res.contains(e.target)&&e.target!==box)res.style.display='none'});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement!==box){e.preventDefault();box.focus()}
-  if(e.key==='Escape'){res.style.display='none'}
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
 });
 // 移动端侧栏抽屉
 const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
@@ -237,20 +306,24 @@ backdrop.addEventListener('click',()=>setSide(false));
 // 高亮当前页
 const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
 document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
-// 右侧目录：滚动高亮
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
 const tocLinks=[...document.querySelectorAll('#tocnav a')];
 if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
   const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
   const onScroll=()=>{
     let idx=0;
     for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
     tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
   };
   document.addEventListener('scroll',onScroll,{passive:true});onScroll();
 }
-// 阅读进度条 + 回到顶部
-const pbar=$('#pbar'),btt=$('#btt');
-function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600)}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
 document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
 btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 // 代码块复制按钮
@@ -263,7 +336,24 @@ document.querySelectorAll('pre.code').forEach(pre=>{
     if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
   pre.appendChild(b);
 });
-// 区块滚动淡入
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
-document.querySelectorAll('article > .tablewrap, article > blockquote, article > pre.code').forEach(el=>{el.classList.add('rv');io.observe(el)});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
 </script></body></html>
