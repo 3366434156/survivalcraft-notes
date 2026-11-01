@@ -1,0 +1,374 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><script>(function(){try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}})()</script><title>地形修改与MovingBlocks · SC 源码笔记</title><style>
+:root{
+--bg:#f8fafc;--sheet:#ffffff;--surface-2:#f1f5f9;--side-bg:#f8fafc;
+--ink:#0f172a;--ink-soft:#475569;--ink-faint:#94a3b8;
+--line:#e6e9f0;--line-strong:#d5dbe5;
+--acc:#4f46e5;--acc-2:#7c3aed;--acc-ink:#4338ca;--acc-soft:#eef2ff;
+--top-bg:rgba(248,250,252,.82);--code-bg:#0f172a;--code-ink:#e2e8f0;
+--shadow:0 1px 2px rgba(2,6,23,.05),0 12px 32px -8px rgba(2,6,23,.10);
+--shadow-sm:0 1px 2px rgba(2,6,23,.06);
+--header-h:58px;--side-w:264px}
+:root[data-theme=dark]{
+--bg:#0a0d14;--sheet:#10141f;--surface-2:#161c2b;--side-bg:#0c101a;
+--ink:#e6e9f0;--ink-soft:#a6afc2;--ink-faint:#64708c;
+--line:#1e2536;--line-strong:#2b3550;
+--acc:#818cf8;--acc-2:#a78bfa;--acc-ink:#a5b4fc;--acc-soft:rgba(99,102,241,.16);
+--top-bg:rgba(10,13,20,.78);--code-bg:#0b101c;--code-ink:#d7dee8;
+--shadow:0 1px 2px rgba(0,0,0,.45),0 14px 36px -10px rgba(0,0,0,.55);
+--shadow-sm:0 1px 2px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px)}
+body{margin:0;font-family:ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",-apple-system,sans-serif;
+color:var(--ink);font-size:15px;line-height:1.8;
+background:radial-gradient(1000px 460px at 78% -12%,rgba(99,102,241,.09),transparent 60%),
+radial-gradient(820px 420px at -8% -4%,rgba(124,58,237,.06),transparent 55%),var(--bg);
+transition:color .2s,background-color .2s}
+::selection{background:var(--acc-soft);color:var(--acc-ink)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+/* 顶栏：玻璃 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
+background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
+#themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
+#themeBtn:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap;border:1px solid var(--line);border-radius:9px;padding:6px 11px;background:var(--surface)}
+#top .gh:hover{color:var(--acc);border-color:var(--acc)}
+/* 布局 */
+#layout{display:flex;min-height:calc(100vh - var(--header-h))}
+#backdrop{display:none}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-size:10.5px;font-weight:700;color:var(--ink-faint);letter-spacing:2.2px;text-transform:uppercase}
+#side .sec:first-child{margin-top:4px}
+#nav a{display:block;padding:5.5px 10px;margin:1px 0;border-radius:8px;color:var(--ink-soft);text-decoration:none;font-size:13.5px;line-height:1.5;transition:background .12s,color .12s}
+#nav a:hover{background:var(--acc-soft);color:var(--acc-ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-ink);font-weight:600;box-shadow:inset 2px 0 0 var(--acc)}
+/* 正文 + 右侧目录 */
+#main{flex:1;min-width:0;padding:32px clamp(16px,3.5vw,44px) 80px}
+#contentrow{display:flex;gap:34px;align-items:flex-start;justify-content:center;max-width:1240px;margin:0 auto}
+article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow);overflow-wrap:break-word}
+h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
+background:linear-gradient(120deg,var(--ink) 30%,var(--acc-ink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;padding-left:13px;border-bottom:1px solid var(--line);position:relative}
+h2::before{content:"";position:absolute;left:0;top:4px;bottom:13px;width:4px;border-radius:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:.9}
+h3{font-size:16px;font-weight:700;margin:26px 0 10px}
+p{margin:10px 0}
+a{color:var(--acc-ink);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:6px 12px 12px 6px;color:var(--ink-soft);font-size:14.5px}
+blockquote p{margin:4px 0}
+code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:break-word}
+:root[data-theme=dark] code{color:#c7d2fe}
+:root[data-theme=dark] article{border-color:rgba(148,163,184,.15);box-shadow:0 20px 48px -20px rgba(0,0,0,.65)}
+:root[data-theme=dark] #top{border-bottom-color:rgba(148,163,184,.13)}
+:root[data-theme=dark] #side{border-right-color:rgba(148,163,184,.1)}
+pre.code{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:var(--shadow-sm)}
+pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);box-shadow:var(--shadow-sm)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
+th{background:var(--surface-2);color:var(--ink);font-weight:600;text-align:left}
+th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:break-word}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--acc-soft)}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+ul,ol{padding-left:1.5em;margin:10px 0}
+li{margin:4px 0}
+#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+/* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
+pre.code .k{color:#ff7b72}
+pre.code .t{color:#ffa657}
+pre.code .s{color:#a5d6ff}
+pre.code .c{color:#8b949e;font-style:italic}
+pre.code .n{color:#79c0ff}
+pre.code .a{color:#d2a8ff}
+pre.code .t2{color:#7ee787}
+/* 上一页/下一页 */
+.pn{display:flex;gap:14px;margin:36px 0 6px}
+.pn a{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pn a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(79,70,229,.35)}
+.pn a.next{text-align:right}
+.pn a small{color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px}
+.pn a b{color:var(--acc-ink);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .pnvoid{flex:1}
+/* 首页三入口卡片 */
+.hero{margin:24px 0 4px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
+.hcard:hover::before{opacity:1}
+.hcard .ico{font-size:21px;line-height:1}
+.hcard b{font-size:15.5px;color:var(--ink)}
+.hcard span{font-size:12.5px;color:var(--ink-soft)}
+/* 长表格：内部滚动 + 粘性表头 */
+.tablewrap.tall{max-height:calc(100vh - 150px);overflow:auto}
+.tablewrap.tall th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line-strong)}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
+.deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
+/* ── 交互层 ── */
+#pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0}
+#btt{position:fixed;right:22px;bottom:26px;z-index:18;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--acc);font-size:17px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:all .25s;box-shadow:var(--shadow-sm)}
+#btt.show{opacity:1;pointer-events:auto;transform:none}
+#btt:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);transform:translateY(-2px)}
+pre.code{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:var(--code-ink);border-radius:7px;padding:3px 9px;font-size:11.5px;cursor:pointer;opacity:0;transition:all .18s}
+pre.code:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.15);border-color:var(--acc)}
+.copybtn.ok{color:#4ade80;border-color:rgba(74,222,128,.6)}
+.tablewrap{transition:box-shadow .2s,border-color .2s}
+.tablewrap:hover{border-color:var(--line-strong);box-shadow:0 6px 24px -8px rgba(2,6,23,.18)}
+tr[id] td:first-child{font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:12.5px}
+tr[id] td{transition:background .12s}
+tr[id]:hover td{background:var(--acc-soft)}
+#nav a{transition:background .15s,color .15s,padding-left .15s}
+#nav a:hover{padding-left:15px}
+#tocnav a{transition:color .12s,background .12s,padding-left .15s}
+#tocnav a:hover{padding-left:15px}
+.jumpbox{margin:12px 0 2px}
+.jumpbox summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--acc-ink);background:var(--acc-soft);border:1px solid var(--line);border-radius:9px;padding:5px 12px;display:inline-block;list-style:none;transition:all .15s;user-select:none}
+.jumpbox summary::-webkit-details-marker{display:none}
+.jumpbox summary:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 2px}
+.chips a{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--ink-soft);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px 8px;text-decoration:none;transition:all .12s}
+.chips a:hover{color:var(--acc-ink);border-color:var(--acc);background:var(--acc-soft);transform:translateY(-1px)}
+.rv{opacity:0;transform:translateY(10px)}
+.rv.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
+@media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none}}
+/* 右侧目录 */
+#toc{flex:0 0 224px;position:sticky;top:calc(var(--header-h) + 26px);max-height:calc(100vh - var(--header-h) - 52px);overflow-y:auto;font-size:12.5px;line-height:1.5;padding:4px 0 20px}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ink-faint);margin:8px 10px 10px;text-transform:uppercase}
+#tocnav a{display:block;padding:4px 10px;border-left:2px solid var(--line);color:var(--ink-soft);text-decoration:none;border-radius:0 7px 7px 0;margin:1px 0}
+#tocnav a.lvl3{padding-left:22px;font-size:12px;color:var(--ink-faint)}
+#tocnav a:hover{color:var(--acc);text-decoration:none}
+#tocnav a.active{color:var(--acc-ink);border-left-color:var(--acc);background:var(--acc-soft);font-weight:600}
+@media(max-width:1279px){#toc{display:none}#contentrow{max-width:920px}}
+/* 大屏加宽档：含 40+ 行大表的页(wideart)放得更开，散文页适度加宽 */
+article.wideart{max-width:1060px}
+@media(min-width:1600px){#contentrow{max-width:1580px}#foot{max-width:1580px}article{max-width:960px}article.wideart{max-width:1300px}}
+@media(min-width:2000px){#contentrow{max-width:1720px}#foot{max-width:1720px}article{max-width:1020px}article.wideart{max-width:1420px}body{font-size:15.5px}table{font-size:14px}}
+/* 窄屏 */
+@media(max-width:1024px){
+#burger{display:block}
+#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(2,6,23,.42);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
+#backdrop.show{opacity:1;pointer-events:auto}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:14px 0 36px rgba(2,6,23,.2)}
+#side.open{left:0}
+#top .gh{display:block;font-size:11.5px;padding:6px 9px}
+#top .brand small{display:none}
+.searchwrap{width:min(230px,50vw)}
+.searchwrap kbd{display:none}
+#main{padding:22px clamp(14px,3vw,24px) 70px}
+article{padding:22px 18px 30px;border-radius:14px}
+}
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);animation:drift2 36s ease-in-out infinite alternate}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
+/* 手机档（置于 CSS 末尾保证覆盖上方 searchwrap 宽度）：搜索收成纯图标钮，把宽度让给品牌名 */
+@media(max-width:600px){
+.searchwrap{width:38px;padding:7.5px 0;justify-content:center}
+.searchwrap .ph{display:none}
+#top{gap:8px}
+#top .brand b{font-size:15px;letter-spacing:-.1px;max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+#top .gh{font-size:10.5px;padding:6px 7px}
+}
+/* 手机横滚表：首列吸附，滚动时保留行上下文 */
+@media(max-width:760px){
+.tablewrap th:first-child,.tablewrap td:first-child{position:sticky;left:0;z-index:1;background:var(--sheet);box-shadow:inset -1px 0 0 var(--line)}
+.tablewrap th:first-child{background:var(--surface-2);z-index:2}
+.tablewrap.tall th:first-child{z-index:3}
+.tablewrap tbody tr:hover td:first-child{background:var(--acc-soft)}
+/* 慢设备上逐行瀑布会闪空白：手机端直接整行呈现 */
+.rv tbody tr{animation:none;opacity:1;transform:none}
+}
+@media print{
+#top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
+body{background:#fff;color:#000}
+#main{padding:0}#contentrow{display:block}
+article{box-shadow:none;border:none;max-width:100%}
+a{color:inherit}
+}
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 16</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod开发配方2.html">Mod开发配方2</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../数据格式参考3.html">数据格式参考3</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 26</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><a href="../01-引擎/25-方块实体与容器.html">25-方块实体与容器</a><a href="../01-引擎/27-地形修改与MovingBlocks.html">27-地形修改与MovingBlocks</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="地形修改与movingblocks">地形修改与MovingBlocks</h1>
+<blockquote>域: SC引擎 · 更新: 2026-11-01 · 状态: 全读(SubsystemTerrain/TerrainChunk/Terrain/TerrainChunkState/TerrainUpdater/TerrainSerializer23/SubsystemMovingBlocks/MovingBlock/SubsystemPistonBlockBehavior/SubsystemCollapsingBlockBehavior/SubsystemExplosions/SubsystemEntityBlockBehavior/SubsystemBlockEntities/SubsystemBlockBehavior)</blockquote>
+<h2 id="一句话定位">一句话定位</h2>
+<p>运行时改世界的唯一入账口是 <code>SubsystemTerrain.ChangeCell</code>（钩子→写格→脏计数→3×3 降级→行为派发五连）；存档不记"修改日志"而是<b>只把脏过的整块快照</b>写进 Region 文件；活塞/塌方把方块从网格搬进 <code>MovingBlockSet</code> 浮空集合、落地用 <code>DestroyCell</code> 带块回写——爆炸则是"逐格 DestroyCell"的批量原版范式。</p>
+<h2 id="修改入账链-运行时改一格发生什么">修改入账链（运行时改一格发生什么）</h2>
+<div class="tablewrap"><table><thead><tr><th>#</th><th>发生什么</th><th>出处</th></tr></thead><tbody><tr><td>1</td><td>入口 <code>ChangeCell(x,y,z,value, updateModificationCounter=true, movingBlock=null)</code></td><td><code>Survivalcraft\Subsystem\SubsystemTerrain.cs:355</code></td></tr><tr><td>2</td><td>⚡<code>TerrainChangeCell</code> 钩子（<code>out Skip=true</code> 整段跳过原版写格）</td><td>SubsystemTerrain.cs:357-369</td></tr><tr><td>3</td><td>合法性只查 y∈[0,256)（<code>Terrain.IsCellValid</code>，x/z 越界由 <code>GetChunkAtCell</code> 返 null 兜住）</td><td>SubsystemTerrain.cs:370-372; <code>Survivalcraft\Game\Terrain.cs:228</code></td></tr><tr><td>4</td><td>新旧值<b>清光位</b>后比较，相同直接 return——手写光值无效，光只由重算产生</td><td>SubsystemTerrain.cs:373-378</td></tr><tr><td>5</td><td><code>Terrain.SetCellValueFast</code> 写入 Cells 数组（同步可见）</td><td>SubsystemTerrain.cs:379; Terrain.cs:260; <code>Survivalcraft\Game\TerrainChunk.cs:171</code></td></tr><tr><td>6</td><td><code>chunk.ModificationCounter++</code>（<b>全仓唯一自增点</b>；<code>updateModificationCounter=false</code> 可跳过，原版仅活塞回缩用）</td><td>SubsystemTerrain.cs:380-384</td></tr><tr><td>7</td><td><code>DowngradeChunkNeighborhoodState(coords, radius=1, InvalidLight, false)</code>——自身+8 邻降级，光照/网格交给状态机重算</td><td>SubsystemTerrain.cs:385; <code>Survivalcraft\Game\TerrainUpdater.cs:416-432</code></td></tr><tr><td>8</td><td>记入 <code>m_modifiedCells</code> → 下一帧 <code>Update→ProcessModifiedCells</code>：对 7 个偏移(含自身)逐个发 <code>OnNeighborBlockChanged</code></td><td>SubsystemTerrain.cs:387, :493-498, :66-84</td></tr><tr><td>9</td><td><code>ChangeCellToBehavior</code>（try/catch 只记日志）：movingBlock 分支见下；否则 contents 变→<code>OnBlockRemoved</code>(旧)→<code>OnBlockAdded</code>(新)，不变→<code>OnBlockModified</code></td><td>SubsystemTerrain.cs:388-393, :396-427</td></tr><tr><td>10</td><td><code>DestroyCell(toolLevel,…,movingBlock)</code> = 掉落表→碎屑粒子→<code>ChangeCell(:469)</code>；挖/爆炸/落地回写全汇这里</td><td>SubsystemTerrain.cs:429-470</td></tr></tbody></table></div>
+<ul><li><b>裸写旁路</b>：<code>Terrain/TerrainChunk.SetCellValueFast</code> 不计数、不降级、不发行为——只许生成管线与画布地形用；运行时直写 = 修改不落盘 + 光照网格冻结。</li><li><b>移动分支</b>（<code>movingBlock.MovingBlockSet!=null</code> 时第 9 步换成）：集合未停→旧值行为 <code>OnBlockStartMoving</code>；已停→新值行为 <code>OnBlockStopMoving</code>；然后 <b>return——OnBlockAdded/Removed 完全不触发</b>（这是箱子搬家内容不丢的根因） | SubsystemTerrain.cs:401-413</li><li><b>批量范式=爆炸</b>：<code>AddExplosion</code> 入队(:237-244)→<code>Update</code> 把中心 ±4 内的排队爆炸一次全爆(:246-327)→<code>SimulateExplosion</code> BFS 压力衰减波(:343-639，衰减 <code>pressure/(pow(块数,0.66)+5·max(步-7,0))</code> :376-377)→每毁格 <code>DestroyCell(0,noDrop=true,noPS=true)</code>(:671-679)+75/95% 概率链爆 <code>TryExplodeBlock</code>(:225-235,:683)+碎块变抛射物(:701-750)→<code>PostprocessExplosions</code>：存活格行为 <code>OnExplosion</code>(:794-802)+起火(:803-809)+实体/掉落物冲量(:811-838)+音效分档(:839-882) | <code>Survivalcraft\Subsystem\SubsystemExplosions.cs</code></li></ul>
+<h3 id="mod-视角-世界编辑器-结构放置的接口清单">mod 视角：世界编辑器/结构放置的接口清单</h3>
+<ul><li><b>正道</b>：循环 <code>ChangeCell</code>（同区块重复降级幂等，无 N² 放大）；只有格子值需同步读时才可夹 <code>SetCellValueFast</code> 读-改，最后仍走 ChangeCell 收账。</li><li><b>等待契约</b>：格子值同步可见；光照/网格要等状态机把区块重新推到 <code>Valid</code>（相机前 6 格会在 <code>PrepareForDrawing</code> 同步等完，TerrainUpdater.cs:392-414）；邻居行为通知<b>延后一帧</b>（ProcessModifiedCells）——OnBlockAdded 里读邻居是"未通知态"。</li><li><b>时机红线</b>：目标区块 <code>State≤InvalidContents4</code>（还在生成趟）别写——生成趟会覆盖早写的格。活塞的原版判据是 3×3 邻域区块全部已生成才动手（SubsystemPistonBlockBehavior.cs:229-237），照抄。</li><li><b>省盘技巧</b>：纯视觉改动传 <code>updateModificationCounter:false</code> 可不脏化区块（但改动也不会存盘）。</li></ul>
+<h2 id="持久化契约">持久化契约</h2>
+<ul><li><b>整块快照，非修改日志</b>：<code>SaveChunk</code> 门槛 <code>State&gt;InvalidContents4 &amp;&amp; ModificationCounter&gt;0</code>，落盘后清零——<b>没被改过的区块永不写盘</b>，重进世界由种子重生成 | <code>Survivalcraft\Game\TerrainSerializer23.cs:593-599</code></li><li><b>文件组织</b>：每世界目录 <code>Regions/Region X,Y.dat</code>，一个文件装 16×16 个区块（坐标 <code>&gt;&gt;4</code> 定位 :343-344/:359-360）；头=FourCC <code>RGN1</code>+256 个 8 字节目录项(:507-514)；每条目前置 4 字节 <code>CHK1</code>(:516-520)；就地写不下→tmp 整文件重建换名(:381-442)；单 Region 上限 256MB(:540-545)；句柄 LRU 100(:473-475) | TerrainSerializer23.cs</li><li><b>压缩</b>：256 字节温湿度（每列 <code>温度&lt;&lt;4|湿度</code> 挤一字节 :654-659）→ 按 y→x→z 对<b>光位清零</b>的整格 value 做 RLE，游程长度藏进 light 位（≤15：4 字节；≤271：5 字节 :751-764）→ Deflate Fastest(:688)；解压未精确填满 16×256×16 抛 "Corrupt chunk data"(:719-723) | TerrainSerializer23.cs:652-724</li><li><b>光不落盘</b>：读档走 <code>NotLoaded→InvalidLight</code>（跳过四趟生成，玩家修改因此幸存）并标 <code>IsLoaded=true</code> | <code>Survivalcraft\Game\TerrainUpdater.cs:653-667</code></li><li><b>十态参与情况</b>（TerrainChunkState.cs:2-13）：只有 ≥InvalidLight(5) 的区块有落盘资格；停在 NotLoaded~InvalidContents4 的区块被卸载 = 直接放弃重生成。ChangeCell 的降级目标就是 InvalidLight——正常路径下"改过的区块"状态恒 ≥5，门槛必过。</li><li><b>退出保存</b>：<code>SubsystemTerrain.Save</code> 遍历全部 AllocatedChunks 逐个过同一门槛(:597-600)；期间 <code>TerrainUpdater.UpdateEvent.WaitOne/Set</code> 暂停后台线程防并发释放 | <code>Survivalcraft\Subsystem\SubsystemTerrain.cs:587-605</code></li><li><b>读档 IO 异常</b>→杀工程回 Play 屏弹日志对话框 | TerrainSerializer23.cs:611-625</li><li><b>非区块地形改动的持久化</b>：进行中的 <code>MovingBlockSet</code> 整体随 SubsystemMovingBlocks 存档（<code>Blocks</code> 序列化成 <code>value,ox,oy,oz;…</code> 串 :495-506；含 Position/TargetPosition/Speed 等 :481-494）；读档 <code>testCollision=false</code> 原地重挂(:459-470)。BlockEntity 内容物与地形无关，由实体存档承载（见 <a href="../01-引擎/25-方块实体与容器.html">25页</a>）。</li><li>老格式 TS14/129/22 只被版本转换器读写；<code>SingleFileStorage</code>(Chunks32fs.dat) 在本仓库构造函数里已不启用（构造固定 <code>new RegionFileStorage()</code> :586-589），属备用/闲置后端。</li></ul>
+<h2 id="movingblocks-全链-活塞-塌方整体搬家">MovingBlocks 全链（活塞/塌方整体搬家）</h2>
+<p><b>结构</b>：<code>MovingBlock{Offset,Value,MovingBlockSet}</code>（<code>Survivalcraft\Block\MovingBlock.cs:91-95</code>）；<code>MovingBlockSet{Position/TargetPosition/Speed/Acceleration/Drag/Smoothness, Blocks, Box, Geometry}</code>（<code>Survivalcraft\Subsystem\SubsystemMovingBlocks.cs:11-108</code>，接口 <code>Survivalcraft\Block\IMovingBlockSet.cs</code>）。集合<b>不是实体</b>：渲染自绘（Draw :382-430，几何用"画布 Terrain+ShadowBlock(257) 背板"烘出来 :556-662），物理是位置插值而非 ComponentBody。</p>
+<p>全链（以活塞推为例，一步不漏）：</p>
+<ol><li>触发：电元素 → <code>AdjustPiston(position,length)</code> 入 <code>m_actions</code> | <code>Survivalcraft\Subsystem\BlockBehavior\SubsystemPistonBlockBehavior.cs:44-50</code></li><li><code>Update</code> 每 0.125s 一拍 <code>ProcessQueuedActions</code>(:52-57,:204-251)：格不是活塞就停(:210-214)；<b>3×3 邻域区块必须全生成</b>(:229-237)；每帧另跑 <code>UpdateMovableBlocks</code> 维护集合内活塞头(:253-288，增删用 <code>IMovingBlockSet.SetBlock</code> :96-103)</li><li><code>MovePiston</code>(:311-469)：收集头链(238)+可推块（≤8，上限常量 :34-38；<code>IsBlockMovable</code> :549-554）→ <code>AddMovingBlockSet(start,target,…,"Piston",tag=活塞坐标,testCollision=true)</code>(:368-379；钩子 <code>OnMovingBlockSetAdded</code> :180-187) → <b>逐块 <code>ChangeCell(…,0,true,movingBlock)</code> 让方块离开网格</b>(:385-392) → 活塞格标 <code>IsExtended</code>(:399-404)</li><li>上一步的 ChangeCell 带 movingBlock→<code>OnBlockStartMoving</code>（旧值行为）：BlockEntity 从坐标字典切进 <code>m_movingBlockEntities</code>——<b>实体不销毁，内容物全程保留</b>（对照 <code>OnBlockRemoved</code> 会 <code>DropAllItems</code>+删实体） | <code>Survivalcraft\Subsystem\BlockBehavior\SubsystemEntityBlockBehavior.cs:80-87</code>（对照 :37-46）；<code>Survivalcraft\Subsystem\SubsystemBlockEntities.cs:6-8</code></li><li>每帧 <code>SubsystemMovingBlocks.Update</code>(:304-380)：所在区块未生成/半生成直接<b>冻结跳过</b>(:319-326)；加速度+阻力+双端平滑(:327-335)；速度钳 <code>0.95/dt</code>(:338-339)；到点→Position=Target(:340-344)；<code>MovingBlocksCollision</code>(集合互撞 :524-534)+<code>TerrainCollision</code>(撞地形，逐格发 <code>CollidedWithTerrain</code> 事件 :536-554)(:350-351)；Stop 时按运动方向 Ceiling/Floor <b>对齐格线</b>(:352-371)</li><li>落地：到点或撞死→<code>m_stopped</code>→<code>Stopped</code> 事件(:372-379)→活塞侧 <code>MovingBlocksStopped</code> 回队(:535-547)→<code>StopPiston</code>(:471-503)：<code>RemoveMovingBlockSet</code>（RemainCounter=4，多画 4 帧幽灵防闪断 :204-217,:391-401）→ 逐块 <b><code>AddTerrainBlock</code></b>(:487)</li><li><b><code>AddTerrainBlock</code>(:692-713) = 官方落地写回</b>：集合 <code>Stop()</code>(:697) → <code>DestroyCell(0,x,y,z,原值,noDrop=m_noDropOnMovingBlockStopped,movingBlock)</code>(:698-707) → ChangeCell 带已停集合→<code>OnBlockStopMoving</code>（新值行为）：字典切回坐标键+<code>Coordinates</code> 改写 | SubsystemEntityBlockBehavior.cs:89-97</li><li>卸载保险：<code>OnChunkDiscarding</code> 把 16 格扩边内的活塞集合全停掉（防集合悬在将消失的区块上） | SubsystemPistonBlockBehavior.cs:182-191</li><li><b>塌方同构</b>：<code>OnNeighborBlockChanged</code>(Living 模式)→<code>TryCollapseColumn</code>(:67-104)：向上扫整列 <code>GetIsCollapsable</code>(:76-83)→<code>AddMovingBlockSet(target.y=-count-1</code> 自由落体, accel=10/drag=0.7 :85-96)→逐块 <code>ChangeCell(…,0,true,item)</code>(:98-101)；砸到支撑块停、砸到可毁块 DestroyCell 穿透(:29-47)；落地全量回写+移除(:49-65) | <code>Survivalcraft\Subsystem\BlockBehavior\SubsystemCollapsingBlockBehavior.cs</code></li></ol>
+<p><b>交互面</b>：<code>SubsystemMovingBlocks.Raycast</code>(:238-302) 供选中移动块；<code>ComponentMiner.Interact(MovingBlocksRaycastResult)</code>(:548-583)→行为 <code>OnInteract(MovingBlocksRaycastResult,…)</code>（箱子经 <code>GetBlockEntity(movingBlock)</code> 摸到搬移中的实体，SubsystemEntityBlockBehavior.cs:65-76）。<b>移动中的方块不可挖</b>：<code>Raycast&lt;T&gt;</code> 按返回类型过滤（ComponentMiner.cs:1073-1081），Dig 只收 TerrainRaycastResult，最近命中是移动块时拿到 null。</p>
+<h2 id="区块生命周期-修改视角">区块生命周期（修改视角）</h2>
+<ul><li><b>装载圈</b>：<code>IsChunkInRange</code>=到任一 UpdateLocation 中心距离²≤ContentDistance²（TerrainUpdater.cs:447-457）；位置由相机每帧上报（visibility=天空能见度、content=64，:392-393）。</li><li><b>卸载</b>：圈外→⚡<code>ToFreeChunks</code> 钩子(:465-475)→全行为 <code>OnChunkDiscarding</code>(:477-479)→<code>SaveChunk</code>（门槛过滤，脏了才写）(:480)→<code>FreeChunk</code>(:481)。<b>卸载即保存</b>，无全局"退出才存"依赖。</li><li><b>重生成判据</b>：下次进圈 <code>AllocateChunk</code>(:494)→NotLoaded→读档成功=保留修改直进 InvalidLight(:653-667)；无档=全量生成。TCG 与玩家修改的边界 = <b>Region 文件里有没有这个区块</b>。</li><li><b>降级重算粒度</b>：光照=3×3 邻域整域重算（降级即失效）；网格按 16×16×16 slice 的<b>内容哈希</b>跳过未变层（<code>CalculateChunkSliceContentsHashes</code> :1228-1297；<code>GenerateChunkVertices</code> 命中即 skip :1157-1165）——改一格只重画所在 slice 与波及列。</li><li><b>全局降级源</b>：天光值变化→InvalidLight(:318-322)；季节温湿变化→InvalidVertices1(:323-330)；亮度设置→InvalidVertices1+强制几何重建(:1334-1338)。</li><li><b>"改过没有"的读法</b>：<code>chunk.ModificationCounter&gt;0</code>（本会话改过）、<code>chunk.IsLoaded</code>（来自存档而非生成）——原版家具雕刻用两者判"区块是否处女地"（<code>Survivalcraft\Subsystem\BlockBehavior\SubsystemFurnitureBlockBehavior.cs:148-155</code>）。</li></ul>
+<h2 id="坑与对策">坑与对策</h2>
+<ul><li><b>SetCellValueFast 直写三宗罪</b>：不落盘（计数不增）、光照网格冻结、无行为派发。运行时一律 ChangeCell。</li><li><b>生成中的区块被写</b>：生成趟会覆盖；照抄活塞"3×3 邻域全生成才动手"。</li><li><b>ChangeCell 里 OnBlockAdded 读邻居是旧的</b>：通知延后一帧到 ProcessModifiedCells（入账链 8）。</li><li><b>移动块落地写错分支</b>：<code>StopPiston</code> 先 <code>RemoveMovingBlockSet</code>（只移出列表，MovingBlock→集合的引用还在）再逐块 <code>AddTerrainBlock</code>，依赖"引用完好+集合随后 Stop()"走 OnBlockStopMoving；若 mod 提前断开引用或集合被销毁，ChangeCell 退回普通分支触发 OnBlockAdded/Removed——箱子会被拆成掉落物 [推测：后果由 OnBlockRemoved:41-44 决定，断链条件未实测]</li><li><b>爆炸是逐格账</b>：N 个毁格=N 次 ChangeCell+3×3 降级（幂等但非零开销）；巨量修改（如 &gt;1 万格）考虑分帧。</li><li><b>RLE 上限 271</b>：同一值连续 272+ 格会自动切段，无需处理；但解码器强校验 16×256×16 恰好填满，手改存档极易触发 "Corrupt chunk data"。</li></ul>
+<h2 id="原版范例">原版范例</h2>
+<div class="tablewrap"><table><thead><tr><th>我要做…</th><th>照抄哪里</th></tr></thead><tbody><tr><td>批量清一片区域</td><td><code>SubsystemExplosions.SimulateExplosion</code>:343——BFS 圈格+逐格 <code>DestroyCell(0,noDrop,noPS)</code>，收尾统一派发 OnExplosion/冲量</td></tr><tr><td>结构放置器（批量写入）</td><td>循环 <code>SubsystemTerrain.ChangeCell</code>；参考活塞扩展逐块入账(:385-392)；写入前查 3×3 邻域已生成(:229-237)</td></tr><tr><td>结构整体平移/搬运</td><td><code>SubsystemCollapsingBlockBehavior.TryCollapseColumn</code>:67-104 三段式：AddMovingBlockSet→ChangeCell(0,movingBlock)→Stopped 事件里 AddTerrainBlock 回写</td></tr><tr><td>搬运时保住方块实体（箱子带内容移动）</td><td><code>SubsystemEntityBlockBehavior.cs:80-97</code> 双向切字典；<code>MovingBlock.SetValuesDicionary</code>:81-86 让位置随实体存档</td></tr><tr><td>让悬浮方块可被玩家交互</td><td><code>SubsystemMovingBlocks.Raycast</code>:238 + 行为重载 <code>OnInteract(MovingBlocksRaycastResult,…)</code>（SubsystemEntityBlockBehavior.cs:65-76）</td></tr><tr><td>自定义可塌方块</td><td><code>Block.GetIsCollapsable/IsCollapseSupportBlock/IsCollapseDestructibleBlock</code>（SubsystemCollapsingBlockBehavior.cs:79,:106-116）</td></tr><tr><td>挡活塞/被活塞推</td><td><code>Block.IsMovableByPiston/IsBlockingPiston</code>（SubsystemPistonBlockBehavior.cs:549-556）；8 块上限 :34</td></tr><tr><td>判断区块是否处女地</td><td><code>chunk.ModificationCounter</code>+<code>chunk.IsLoaded</code>（SubsystemFurnitureBlockBehavior.cs:148-155）</td></tr></tbody></table></div>
+<h2 id="快查路由">快查路由</h2>
+<div class="tablewrap"><table><thead><tr><th>我想…</th><th>去/看</th></tr></thead><tbody><tr><td>改一格后光照/邻居没反应</td><td>入账链 6~9（降级+延后一帧通知）；等状态机重推 Valid</td></tr><tr><td>改动存档后消失</td><td>用了 SetCellValueFast 直写；或区块未到 InvalidLight 就被卸载</td></tr><tr><td>查一格改动到底触发了哪些行为</td><td>SubsystemTerrain.cs:396-427 分派表（Added/Removed/Modified/StartMoving/StopMoving）</td></tr><tr><td>搬一整个结构</td><td>MovingBlocks 全链 1-7；集合存档格式见持久化节</td></tr><tr><td>移动中的箱子打不开/内容丢了</td><td>OnBlockStartMoving/StopMoving 未成对——movingBlock 参数必须传满整链</td></tr><tr><td>活塞推不动某方块</td><td><code>IsMovableByPiston</code> 默认 false；8 块/伸出 8 格上限（SubsystemPistonBlockBehavior.cs:34-38）</td></tr><tr><td>调爆炸威力/抗爆</td><td><code>Block.GetExplosionPressure/GetExplosionResilience</code>（SubsystemExplosions.cs:228,:667）；⚡<code>OnBlockExploded</code>/<code>CalculateExplosionPower</code> 钩子(:364-371,:787-793)</td></tr><tr><td>区块何时卸载/修改何时落盘</td><td>生命周期节+<code>SaveChunk</code> 门槛（TerrainSerializer23.cs:593-599）</td></tr><tr><td>存档里 Regions 文件内部结构</td><td>持久化节（RGN1/CHK1/目录项/256MB 上限）</td></tr><tr><td>找 pages 的生成侧（四趟/十态/序列化器全貌）</td><td><a href="../01-引擎/05-世界与地形生成.html">05页</a>；挖放玩家链 <a href="../01-引擎/24-机制全链.html">24页</a> 链 1/2；BlockEntity 侧 <a href="../01-引擎/25-方块实体与容器.html">25页</a></td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/25-方块实体与容器.html"><small>上一页 · SC引擎</small><b>25-方块实体与容器</b></a><a class="next" href="../01-引擎/明细/02a-子系统明细.html"><small>下一页 · SC引擎·明细</small><b>02a-子系统明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#修改入账链-运行时改一格发生什么">修改入账链（运行时改一格发生什么）</a><a class="lvl3" href="#mod-视角-世界编辑器-结构放置的接口清单">mod 视角：世界编辑器/结构放置的接口清单</a><a class="lvl2" href="#持久化契约">持久化契约</a><a class="lvl2" href="#movingblocks-全链-活塞-塌方整体搬家">MovingBlocks 全链（活塞/塌方整体搬家）</a><a class="lvl2" href="#区块生命周期-修改视角">区块生命周期（修改视角）</a><a class="lvl2" href="#坑与对策">坑与对策</a><a class="lvl2" href="#原版范例">原版范例</a><a class="lvl2" href="#快查路由">快查路由</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+const $=s=>document.querySelector(s);
+const ROOT="../"; // 站点根相对前缀（按页面深度注入）
+// 主题切换
+const tbtn=$('#themeBtn');
+function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
+applyTheme(document.documentElement.dataset.theme||'light');
+tbtn.addEventListener('click',()=>applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'));
+// ⌘K 命令面板
+let IDX=[];
+fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
+});
+// 移动端侧栏抽屉
+const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
+function setSide(open){side.classList.toggle('open',open);backdrop.classList.toggle('show',open)}
+burger.addEventListener('click',e=>{e.stopPropagation();setSide(!side.classList.contains('open'))});
+document.addEventListener('click',e=>{if(window.innerWidth<=1024&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==burger)setSide(false)});
+backdrop.addEventListener('click',()=>setSide(false));
+// 高亮当前页
+const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
+document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
+const tocLinks=[...document.querySelectorAll('#tocnav a')];
+if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
+  const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
+  const onScroll=()=>{
+    let idx=0;
+    for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
+    tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
+  };
+  document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
+document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
+btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+// 代码块复制按钮
+document.querySelectorAll('pre.code').forEach(pre=>{
+  const b=document.createElement('button');b.className='copybtn';b.textContent='复制';
+  b.addEventListener('click',async()=>{const txt=pre.innerText;let ok=false;
+    try{await navigator.clipboard.writeText(txt);ok=true}catch(e){
+      try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(e2){}}
+    b.textContent=ok?'✓ 已复制':'失败';
+    if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
+  pre.appendChild(b);
+});
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
+</script></body></html>
