@@ -11,7 +11,7 @@
 | 域 | 我要做… | 照抄哪里（+为什么抄它） |
 |---|---|---|
 | 方块 | 最简新方块 | `IceBlock.cs`（4 行最小实现）；带染色仿 `BasaltBlock.cs:5`；可入家具抄 `CanBeBuiltIntoFurniture` 〔04〕 |
-| 方块 | 加一套多材质工具 | `AxeBlock.cs`（基类 Initialize 烘模型）+`CopperAxeBlock.cs:5`（叶填参）——材质差异全部收敛为 ctor 参数 〔04〕 |
+| 方块 | 加一套多材质工具 | `AxeBlock.cs`（基类 Initialize 烘模型）+`CopperAxeBlock.cs:5`（叶填参）——类/模型差异收敛为 ctor 参数，**数值差异（三 Power/耐久/ToolLevel）在 BlocksData.txt 行**（:167-176，按列名反射），见 [36-挖掘与工具](01-引擎/36-挖掘与工具.md) 〔04〕 |
 | 方块 | 异形方块（楼梯/活塞，预烘变体） | `DoorBlock.cs:21-62`(16 变体)/`StairsBlock.cs:26-104`(24×2)/`PistonBlock.cs:12-70`(48)；Initialize 预烘 BlockMesh+碰撞盒表，运行期只查表 〔04〕 |
 | 方块 | 门/开关类方块（data 位+朝向放置） | `DoorBlock.cs:208-228`（data 位工具）+:120（朝向放置）；活板门倒装看 `TrapdoorBlock.cs:92-118` 〔04〕 |
 | 方块 | 液体方块 | `FluidBlock.cs:23-43`（反射建同族表，免写比较器）+`WaterBlock.cs:12`（着色）；顶面 8 邻平滑 :179-192 〔04〕 |

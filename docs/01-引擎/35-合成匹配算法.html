@@ -1,0 +1,460 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><script>(function(){try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}})()</script><title>合成匹配算法（网格→配方·通配与Remains·熔炉复用·动态配方） · SC 源码笔记</title><style>
+:root{
+--bg:#f8fafc;--sheet:#ffffff;--surface-2:#f1f5f9;--side-bg:#f8fafc;
+--ink:#0f172a;--ink-soft:#475569;--ink-faint:#94a3b8;
+--line:#e6e9f0;--line-strong:#d5dbe5;
+--acc:#4f46e5;--acc-2:#7c3aed;--acc-ink:#4338ca;--acc-soft:#eef2ff;
+--top-bg:rgba(248,250,252,.82);--code-bg:#0f172a;--code-ink:#e2e8f0;
+--shadow:0 1px 2px rgba(2,6,23,.05),0 12px 32px -8px rgba(2,6,23,.10);
+--shadow-sm:0 1px 2px rgba(2,6,23,.06);
+--header-h:58px;--side-w:264px}
+:root[data-theme=dark]{
+--bg:#0a0d14;--sheet:#10141f;--surface-2:#161c2b;--side-bg:#0c101a;
+--ink:#e6e9f0;--ink-soft:#a6afc2;--ink-faint:#64708c;
+--line:#1e2536;--line-strong:#2b3550;
+--acc:#818cf8;--acc-2:#a78bfa;--acc-ink:#a5b4fc;--acc-soft:rgba(99,102,241,.16);
+--top-bg:rgba(10,13,20,.78);--code-bg:#0b101c;--code-ink:#d7dee8;
+--shadow:0 1px 2px rgba(0,0,0,.45),0 14px 36px -10px rgba(0,0,0,.55);
+--shadow-sm:0 1px 2px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px)}
+body{margin:0;font-family:ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",-apple-system,sans-serif;
+color:var(--ink);font-size:15px;line-height:1.8;
+background:radial-gradient(1000px 460px at 78% -12%,rgba(99,102,241,.09),transparent 60%),
+radial-gradient(820px 420px at -8% -4%,rgba(124,58,237,.06),transparent 55%),var(--bg);
+transition:color .2s,background-color .2s}
+::selection{background:var(--acc-soft);color:var(--acc-ink)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+/* 顶栏：玻璃 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
+background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.55),transparent);opacity:0;transition:opacity .35s}
+#top.scrolled::after{opacity:1}
+#burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4);animation:logob 4s ease-in-out infinite}
+@keyframes logob{0%,100%{box-shadow:0 4px 12px rgba(99,102,241,.4);filter:hue-rotate(0deg)}50%{box-shadow:0 4px 20px rgba(139,92,246,.65);filter:hue-rotate(20deg)}}
+@media (prefers-reduced-motion: reduce){#top .brand b::before{animation:none}}
+#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
+#themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
+#themeBtn:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap;border:1px solid var(--line);border-radius:9px;padding:6px 11px;background:var(--surface)}
+#top .gh:hover{color:var(--acc);border-color:var(--acc)}
+/* 布局 */
+#layout{display:flex;min-height:calc(100vh - var(--header-h))}
+#backdrop{display:none}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-size:10.5px;font-weight:700;color:var(--ink-faint);letter-spacing:2.2px;text-transform:uppercase}
+#side .sec:first-child{margin-top:4px}
+#nav a{display:block;padding:5.5px 10px;margin:1px 0;border-radius:8px;color:var(--ink-soft);text-decoration:none;font-size:13.5px;line-height:1.5;transition:background .12s,color .12s}
+#nav a:hover{background:var(--acc-soft);color:var(--acc-ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-ink);font-weight:600;box-shadow:inset 2px 0 0 var(--acc)}
+/* 正文 + 右侧目录 */
+#main{flex:1;min-width:0;padding:32px clamp(16px,3.5vw,44px) 80px}
+#contentrow{display:flex;gap:34px;align-items:flex-start;justify-content:center;max-width:1240px;margin:0 auto}
+article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow);overflow-wrap:break-word}
+h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
+background:linear-gradient(120deg,var(--ink) 25%,var(--acc-ink) 45%,var(--ink) 70%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:h1sh 8s ease-in-out infinite alternate}
+@keyframes h1sh{to{background-position:100% center}}
+@media (prefers-reduced-motion: reduce){h1{animation:none}}
+h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;padding-left:13px;border-bottom:1px solid var(--line);position:relative}
+h2::before{content:"";position:absolute;left:0;top:4px;bottom:13px;width:4px;border-radius:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:.9}
+h3{font-size:16px;font-weight:700;margin:26px 0 10px}
+p{margin:10px 0}
+a{color:var(--acc-ink);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+a.hcard:hover,a.pn a:hover{text-decoration:none} /* 卡片有抬升/辉光反馈，整卡下划线很廉价 */
+/* 正文链接：渐变下划线滑入（卡片/签云/上下页自身有背景，重置之） */
+article a:not(.pn a):not(.chips a):not(.hcard){background:linear-gradient(90deg,var(--acc),var(--acc-2)) left calc(100% - 0px)/0% 1.5px no-repeat;transition:background-size .22s ease}
+article a:not(.pn a):not(.chips a):not(.hcard):hover{background-size:100% 1.5px;text-decoration:none}
+blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:6px 12px 12px 6px;color:var(--ink-soft);font-size:14.5px}
+blockquote p{margin:4px 0}
+code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:break-word}
+:root[data-theme=dark] code{color:#c7d2fe}
+:root[data-theme=dark] article{border-color:rgba(148,163,184,.15);box-shadow:0 20px 48px -20px rgba(0,0,0,.65)}
+:root[data-theme=dark] #top{border-bottom-color:rgba(148,163,184,.13)}
+:root[data-theme=dark] #side{border-right-color:rgba(148,163,184,.1)}
+pre.code{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:var(--shadow-sm)}
+pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);box-shadow:var(--shadow-sm)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
+th{background:var(--surface-2);color:var(--ink);font-weight:600;text-align:left}
+th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:break-word}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--acc-soft)}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+ul,ol{padding-left:1.5em;margin:10px 0}
+li{margin:4px 0}
+article li::marker{color:var(--acc)}
+#foot{max-width:1240px;margin:40px auto 0;padding:16px 20px 0;border-top:none;font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px;position:relative}
+#foot::before{content:"";position:absolute;top:0;left:18%;right:18%;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+#foot b{color:var(--ink-soft);font-weight:600}
+/* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
+pre.code .k{color:#ff7b72}
+pre.code .t{color:#ffa657}
+pre.code .s{color:#a5d6ff}
+pre.code .c{color:#8b949e;font-style:italic}
+pre.code .n{color:#79c0ff}
+pre.code .a{color:#d2a8ff}
+pre.code .t2{color:#7ee787}
+/* 上一页/下一页 */
+.pn{display:flex;gap:14px;margin:36px 0 6px}
+.pn a{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pn a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(79,70,229,.35)}
+.pn a.next{text-align:right}
+.pn a small{color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px}
+.pn a b{color:var(--acc-ink);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .pnvoid{flex:1}
+/* 首页三入口卡片 */
+.hero{margin:24px 0 4px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hcard::before{content:"";position:absolute;inset:0;border-radius:13px;padding:1.5px;background:conic-gradient(from var(--flw,0deg),transparent 0 68%,var(--acc) 82%,var(--acc-2) 90%,transparent 98%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .25s;pointer-events:none}
+.hcard:hover::before{opacity:1;animation:flw 2.6s linear infinite}
+@property --flw{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes flw{to{--flw:360deg}}
+@media (prefers-reduced-motion: reduce){.hcard:hover::before{animation:none}}
+.hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
+.hcard:hover::before{opacity:1}
+.hcard .ico{font-size:21px;line-height:1}
+.hcard b{font-size:15.5px;color:var(--ink)}
+.hcard span{font-size:12.5px;color:var(--ink-soft)}
+/* 长表格：内部滚动 + 粘性表头 */
+.tablewrap.tall{max-height:calc(100vh - 150px);overflow:auto}
+.tablewrap.tall th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line-strong)}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
+.deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
+/* ── 交互层 ── */
+#pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0;box-shadow:0 0 10px rgba(99,102,241,.65)}
+#btt{position:fixed;right:22px;bottom:26px;z-index:18;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--acc);font-size:17px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:all .25s;box-shadow:var(--shadow-sm)}
+#btt.show{opacity:1;pointer-events:auto;transform:none}
+#btt:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);transform:translateY(-2px)}
+pre.code{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:var(--code-ink);border-radius:7px;padding:3px 9px;font-size:11.5px;cursor:pointer;opacity:0;transition:all .18s}
+pre.code:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.15);border-color:var(--acc)}
+.copybtn.ok{color:#4ade80;border-color:rgba(74,222,128,.6)}
+.tablewrap{transition:box-shadow .2s,border-color .2s}
+.tablewrap:hover{border-color:var(--line-strong);box-shadow:0 6px 24px -8px rgba(2,6,23,.18)}
+tr[id] td:first-child{font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:12.5px}
+tr[id] td{transition:background .12s}
+tr[id]:hover td{background:var(--acc-soft)}
+#nav a{transition:background .15s,color .15s,padding-left .15s}
+#nav a:hover{padding-left:15px}
+#tocnav a{transition:color .12s,background .12s,padding-left .15s}
+#tocnav a:hover{padding-left:15px}
+.jumpbox{margin:12px 0 2px}
+.jumpbox summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--acc-ink);background:var(--acc-soft);border:1px solid var(--line);border-radius:9px;padding:5px 12px;display:inline-block;list-style:none;transition:all .15s;user-select:none}
+.jumpbox summary::-webkit-details-marker{display:none}
+.jumpbox summary:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 2px}
+.chips a{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--ink-soft);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px 8px;text-decoration:none;transition:all .12s}
+.chips a:hover{color:var(--acc-ink);border-color:var(--acc);background:var(--acc-soft);transform:translateY(-1px)}
+.rv{opacity:0;transform:translateY(10px)}
+.rv.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
+@media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none}}
+/* 右侧目录 */
+#toc{flex:0 0 224px;position:sticky;top:calc(var(--header-h) + 26px);max-height:calc(100vh - var(--header-h) - 52px);overflow-y:auto;font-size:12.5px;line-height:1.5;padding:4px 0 20px}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ink-faint);margin:8px 10px 10px;text-transform:uppercase}
+#tocnav a{display:block;padding:4px 10px;border-left:2px solid var(--line);color:var(--ink-soft);text-decoration:none;border-radius:0 7px 7px 0;margin:1px 0}
+#tocnav a.lvl3{padding-left:22px;font-size:12px;color:var(--ink-faint)}
+#tocnav a:hover{color:var(--acc);text-decoration:none}
+#tocnav a.active{color:var(--acc-ink);border-left-color:var(--acc);background:var(--acc-soft);font-weight:600}
+@media(max-width:1279px){#toc{display:none}#contentrow{max-width:920px}}
+/* 大屏加宽档：含 40+ 行大表的页(wideart)放得更开，散文页适度加宽 */
+article.wideart{max-width:1060px}
+@media(min-width:1600px){#contentrow{max-width:1580px}#foot{max-width:1580px}article{max-width:960px}article.wideart{max-width:1300px}}
+@media(min-width:2000px){#contentrow{max-width:1720px}#foot{max-width:1720px}article{max-width:1020px}article.wideart{max-width:1420px}body{font-size:15.5px}table{font-size:14px}}
+/* 窄屏 */
+@media(max-width:1024px){
+#burger{display:block}
+#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(2,6,23,.42);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
+#backdrop.show{opacity:1;pointer-events:auto}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:14px 0 36px rgba(2,6,23,.2)}
+#side.open{left:0}
+#top .gh{display:block;font-size:11.5px;padding:6px 9px}
+#top .brand small{display:none}
+.searchwrap{width:min(230px,50vw)}
+.searchwrap kbd{display:none}
+#main{padding:22px clamp(14px,3vw,24px) 70px}
+article{padding:22px 18px 30px;border-radius:14px}
+}
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%),transparent;animation:drift2 36s ease-in-out infinite alternate}
+.b3{width:640px;height:640px;top:36%;left:54%;background:radial-gradient(circle,rgba(217,70,239,.09),transparent 62%);animation:drift3 46s ease-in-out infinite alternate}
+@keyframes drift3{to{transform:translate(-90px,-70px) scale(1.14)}}
+/* 全局噪点纹理：最顶层极淡颗粒，给两主题加胶片质感 */
+html::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.032;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root[data-theme=dark] html::after{opacity:.05}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+article img:hover{transform:scale(1.015);box-shadow:0 10px 30px -10px rgba(2,6,23,.35)}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+/* 语言徽标按语言着色 */
+.codewrap:has(> pre.lang-csharp) .cinfo{color:#79c0ff}
+.codewrap:has(> pre.lang-xml) .cinfo{color:#7ee787}
+.codewrap:has(> pre.lang-json) .cinfo{color:#ffa657}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;box-shadow:0 0 8px rgba(99,102,241,.55);transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
+/* 主题切换圆形揭示（View Transitions；不支持时回退直切） */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1}
+::view-transition-new(root){z-index:2}
+/* 手机档（置于 CSS 末尾保证覆盖上方 searchwrap 宽度）：搜索收成纯图标钮，把宽度让给品牌名 */
+@media(max-width:600px){
+.searchwrap{width:38px;padding:7.5px 0;justify-content:center}
+.searchwrap .ph{display:none}
+#top{gap:8px}
+#top .brand b{font-size:15px;letter-spacing:-.1px;max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+#top .gh{font-size:10.5px;padding:6px 7px}
+}
+/* 手机横滚表：首列吸附，滚动时保留行上下文 */
+@media(max-width:760px){
+.tablewrap th:first-child,.tablewrap td:first-child{position:sticky;left:0;z-index:1;background:var(--sheet);box-shadow:inset -1px 0 0 var(--line)}
+.tablewrap th:first-child{background:var(--surface-2);z-index:2}
+.tablewrap.tall th:first-child{z-index:3}
+.tablewrap tbody tr:hover td:first-child{background:var(--acc-soft)}
+/* 慢设备上逐行瀑布会闪空白：手机端直接整行呈现 */
+.rv tbody tr{animation:none;opacity:1;transform:none}
+}
+@media print{
+#top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
+body{background:#fff;color:#000}
+#main{padding:0}#contentrow{display:block}
+article{box-shadow:none;border:none;max-width:100%}
+a{color:inherit}
+}
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 16</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod开发配方2.html">Mod开发配方2</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../数据格式参考3.html">数据格式参考3</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 37</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><a href="../01-引擎/25-方块实体与容器.html">25-方块实体与容器</a><a href="../01-引擎/26-生物AI与行为.html">26-生物AI与行为</a><a href="../01-引擎/27-地形修改与MovingBlocks.html">27-地形修改与MovingBlocks</a><a href="../01-引擎/28-弹道与远程武器.html">28-弹道与远程武器</a><a href="../01-引擎/29-Widget生命周期与自定义控件.html">29-Widget生命周期与自定义控件</a><a href="../01-引擎/30-爆炸系统.html">30-爆炸系统</a><a href="../01-引擎/31-服饰与装备.html">31-服饰与装备</a><a href="../01-引擎/32-家具系统.html">32-家具系统</a><a href="../01-引擎/33-流体系统.html">33-流体系统</a><a href="../01-引擎/34-玩家一生.html">34-玩家一生</a><a href="../01-引擎/35-合成匹配算法.html">35-合成匹配算法</a><a href="../01-引擎/36-挖掘与工具.html">36-挖掘与工具</a><a href="../01-引擎/37-种植与作物生长.html">37-种植与作物生长</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="合成匹配算法-网格-配方-通配与remains-熔炉复用-动态配方">合成匹配算法（网格→配方·通配与Remains·熔炉复用·动态配方）</h1>
+<blockquote>域: SC引擎 · 更新: 2026-11-02 · 状态: 全链今日实读（CraftingRecipesManager / CraftingRecipe / ComponentCraftingTable / ComponentFurnace / FurnitureBlock·ClothingBlock·CarpetBlock 的 GetAdHocCraftingRecipe / CraftingTableWidget / FullInventoryWidget / CraftingRecipeWidget / CraftingRecipeSlotWidget 全文 + BlocksData.txt CraftingId 列与 Database.xml 槽位参数核验，行号均本日现行代码） · 关联: <a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a> · <a href="../01-引擎/25-方块实体与容器.html">25-方块实体与容器</a> · <a href="../01-引擎/29-Widget生命周期与自定义控件.html">29-Widget生命周期与自定义控件</a> · <a href="../Mod开发配方2.html">Mod开发配方2</a></blockquote>
+<h2 id="一句话定位">一句话定位</h2>
+<p>配方匹配是一个<b>纯字符串比对器</b>：工作台/熔炉把网格物品编码成 9 个 <code>craftingId:data</code> 字符串，<code>CraftingRecipesManager.FindMatchingRecipe</code> 先问各 Block 的 ad-hoc 动态配方、再线性扫静态表，<code>MatchRecipe</code> 用<b>镜像+平移穷举</b>（无旋转）对齐 3×3 残阵，<code>CompareIngredients</code> 只比 craftingId 字符串与 data 整数——"任意原木"就是 5 个方块共用同一 craftingId，"任意颜色"就是配方不写 <code>:data</code>。熔炉没有独立配方类，烧的就是 <code>RequiredHeatLevel&gt;0</code> 的 CraftingRecipe，走<b>同一个匹配器</b>。</p>
+<h2 id="1-recipe-数据结构-survivalcraft-game-craftingrecipe-">1 Recipe 数据结构（Survivalcraft/Game/CraftingRecipe.cs:2-27）</h2>
+<div class="tablewrap"><table><thead><tr><th>字段</th><th>语义</th><th>备注</th></tr></thead><tbody><tr><td><code>Ingredients: string[9]</code></td><td>3×3 配料阵，行优先；null=空格</td><td>元素格式 <code>craftingId</code> 或 <code>craftingId:data</code>，见 §3</td></tr><tr><td><code>ResultValue / ResultCount</code></td><td>产物方块值 / 单次产量</td><td>值由 <code>DecodeResult</code> 生成（:178-197）</td></tr><tr><td><code>RemainsValue / RemainsCount</code></td><td>余渣（容器返还）方块值/数量</td><td>可选，缺省 0（管理器 :96-100）</td></tr><tr><td><code>RequiredHeatLevel</code></td><td>需要的热量档</td><td>工作台恒传 0；<b>&gt;0 即熔炉配方</b></td></tr><tr><td><code>RequiredPlayerLevel</code></td><td>需要玩家等级</td><td>缺省 1（管理器 :102）；受 <code>EnableLevelRestrictions</code> 开关（:16）</td></tr><tr><td><code>Description / Message</code></td><td>书面描述 / 命中时弹的小消息</td><td>支持 <code>[key]</code> 本地化（:89-93、ComponentCraftingTable.cs:176-179）</td></tr><tr><td><code>DisplayOrder</code></td><td>显示顺序，越小越靠前</td><td>仅影响排序与配方书展示，<b>不影响匹配胜负</b>（见 §2.4）</td></tr><tr><td><code>MaxSize=3</code></td><td>阵面常量上限</td><td>网格可小于 3（玩家背包 2×2），不可大于 3</td></tr></tbody></table></div>
+<h2 id="2-匹配算法逐段-survivalcraft-managers-craftingrecipesm">2 匹配算法逐段（Survivalcraft/Managers/CraftingRecipesManager.cs，本日全文）</h2>
+<h3 id="2-1-入口-findmatchingrecipe-141-176-判定流程">2.1 入口 FindMatchingRecipe（:141-176）——判定流程</h3>
+<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>text</span></div><pre class="code"><code>FindMatchingRecipe(terrain, ingredients[9], heatLevel, playerLevel)
+1. ingredients 全空 → 返 null（:142-144）
+2. ad-hoc 优先：按 index 遍历 BlocksManager.Blocks 全部方块（:146-154），
+   调 block.GetAdHocCraftingRecipe(terrain, ingredients, heat, level)；
+   返非 null 且 MatchRecipe(其Ingredients, 实际格) 通过 → **立即 break 采用**
+3. 静态表：无 ad-hoc 命中 → 按 m_recipes 现序线性扫（:155-162），
+   首个 MatchRecipe 通过者采用（短路与，后到者无关）
+4. 门禁（:163-173）：命中后若 heatLevel &lt; RequiredHeatLevel
+   → 返**只带 Message 的假配方**（ResultValue=0；heatLevel≤0 用文案0，&gt;0 用文案1 :165-167）；
+   若 playerLevel &lt; RequiredPlayerLevel 且 EnableLevelRestrictions
+   → 同款假配方（按是否需热分文案2/3 :169-173）
+5. 假配方也是 CraftingRecipe → 调用方必须判 ResultValue!=0 而非只判 null</code></pre></div>
+<h3 id="2-2-matchrecipe-220-259-对齐穷举">2.2 MatchRecipe（:220-259）——对齐穷举</h3>
+<ul><li>mod 钩子 <code>MatchRecipe</code> 最先执行（:223-232）：任一 mod 声明接管（out flag=true）则<b>整体替换</b>引擎匹配。</li><li><code>actualIngredients.Length &gt; 9</code> 直接 false（:233-235）。<b>反过来实际数组必须足 9 长</b>：比较循环固定走到 9（:244-251），提前撞上 <code>l == actualIngredients.Length</code> 记 flag=false——mod 代码传短数组永远匹配失败，空格要填 null 补齐到 9。</li><li>穷举空间：<code>flip ∈ {false,true}</code>（镜像）× <code>shiftX,shiftY ∈ [-4,2]</code>（平移），共 2×7×7=98 次变换（:237-240）。<b>没有旋转</b>：方向敏感的形状（如 L 形）只有原样和左右镜像两种可命中。</li><li>每次变换把配方阵重排进 9 格临时阵，再逐格 <code>CompareIngredients</code>（:244-251），全 9 格相等即 true。实际数组不足 9 时循环照样走到 9 → 见上一条的陷阱。</li></ul>
+<h3 id="2-3-transformrecipe-261-282-单次平移-镜像">2.3 TransformRecipe（:261-282）——单次平移/镜像</h3>
+<ul><li>对配方阵每格 <code>(k=列, j=行)</code>：flip 时列取 <code>3-k-1</code>（水平翻转），加 shiftX/shiftY 落点（:265-274）。</li><li>非空格被平移出 [0,3) 边界 → 整次变换失败（:276-278）；空格挪出界无所谓。故 1×1/2×2 配方可落在 3×3 网格任意角落，2×2 玩家网格只能容下 ≤2 宽/高的配方。</li></ul>
+<h3 id="2-4-compareingredients-284-304-单格判等">2.4 CompareIngredients（:284-304）——单格判等</h3>
+<div class=codewrap><div class=codehead><span class="cdot d1"></span><span class="cdot d2"></span><span class="cdot d3"></span><span class=cinfo>text</span></div><pre class="code"><code>required==null ⇔ actual==null（空对空 :285-291）
+双侧 DecodeIngredient 拆成 craftingId + data?（:292-293）
+actual 无 :data → 抛 InvalidOperationException（:294-296）
+  ——所以网格编码方恒拼 &quot;id:data&quot;（ComponentCraftingTable.cs:140、ComponentFurnace.cs:244）
+craftingId 相等且（required 无 data → 通配任意 data :298-299；否则 data 精确相等 :301）</code></pre></div>
+<ul><li><b>匹配完全不看堆叠数</b>：格子里 1 个还是 64 个不影响判定；数量只决定"能合成几次"（§4.2）。</li><li><b>匹配胜负与排序无关</b>：线性扫按列表现序取首个命中，而列表序是 <code>Initialize</code> 排出来的——DisplayOrder 升序，同序按<b>非空配料数降序</b>（:37-49，<code>Compare(x,y)</code> 拿 r2 的数量比 r1 的），即"更复杂的配方排前面"。这影响配方书展示次序，也可能在两条真重叠的配方间充当优先级。</li><li><code>Initialize</code>（:18-57）顺序：mod XML 合并 <code>LoadCr</code>（:21-24）→ <code>LoadData</code> 递归解码（:59-83，<code>OnCraftingRecipeDecode</code> 钩子可整体接管单条）→ 遍历方块收 <code>GetProceduralCraftingRecipes</code>（:25-28）→ <code>CraftingRecipesManagerInitialize</code> 钩子（可改表+<code>ref sort</code> 关排序 :30-36）→ 排序 → <code>Initialized</code> 钩子（:50-56）。</li><li><code>DecodeElementToCraftingRecipe</code>（:85-139）：属性小写单字母=配料变量（:107-119），正文每行引号内为 pattern 行，<code>Ingredients[j + i*3]</code>（<code>horizontalLen</code> 缺省 3，:120-137）；data 范围限 0..0x3FFFF（:114-117）。<code>DecodeResult</code> 用<b>方块类名</b>查 <code>BlockNameToIndex</code>（:193，表在 BlocksManager.cs:96 填充），<code>DecodeIngredient</code> 用 <b>craftingId</b>（:215-217）——产物与配料是两套名字体系。</li></ul>
+<h2 id="3-成分描述与通配-craftingid-机制">3 成分描述与通配（craftingId 机制）</h2>
+<div class="tablewrap"><table><thead><tr><th>机制</th><th>实现</th><th>出处</th></tr></thead><tbody><tr><td>craftingId 定义</td><td>BlocksData.txt 第 15 列字符串，加载时反射灌进 <code>Block.CraftingId</code>（Block.cs:47，默认空串）</td><td>BlocksManager.cs:1037-1083（LoadBlocksData）</td></tr><tr><td>通配"任意原木"</td><td>5 个原木方块共用 <code>wood</code>（Oak/Birch/Spruce/Mimosa/Poplar）——多 Block 同 craftingId 即"任一均可"</td><td>BlocksData.txt（awk $15=="wood" 实测 5 行）</td></tr><tr><td>通配"任意颜色/耐久/木种"</td><td>配方串不写 <code>:data</code> → 任意 data 命中</td><td>CompareIngredients :298-299</td></tr><tr><td>定色/定档</td><td>配方串写 <code>:data</code> → data 精确相等（如 <code>seeds:5</code>）</td><td>:301；XML 实例 CraftingRecipes.xml <code>a="seeds:5"</code></td></tr><tr><td>网格侧编码</td><td><code>$"{block.GetCraftingId(value)}:{data}"</code>，data 恒带上</td><td>ComponentCraftingTable.cs:140</td></tr><tr><td>图标轮播</td><td>配料命中多个方块时按 <code>Time.RealTime</code> 取模轮换显示</td><td>CraftingRecipeSlotWidget.cs:38-48</td></tr><tr><td>间接耐久参与</td><td>染色类动态配方用 <code>BlocksManager.DamageItem</code> 把损耗后的颜料桶当 Remains 返回——耐久在 data 里，匹配本身仍是 data 等值</td><td>CarpetBlock.cs:129-144；ClothingBlock.cs:216-232</td></tr></tbody></table></div>
+<ul><li>耐久没有独立匹配维度：工具/容器的损耗就是 data 位（<code>GetDamage</code>），静态配方不写 <code>:data</code> 时损耗品照常匹配。</li><li><b>单格没有"多选一"语法</b>：一格只能指一个 craftingId；要"木或石"只能拆两条配方或走 mod 钩子。</li></ul>
+<h2 id="4-remains-与工作台数据流">4 Remains 与工作台数据流</h2>
+<h3 id="4-1-两种网格-一个类-componentcraftingtable">4.1 两种网格，一个类（ComponentCraftingTable）</h3>
+<div class="tablewrap"><table><thead><tr><th>宿主</th><th>SlotsCount</th><th>网格</th><th>出处</th></tr></thead><tbody><tr><td>世界工作台（方块 27）实体模板</td><td>11 = 9 格+产物+余渣</td><td>3×3</td><td>Database.xml:3394-3400（SlotsCount=11）；UI CraftingTableWidget.xml CraftingGrid 3×3</td></tr><tr><td>玩家自带（Player 模板成员组件）</td><td>6 = 4 格+产物+余渣</td><td>2×2</td><td>Database.xml Player 模板 CraftingTable SlotsCount=6；UI FullInventoryWidget.xml CraftingGrid 2×2（ComponentGui.cs:544-553 开包时挂）</td></tr></tbody></table></div>
+<ul><li><code>m_craftingGridSize = sqrt(SlotsCount-2)</code>（ComponentCraftingTable.cs:124）——类本身支持任意 N×N，2×2 与 3×3 的差异只在模板槽位数与 UI 网格尺寸，匹配代码零分支。</li><li>槽位约定：末两格=产物（<code>SlotsCount-2</code> :20）/余渣（<code>SlotsCount-1</code> :13）；<code>GetSlotCapacity</code> 对这两格返 0 拒收玩家塞入（:32-37）。</li><li>2×2 网格编码进 3×3 阵：<code>matched[i + j*3]</code>、槽位 <code>i + j*gridSize</code>（:130-133）——2×2 内容映射到 3×3 左上角，其余格 null。</li><li>失效驱动：<code>AddSlotItems</code>/<code>RemoveSlotItems</code> 置 <code>m_recipeUpdateNeeded</code>；从空变非空（或非空变空）再置 <code>m_recipeRefindNeeded</code>（:39-47/:49-106）；<code>Update</code> 里重算（:24-30）。refind=false 时<b>沿用旧配方</b>只刷新数量（:151-161）。</li></ul>
+<h3 id="4-2-一次取货的数量账-removeslotitems-resultslotindex-55-">4.2 一次取货的数量账（RemoveSlotItems @ ResultSlotIndex :55-90）</h3>
+<ol><li><code>num = min(网格非空格堆叠数)</code>（:128-147）→ 产物槽显示 <code>ResultCount × num</code>（:166）。</li><li>取 N 个先向下取整到 <code>ResultCount</code> 的倍数（:70）。</li><li>若有余渣：取货量被<b>余渣槽剩余容量</b>封顶（<code>余容量/RemainsCount × ResultCount</code> :56-69）——余渣满了拿不走产物；余渣槽非空且值不同 → 禁取（:66-68）。</li><li>扣料：每个匹配到的网格格 <code>- N/ResultCount</code>（按 <code>i%3 + gridSize*(i/3)</code> 映射回实际槽 :72-78）。</li><li>回填：余渣槽 <code>+= N/ResultCount × RemainsCount</code>（:79-83）。</li></ol>
+<h3 id="4-3-ui-不复用匹配器">4.3 UI 不复用匹配器</h3>
+<ul><li><code>CraftingRecipeWidget.UpdateWidgets</code>（CraftingRecipeWidget.cs:63-88）把某条配方的 <code>Ingredients[9]</code> 直接摆进 3×3 <code>CraftingRecipeSlotWidget</code>——纯展示，不做匹配；产物同理 <code>SetResult</code>。</li><li><code>CraftingRecipeSlotWidget.SetIngredient</code>（CraftingRecipeSlotWidget.cs:23-33）存字符串，测量时 <code>DecodeIngredient</code>+<code>FindBlocksByCraftingId</code> 解析成图标。</li><li>配方书只过滤不匹配：<code>RecipaediaRecipesScreen.cs:30</code> 按 <code>ResultValue == value</code> 筛 <code>CraftingRecipesManager.Recipes</code>。</li><li>想做"合成预览/自定义匹配 UI"，正确姿势是调用 <code>FindMatchingRecipe</code> 本尊，而不是从 Widget 里找（Widget 层没有匹配逻辑）。</li></ul>
+<h3 id="4-4-remains-语义汇总">4.4 Remains 语义汇总</h3>
+<ul><li>配方级：可选字段，熔炉/工作台同一套字段与回填规则（熔炉出货 :133-137）。</li><li>余渣槽是<b>真实槽位</b>：可手动取出、可续堆（同值才续 :59-63），工作台销毁时随其余槽一起掉落、唯独产物槽不掉（DropAllItems 跳过 ResultSlotIndex :108-120）。</li><li>原版把 Remains 用作"带损耗返还容器"：染地毯/染衣后颜料桶带着新增损耗回去（CarpetBlock.cs:138-140、ClothingBlock.cs:230-232），而非单纯的空桶。</li></ul>
+<h2 id="5-熔炉差异-componentfurnace-cs-本日全文">5 熔炉差异（ComponentFurnace.cs，本日全文）</h2>
+<div class="tablewrap"><table><thead><tr><th>维度</th><th>工作台</th><th>熔炉</th></tr></thead><tbody><tr><td>配方类</td><td>CraftingRecipe</td><td><b>同一个类</b>；无 SmeltingRecipe——<code>RequiredHeatLevel&gt;0</code> 即烧制配方</td></tr><tr><td>槽位</td><td>11/6 槽，末两格产物/余渣</td><td>5 槽（Database.xml:3404-3407）：输入 <code>SlotsCount-3</code> 个（<code>m_furnaceSize=2</code> :223）+ 燃料/产物/余渣（:62-66）</td></tr><tr><td>匹配输入</td><td>9 格 3×3 阵</td><td>只编码前 <code>m_furnaceSize</code> 格进 <code>string[9]</code>（:236-249），其余 null——配方须 ≤2 格且靠平移贴齐左上</td></tr><tr><td>匹配器</td><td>FindMatchingRecipe，heat 恒 0</td><td><b>同一个</b> FindMatchingRecipe（:253），heat 传实时火温</td></tr><tr><td>二次过滤</td><td>无</td><td>命中后要求 <code>RequiredHeatLevel&gt;0</code>（:256-258，防烧台配方混入）、产物槽同值且容量足（:260-267）、余渣槽同值且容量足（:268-282）</td></tr><tr><td>热量来源</td><td>无关</td><td>燃烧中用 <code>m_heatLevel</code>，熄火时预览燃料槽物品的 <code>GetFuelHeatLevel</code>（:165-175）；燃料槽 <code>GetSlotCapacity</code> 拒收非燃料（:74-82）</td></tr><tr><td>燃料逻辑</td><td>无</td><td><code>UseFuel</code> 每次扣 1 燃料、按 <code>GetFuelFireDuration × FuelTimeEfficiency</code> 续燃（:187-205）；爆炸物当燃料直接引爆（:193-196）</td></tr><tr><td>出货</td><td>取货时扣格+回填余渣（§4.2）</td><td>进度满 1 自动：每输入格 -1、产物+ResultCount、余渣+RemainsCount（:123-142）；<code>SmeltSpeed=0.15/s</code>（:26）≈6.7s 一次</td></tr><tr><td>空烧/回退</td><td>无</td><td>无配方即熄（<code>StopFuelWhenNoRecipeIsActive</code> :24、:109-114）；断火进度按 <code>SmeltProgressReductionSpeed</code> 回退，默认 +∞ 清零（:31、:119-122）</td></tr><tr><td>配方切换</td><td>换料重匹配</td><td>换料进度清零重来（:177-180）</td></tr></tbody></table></div>
+<h2 id="6-mod-视角-三条注册路-动态配方可行性">6 mod 视角：三条注册路 + 动态配方可行性</h2>
+<div class="tablewrap"><table><thead><tr><th>路线</th><th>窗口/入口</th><th>匹配行为</th><th>证据</th></tr></thead><tbody><tr><td>XML 数据</td><td>mod 包内 CraftingRecipes.xml，<code>ModEntity.LoadCr</code> 合并进同一棵 XElement → <code>LoadData</code></td><td>静态表一员，翻译/镜像/通配全自动；<code>OnCraftingRecipeDecode</code> 钩子可单条接管或改写</td><td>CraftingRecipesManager.cs:21-24/:59-83</td></tr><tr><td>代码注册</td><td><code>CraftingRecipesManagerInitialize</code> 钩子里往 <code>m_recipes</code>（public static List）增删改，<code>ref sort=false</code> 可关自动排序</td><td>同上；init 期一次性，运行期改表也即时生效（匹配每次现查表）[推测：无人缓存表快照]</td><td>:30-36/:8-9</td></tr><tr><td>程序化覆盖</td><td>重写 Block 的 <code>GetProceduralCraftingRecipes()</code>（批量静态）或 <code>GetAdHocCraftingRecipe()</code>（逐次动态）</td><td>procedural 进表；ad-hoc <b>优先于全表</b>、每次重算现调</td><td>Block.cs:326-333；匹配序 :146-162</td></tr></tbody></table></div>
+<p><b>动态/条件配方可行，且有原版三例</b>（均 <code>GetAdHocCraftingRecipe</code> 覆写，输入即当前网格+热量+玩家等级，输出可运行时构造）：</p>
+<ol><li><code>FurnitureBlock</code>（:436-530）：按格子里的家具设计 data 现场生成按钮/开关变体家具，<code>Ingredients = (string[])ingredients.Clone()</code> 让自己的"配方"等于玩家摆的阵。</li><li><code>ClothingBlock</code>（:189-244）：<code>CanBeDyed</code> 不满足 → 返 null（条件拒绝）；颜色混合后连同损耗颜料桶 Remains 一起现造。</li><li><code>CarpetBlock</code>（:103-150）：混色无变化（颜色相同）→ 返 null；产物/余渣 data 全运行时算。</li></ol>
+<p>注意点：ad-hoc 挂在 Block 上，返回后仍要过一道 <code>MatchRecipe</code>（:148-153）——惯例是把实际 ingredients 原样塞进返回配方的 Ingredients（如上三例）。全局改匹配规则用 <code>MatchRecipe</code>/<code>DecodeIngredient</code>/<code>DecodeResult</code> 三个 mod 钩子（:223-232/:203-209/:181-187），接管后引擎判等完全旁路。</p>
+<h2 id="7-原版范例表">7 原版范例表</h2>
+<div class="tablewrap"><table><thead><tr><th>例子</th><th>文件:行</th><th>展示点</th></tr></thead><tbody><tr><td><code>"aa"</code> 木柴→煤，RequiredHeatLevel=1</td><td>Content/Assets/CraftingRecipes.xml:3-5</td><td>熔炉 2 格配方 + <code>craftingId=wood</code> 通配 5 种原木</td></tr><tr><td>面粉 <code>a="seeds:5"</code> 3×3 全满</td><td>CraftingRecipes.xml（Food 节）</td><td><code>:data</code> 定档精确匹配</td></tr><tr><td>面团 Remains="EmptyBucketBlock"</td><td>CraftingRecipes.xml（Food 节）</td><td>XML 静态配方返还容器</td></tr><tr><td>染地毯（桶损耗返还）</td><td>CarpetBlock.cs:103-150</td><td>ad-hoc 动态配方 + Remains 当耐久账本</td></tr><tr><td>染衣物（CanBeDyed 拒绝）</td><td>ClothingBlock.cs:189-244</td><td>条件配方：不满足返 null</td></tr><tr><td>家具按钮/开关变体</td><td>FurnitureBlock.cs:436-530</td><td>输入即配方（Clone ingredients）+ 运行时产物 data</td></tr><tr><td>9+2 槽 3×3 工作台</td><td>Database.xml:3394-3400</td><td>实体模板定义槽位，类零分支</td></tr><tr><td>4+2 槽玩家 2×2</td><td>Database.xml（Player 模板）</td><td>同一组件类，尺寸由 SlotsCount 推出</td></tr></tbody></table></div>
+<h2 id="8-与既有页出入-只记录-不改原页">8 与既有页出入（只记录，不改原页）</h2>
+<ol><li><a href="../01-引擎/16-玩法物品与背包.html">16 页</a>:81 "配料串是 <code>方块名[:data]</code>"——<b>不准确</b>：配料用 <b>craftingId</b>（BlocksData.txt 第 15 列，可与类名不同，5 种原木共用 <code>wood</code>），产物才用方块类名（DecodeResult 走 BlockNameToIndex，BlocksManager.cs:96）；本页 §3 补全。</li><li>16 页:82 "先遍历 256 方块"——实为遍历 <code>BlocksManager.Blocks</code> <b>全部已注册方块</b>（:146-154，上限 1024 而非 256）；"假配方"行号应为 :164-173（页作 :158-168，偏移几行）。</li><li>16 页:83 "对 9×9 残阵做镜像+平移穷举"——表述误差：阵是 <b>3×3</b>（9 格），穷举空间是 2 镜像 × 7×7 平移 = 98 次变换（:237-241），且<b>无旋转</b>。</li><li><a href="../01-引擎/25-方块实体与容器.html">25 页</a>:15/:74/:92 的槽位约定、<code>m_recipeUpdateNeeded</code> 重算标记、<code>num</code> 取最少堆数今日复核<b>一致</b>；Database.xml:3399-3400 行号一致（SlotsCount=11）。</li><li>25 页未提玩家实体自带 6 槽 2×2 工作台组件（本页 §4.1），属补全非冲突。</li></ol>
+<h2 id="9-快查路由">9 快查路由</h2>
+<div class="tablewrap"><table><thead><tr><th>需求</th><th>去处</th></tr></thead><tbody><tr><td>匹配流程/优先级/假配方</td><td>CraftingRecipesManager.cs:141-176；本页 §2.1</td></tr><tr><td>改判等规则（通配/多选一/自定义比对）</td><td>mod 钩子 MatchRecipe（:223-232，整体接管）；CompareIngredients :284-304</td></tr><tr><td>传给 FindMatchingRecipe 的数组注意</td><td>必足 9 长、空格填 null、每格必带 <code>:data</code>（§2.2/§2.4）</td></tr><tr><td>"任意木板/任意颜色"</td><td>craftingId 共用 + 省略 <code>:data</code>（§3）</td></tr><tr><td>动态/条件配方</td><td>覆写 <code>GetAdHocCraftingRecipe</code>（Block.cs:330），范例 §7 中三条</td></tr><tr><td>批量注册/排序控制</td><td>CraftingRecipesManagerInitialize 钩子（:30-36）；procedural :25-28</td></tr><tr><td>余渣容量/回填账</td><td>ComponentCraftingTable.cs:55-90；本页 §4.2</td></tr><tr><td>熔炉只认烧制配方/燃料规则</td><td>ComponentFurnace.cs:236-291/:187-205</td></tr><tr><td>工作台/背包界面布局</td><td>CraftingTableWidget.cs / FullInventoryWidget.cs + Database.xml SlotsCount</td></tr><tr><td>配方书展示（非匹配）</td><td>RecipaediaRecipesScreen.cs:30；CraftingRecipeWidget.cs:63-88</td></tr></tbody></table></div><nav class=pn><a class="prev" href="../01-引擎/34-玩家一生.html"><small>上一页 · SC引擎</small><b>34-玩家一生</b></a><a class="next" href="../01-引擎/36-挖掘与工具.html"><small>下一页 · SC引擎</small><b>36-挖掘与工具</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#1-recipe-数据结构-survivalcraft-game-craftingrecipe-">1 Recipe 数据结构（Survivalcraft/Game/CraftingRecipe.cs:2-27）</a><a class="lvl2" href="#2-匹配算法逐段-survivalcraft-managers-craftingrecipesm">2 匹配算法逐段（Survivalcraft/Managers/CraftingRecipesManager.cs，本日全文）</a><a class="lvl3" href="#2-1-入口-findmatchingrecipe-141-176-判定流程">2.1 入口 FindMatchingRecipe（:141-176）——判定流程</a><a class="lvl3" href="#2-2-matchrecipe-220-259-对齐穷举">2.2 MatchRecipe（:220-259）——对齐穷举</a><a class="lvl3" href="#2-3-transformrecipe-261-282-单次平移-镜像">2.3 TransformRecipe（:261-282）——单次平移/镜像</a><a class="lvl3" href="#2-4-compareingredients-284-304-单格判等">2.4 CompareIngredients（:284-304）——单格判等</a><a class="lvl2" href="#3-成分描述与通配-craftingid-机制">3 成分描述与通配（craftingId 机制）</a><a class="lvl2" href="#4-remains-与工作台数据流">4 Remains 与工作台数据流</a><a class="lvl3" href="#4-1-两种网格-一个类-componentcraftingtable">4.1 两种网格，一个类（ComponentCraftingTable）</a><a class="lvl3" href="#4-2-一次取货的数量账-removeslotitems-resultslotindex-55-">4.2 一次取货的数量账（RemoveSlotItems @ ResultSlotIndex :55-90）</a><a class="lvl3" href="#4-3-ui-不复用匹配器">4.3 UI 不复用匹配器</a><a class="lvl3" href="#4-4-remains-语义汇总">4.4 Remains 语义汇总</a><a class="lvl2" href="#5-熔炉差异-componentfurnace-cs-本日全文">5 熔炉差异（ComponentFurnace.cs，本日全文）</a><a class="lvl2" href="#6-mod-视角-三条注册路-动态配方可行性">6 mod 视角：三条注册路 + 动态配方可行性</a><a class="lvl2" href="#7-原版范例表">7 原版范例表</a><a class="lvl2" href="#8-与既有页出入-只记录-不改原页">8 与既有页出入（只记录，不改原页）</a><a class="lvl2" href="#9-快查路由">9 快查路由</a></nav></aside></div><div id=foot><b>SC 源码笔记</b> · 76 页 · 最后更新 2026-11-02 · <a href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub</a> · <a href="https://gitee.com/SC-SPM/SurvivalcraftApi" target=_blank rel=noopener>引擎源码</a> · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+const $=s=>document.querySelector(s);
+const ROOT="../"; // 站点根相对前缀（按页面深度注入）
+// 主题切换
+const tbtn=$('#themeBtn');
+function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
+applyTheme(document.documentElement.dataset.theme||'light');
+tbtn.addEventListener('click',()=>{
+  const next=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const vt=document.startViewTransition(()=>applyTheme(next));
+    vt.ready.then(()=>{
+      const r=tbtn.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+      const mr=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+      document.documentElement.animate({clipPath:['circle(0px at '+x+'px '+y+'px)','circle('+mr+'px at '+x+'px '+y+'px)']},{duration:520,easing:'ease-in-out',pseudoElement:'::view-transition-new(root)'});
+    }).catch(()=>{});
+  } else applyTheme(next);
+});
+// ⌘K 命令面板
+let IDX=[];
+fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
+});
+// 移动端侧栏抽屉
+const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
+function setSide(open){side.classList.toggle('open',open);backdrop.classList.toggle('show',open)}
+burger.addEventListener('click',e=>{e.stopPropagation();setSide(!side.classList.contains('open'))});
+document.addEventListener('click',e=>{if(window.innerWidth<=1024&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==burger)setSide(false)});
+backdrop.addEventListener('click',()=>setSide(false));
+// 高亮当前页
+const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
+document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
+const tocLinks=[...document.querySelectorAll('#tocnav a')];
+if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
+  const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
+  const onScroll=()=>{
+    let idx=0;
+    for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
+    tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
+  };
+  document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
+document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
+btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+// 代码块复制按钮
+document.querySelectorAll('pre.code').forEach(pre=>{
+  const b=document.createElement('button');b.className='copybtn';b.textContent='复制';
+  b.addEventListener('click',async()=>{const txt=pre.innerText;let ok=false;
+    try{await navigator.clipboard.writeText(txt);ok=true}catch(e){
+      try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(e2){}}
+    b.textContent=ok?'✓ 已复制':'失败';
+    if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
+  pre.appendChild(b);
+});
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+// Hero 卡片 3D 倾斜（光晕之上的立体层；尊重减少动效）
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+document.querySelectorAll('.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+    el.style.transform='translateY(-3px) perspective(700px) rotateX('+(-py*5).toFixed(2)+'deg) rotateY('+(px*6).toFixed(2)+'deg)';
+  });
+  el.addEventListener('mouseleave',()=>{el.style.transform=''});
+});
+}
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
+</script></body></html>
