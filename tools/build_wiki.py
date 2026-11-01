@@ -150,7 +150,8 @@ def inline(text, src_file, reg):
         return '<span class="deadlink" title="引用的材料未随本站分发">%s ⟶未收录</span>' % label
     text = LINK_RE.sub(link, text)
     text = BOLD_RE.sub(r"<b>\1</b>", text)
-    text = ITAL_RE.sub(r"<i>\1</i>", text)
+    # 不做 *斜体* 解析：本库是技术笔记，源码里的 * 都是乘号/通配符（0.003*3*0.53、Clothing/*/x），
+    # 斜体正则会吞掉它们制造 <i> 误伤（曾致 22a/13/05a 等 10+ 页文本丢失星号且撑破段落）
     for i, s in enumerate(spans):
         text = text.replace("\x00%d\x00" % i, s)
     return text
@@ -354,8 +355,8 @@ transition:color .2s,background-color .2s}
 background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 #burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
 #top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
-#top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:flex;align-items:center;gap:9px}
-#top .brand b::before{content:"";width:22px;height:22px;border-radius:7px;flex:0 0 22px;
+#top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
 background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
@@ -375,7 +376,7 @@ background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px
 /* 正文 + 右侧目录 */
 #main{flex:1;min-width:0;padding:32px clamp(16px,3.5vw,44px) 80px}
 #contentrow{display:flex;gap:34px;align-items:flex-start;justify-content:center;max-width:1240px;margin:0 auto}
-article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow)}
+article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow);overflow-wrap:break-word}
 h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
 background:linear-gradient(120deg,var(--ink) 30%,var(--acc-ink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;padding-left:13px;border-bottom:1px solid var(--line);position:relative}
