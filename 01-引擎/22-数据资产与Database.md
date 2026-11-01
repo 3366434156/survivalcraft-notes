@@ -55,7 +55,7 @@ Content/Assets 下约 20 族纯数据文件把原版大半设计(1132 个模板�
 | 文件 | 结构 | 消费 |
 |---|---|---|
 | CraftingRecipes.xml | 16 分类节 × 251 `<Recipe>`，ingredients 用小写属性 a/b/c…，元素文本 `"a…"` 网格 | CraftingRecipesManager.cs:18/:59/:85 |
-| Clothes.xml | 43 行 `<ClothingData>` 属性表(Index/Slot/ArmorProtection/Insulation/TextureName…) | ClothingBlock.cs:62-64 LoadClo |
+| Clothes.xml | 38 条 `<ClothingData>` 属性表（49 行；Index/Slot/ArmorProtection/Insulation/TextureName…） | ClothingBlock.cs:62-64 LoadClo |
 | NewWorldNames.txt | 1486 行，一行一个候选世界名 | WorldsManager.cs:29-30 → NewWorldScreen.cs:52 随机取名 |
 | RecoveryProject.xml | 61 行最小 Project XML(Guid=GameProject 模板 9e9a67f8) | WorldsManager.cs:81 生成恢复世界，并把出生点改写为区块表首格 |
 | Atlases/Atlas.txt | 84 行 `名 x y w h …` UI 图集子纹理表 | TextureAtlasManager.cs:13-22 |
@@ -86,7 +86,7 @@ Content/Assets 下约 20 族纯数据文件把原版大半设计(1132 个模板�
 | 刷怪蛋元数据 | Database.xml:182-192(AICreature 的 CreatureEggData ParameterSet)；为什么抄：蛋贴图槽/显示名/营养全在这 |
 | 加一种方块的数据行 | BlocksData.txt:6(DirtBlock 行，含 # 自引用掉落)；为什么抄：79 列标准填法与留空默认 |
 | 加合成配方 | CraftingRecipes.xml:64-139(Materials 节，含 Remains=EmptyBucketBlock 返桶样例 :69)；为什么抄：`a="seeds:5"` 数量与 `DoughBlock:0` 数据后缀写法 |
-| 加防具 | Clothes.xml:2-47(43 条 ClothingData，含金属系 DensityModifier 减速)；为什么抄：Slot/Insulation/Layer 全属性面 |
+| 加防具 | Clothes.xml(38 条 ClothingData，含金属系 DensityModifier 减速)；为什么抄：Slot/Insulation/Layer 全属性面 |
 | 世界恢复存根 | RecoveryProject.xml 全文；为什么抄：最小 Project.xml 只带必要 Subsystem 值 |
 | 修 UI 图集 | Atlases/Atlas.txt+TextureAtlasManager.cs:13-22；为什么抄：纯文本子纹理表+运行期 GetSubtexture 回退 |
 | 动画分层(走/打/骑/死) | AnimationTemplates/Human.template.json+Animations/Human.json；为什么抄：layer blendMode+boneMask+驱动器参数三级结构 |

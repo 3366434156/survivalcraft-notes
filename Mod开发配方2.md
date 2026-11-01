@@ -203,7 +203,7 @@
 | 数据 | 建生物家族抽象层 | `Database.xml:602`(Creature)+:645(LandAnimal)+:176(AICreature) 三级基类——公共组件上提、特异性下放的样板 〔22〕 |
 | 数据 | 加一种方块的数据表行 | `BlocksData.txt:6`（DirtBlock 行，含 # 自引用掉落；78 具名列、可只写覆盖列，见 [数据格式参考](数据格式参考.md)） 〔22〕 |
 | 数据 | 加合成配方（数据表） | `CraftingRecipes.xml:64-139`（Materials 节；`a="seeds:5"` 数量、`DoughBlock:0` 数据后缀、Remains=EmptyBucketBlock 返桶样例 :69） 〔22〕 |
-| 数据 | 加防具（数据表） | `Clothes.xml:2-47`（43 条 ClothingData；Slot/Insulation/Layer 全属性面） 〔22〕 |
+| 数据 | 加防具（数据表） | `Clothes.xml`（38 条 ClothingData；Slot/Insulation/Layer 全属性面） 〔22〕 |
 | 数据 | 合并原版 Database（mod 侧） | `ModsManager.cs:1083-1152`（.xdb 统一 new-*/Remove 前缀 DSL，不走 Harmony 硬改） 〔12·22〕 |
 | 数据 | 动画分层（走/打/骑/死） | `AnimationTemplates\Human.template.json`+`Animations\Human.json`（layer blendMode+boneMask+驱动器参数三级结构） 〔22〕 |
 | 数据 | 世界恢复存根 | `RecoveryProject.xml` 全文（最小 Project.xml 只带必要 Subsystem 值） 〔22〕 |

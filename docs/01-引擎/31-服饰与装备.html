@@ -1,0 +1,434 @@
+<!doctype html><html lang=zh><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><script>(function(){try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}})()</script><title>服饰与装备（穿戴·防御·叠层渲染全链） · SC 源码笔记</title><style>
+:root{
+--bg:#f8fafc;--sheet:#ffffff;--surface-2:#f1f5f9;--side-bg:#f8fafc;
+--ink:#0f172a;--ink-soft:#475569;--ink-faint:#94a3b8;
+--line:#e6e9f0;--line-strong:#d5dbe5;
+--acc:#4f46e5;--acc-2:#7c3aed;--acc-ink:#4338ca;--acc-soft:#eef2ff;
+--top-bg:rgba(248,250,252,.82);--code-bg:#0f172a;--code-ink:#e2e8f0;
+--shadow:0 1px 2px rgba(2,6,23,.05),0 12px 32px -8px rgba(2,6,23,.10);
+--shadow-sm:0 1px 2px rgba(2,6,23,.06);
+--header-h:58px;--side-w:264px}
+:root[data-theme=dark]{
+--bg:#0a0d14;--sheet:#10141f;--surface-2:#161c2b;--side-bg:#0c101a;
+--ink:#e6e9f0;--ink-soft:#a6afc2;--ink-faint:#64708c;
+--line:#1e2536;--line-strong:#2b3550;
+--acc:#818cf8;--acc-2:#a78bfa;--acc-ink:#a5b4fc;--acc-soft:rgba(99,102,241,.16);
+--top-bg:rgba(10,13,20,.78);--code-bg:#0b101c;--code-ink:#d7dee8;
+--shadow:0 1px 2px rgba(0,0,0,.45),0 14px 36px -10px rgba(0,0,0,.55);
+--shadow-sm:0 1px 2px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px)}
+body{margin:0;font-family:ui-sans-serif,system-ui,"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",-apple-system,sans-serif;
+color:var(--ink);font-size:15px;line-height:1.8;
+background:radial-gradient(1000px 460px at 78% -12%,rgba(99,102,241,.09),transparent 60%),
+radial-gradient(820px 420px at -8% -4%,rgba(124,58,237,.06),transparent 55%),var(--bg);
+transition:color .2s,background-color .2s}
+::selection{background:var(--acc-soft);color:var(--acc-ink)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+/* 顶栏：玻璃 */
+#top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:var(--header-h);padding:0 clamp(14px,2.5vw,24px);
+background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#burger{display:none;border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:5px 11px;font-size:16px;cursor:pointer;color:var(--ink);line-height:1.4}
+#top .brand{display:flex;align-items:center;gap:9px;text-decoration:none;white-space:nowrap;min-width:0}
+#top .brand b{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .brand b::before{content:"";display:inline-block;width:22px;height:22px;border-radius:7px;vertical-align:-4.5px;margin-right:9px;
+background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
+#top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
+.searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
+#themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
+#themeBtn:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+#top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap;border:1px solid var(--line);border-radius:9px;padding:6px 11px;background:var(--surface)}
+#top .gh:hover{color:var(--acc);border-color:var(--acc)}
+/* 布局 */
+#layout{display:flex;min-height:calc(100vh - var(--header-h))}
+#backdrop{display:none}
+#side{width:var(--side-w);flex:0 0 var(--side-w);background:var(--side-bg);border-right:1px solid var(--line);position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;padding:16px 12px 48px}
+#side .sec{margin:18px 8px 6px;font-size:10.5px;font-weight:700;color:var(--ink-faint);letter-spacing:2.2px;text-transform:uppercase}
+#side .sec:first-child{margin-top:4px}
+#nav a{display:block;padding:5.5px 10px;margin:1px 0;border-radius:8px;color:var(--ink-soft);text-decoration:none;font-size:13.5px;line-height:1.5;transition:background .12s,color .12s}
+#nav a:hover{background:var(--acc-soft);color:var(--acc-ink)}
+#nav a.active{background:var(--acc-soft);color:var(--acc-ink);font-weight:600;box-shadow:inset 2px 0 0 var(--acc)}
+/* 正文 + 右侧目录 */
+#main{flex:1;min-width:0;padding:32px clamp(16px,3.5vw,44px) 80px}
+#contentrow{display:flex;gap:34px;align-items:flex-start;justify-content:center;max-width:1240px;margin:0 auto}
+article{flex:1;min-width:0;max-width:880px;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:clamp(24px,4vw,46px) clamp(22px,4.5vw,50px);box-shadow:var(--shadow);overflow-wrap:break-word}
+h1{font-size:clamp(23px,3vw,29px);font-weight:800;letter-spacing:-.6px;margin:0 0 14px;
+background:linear-gradient(120deg,var(--ink) 25%,var(--acc-ink) 45%,var(--ink) 70%);background-size:220% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:h1sh 8s ease-in-out infinite alternate}
+@keyframes h1sh{to{background-position:100% center}}
+@media (prefers-reduced-motion: reduce){h1{animation:none}}
+h2{font-size:clamp(18px,2.1vw,20.5px);font-weight:700;letter-spacing:-.3px;margin:42px 0 14px;padding-bottom:9px;padding-left:13px;border-bottom:1px solid var(--line);position:relative}
+h2::before{content:"";position:absolute;left:0;top:4px;bottom:13px;width:4px;border-radius:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:.9}
+h3{font-size:16px;font-weight:700;margin:26px 0 10px}
+p{margin:10px 0}
+a{color:var(--acc-ink);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+a.hcard:hover,a.pn a:hover{text-decoration:none} /* 卡片有抬升/辉光反馈，整卡下划线很廉价 */
+/* 正文链接：渐变下划线滑入（卡片/签云/上下页自身有背景，重置之） */
+article a:not(.pn a):not(.chips a):not(.hcard){background:linear-gradient(90deg,var(--acc),var(--acc-2)) left calc(100% - 0px)/0% 1.5px no-repeat;transition:background-size .22s ease}
+article a:not(.pn a):not(.chips a):not(.hcard):hover{background-size:100% 1.5px;text-decoration:none}
+blockquote{margin:18px 0;padding:13px 18px;background:var(--acc-soft);border-left:3px solid var(--acc);border-radius:6px 12px 12px 6px;color:var(--ink-soft);font-size:14.5px}
+blockquote p{margin:4px 0}
+code{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:.86em;color:var(--acc-ink);overflow-wrap:break-word}
+:root[data-theme=dark] code{color:#c7d2fe}
+:root[data-theme=dark] article{border-color:rgba(148,163,184,.15);box-shadow:0 20px 48px -20px rgba(0,0,0,.65)}
+:root[data-theme=dark] #top{border-bottom-color:rgba(148,163,184,.13)}
+:root[data-theme=dark] #side{border-right-color:rgba(148,163,184,.1)}
+pre.code{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;box-shadow:var(--shadow-sm)}
+pre.code code{background:none;border:none;color:inherit;padding:0;font-size:13px;line-height:1.65;overflow-wrap:normal}
+.tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--line);border-radius:12px;background:var(--sheet);box-shadow:var(--shadow-sm)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.7}
+th{background:var(--surface-2);color:var(--ink);font-weight:600;text-align:left}
+th,td{border-bottom:1px solid var(--line);padding:8px 13px;vertical-align:top;overflow-wrap:break-word}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:var(--acc-soft)}
+hr{border:none;border-top:1px solid var(--line);margin:30px 0}
+ul,ol{padding-left:1.5em;margin:10px 0}
+li{margin:4px 0}
+#foot{max-width:1240px;margin:40px auto 0;padding:14px 20px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-faint);text-align:center;letter-spacing:.4px}
+/* 语法高亮（GitHub Dark 色系，代码底两主题同色） */
+pre.code .k{color:#ff7b72}
+pre.code .t{color:#ffa657}
+pre.code .s{color:#a5d6ff}
+pre.code .c{color:#8b949e;font-style:italic}
+pre.code .n{color:#79c0ff}
+pre.code .a{color:#d2a8ff}
+pre.code .t2{color:#7ee787}
+/* 上一页/下一页 */
+.pn{display:flex;gap:14px;margin:36px 0 6px}
+.pn a{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--sheet);text-decoration:none;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pn a:hover{border-color:var(--acc);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(79,70,229,.35)}
+.pn a.next{text-align:right}
+.pn a small{color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px}
+.pn a b{color:var(--acc-ink);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn .pnvoid{flex:1}
+/* 首页三入口卡片 */
+.hero{margin:24px 0 4px}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 18px 15px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,var(--sheet),var(--surface-2));text-decoration:none;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.hcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--acc),var(--acc-2));opacity:0;transition:opacity .18s}
+.hcard:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 26px -12px rgba(79,70,229,.4)}
+.hcard:hover::before{opacity:1}
+.hcard .ico{font-size:21px;line-height:1}
+.hcard b{font-size:15.5px;color:var(--ink)}
+.hcard span{font-size:12.5px;color:var(--ink-soft)}
+/* 长表格：内部滚动 + 粘性表头 */
+.tablewrap.tall{max-height:calc(100vh - 150px);overflow:auto}
+.tablewrap.tall th{position:sticky;top:0;z-index:2;box-shadow:inset 0 -1px 0 var(--line-strong)}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr}.pn{flex-direction:column}}
+.deadlink{color:var(--ink-faint);border-bottom:1px dotted var(--line-strong)}
+/* ── 交互层 ── */
+#pbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:40;background:linear-gradient(90deg,var(--acc),var(--acc-2));border-radius:0 3px 3px 0;box-shadow:0 0 10px rgba(99,102,241,.65)}
+#btt{position:fixed;right:22px;bottom:26px;z-index:18;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--sheet);color:var(--acc);font-size:17px;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:all .25s;box-shadow:var(--shadow-sm)}
+#btt.show{opacity:1;pointer-events:auto;transform:none}
+#btt:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);transform:translateY(-2px)}
+pre.code{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:var(--code-ink);border-radius:7px;padding:3px 9px;font-size:11.5px;cursor:pointer;opacity:0;transition:all .18s}
+pre.code:hover .copybtn{opacity:1}
+.copybtn:hover{background:rgba(255,255,255,.15);border-color:var(--acc)}
+.copybtn.ok{color:#4ade80;border-color:rgba(74,222,128,.6)}
+.tablewrap{transition:box-shadow .2s,border-color .2s}
+.tablewrap:hover{border-color:var(--line-strong);box-shadow:0 6px 24px -8px rgba(2,6,23,.18)}
+tr[id] td:first-child{font-family:ui-monospace,Consolas,"Cascadia Mono",monospace;font-size:12.5px}
+tr[id] td{transition:background .12s}
+tr[id]:hover td{background:var(--acc-soft)}
+#nav a{transition:background .15s,color .15s,padding-left .15s}
+#nav a:hover{padding-left:15px}
+#tocnav a{transition:color .12s,background .12s,padding-left .15s}
+#tocnav a:hover{padding-left:15px}
+.jumpbox{margin:12px 0 2px}
+.jumpbox summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--acc-ink);background:var(--acc-soft);border:1px solid var(--line);border-radius:9px;padding:5px 12px;display:inline-block;list-style:none;transition:all .15s;user-select:none}
+.jumpbox summary::-webkit-details-marker{display:none}
+.jumpbox summary:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;padding:9px 2px}
+.chips a{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--ink-soft);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px 8px;text-decoration:none;transition:all .12s}
+.chips a:hover{color:var(--acc-ink);border-color:var(--acc);background:var(--acc-soft);transform:translateY(-1px)}
+.rv{opacity:0;transform:translateY(10px)}
+.rv.in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
+@media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none}}
+/* 右侧目录 */
+#toc{flex:0 0 224px;position:sticky;top:calc(var(--header-h) + 26px);max-height:calc(100vh - var(--header-h) - 52px);overflow-y:auto;font-size:12.5px;line-height:1.5;padding:4px 0 20px}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--ink-faint);margin:8px 10px 10px;text-transform:uppercase}
+#tocnav a{display:block;padding:4px 10px;border-left:2px solid var(--line);color:var(--ink-soft);text-decoration:none;border-radius:0 7px 7px 0;margin:1px 0}
+#tocnav a.lvl3{padding-left:22px;font-size:12px;color:var(--ink-faint)}
+#tocnav a:hover{color:var(--acc);text-decoration:none}
+#tocnav a.active{color:var(--acc-ink);border-left-color:var(--acc);background:var(--acc-soft);font-weight:600}
+@media(max-width:1279px){#toc{display:none}#contentrow{max-width:920px}}
+/* 大屏加宽档：含 40+ 行大表的页(wideart)放得更开，散文页适度加宽 */
+article.wideart{max-width:1060px}
+@media(min-width:1600px){#contentrow{max-width:1580px}#foot{max-width:1580px}article{max-width:960px}article.wideart{max-width:1300px}}
+@media(min-width:2000px){#contentrow{max-width:1720px}#foot{max-width:1720px}article{max-width:1020px}article.wideart{max-width:1420px}body{font-size:15.5px}table{font-size:14px}}
+/* 窄屏 */
+@media(max-width:1024px){
+#burger{display:block}
+#backdrop{position:fixed;inset:var(--header-h) 0 0 0;background:rgba(2,6,23,.42);z-index:14;opacity:0;pointer-events:none;transition:opacity .2s}
+#backdrop.show{opacity:1;pointer-events:auto}
+#side{position:fixed;left:calc(-1*var(--side-w) - 24px);top:var(--header-h);transition:left .2s ease;z-index:15;box-shadow:14px 0 36px rgba(2,6,23,.2)}
+#side.open{left:0}
+#top .gh{display:block;font-size:11.5px;padding:6px 9px}
+#top .brand small{display:none}
+.searchwrap{width:min(230px,50vw)}
+.searchwrap kbd{display:none}
+#main{padding:22px clamp(14px,3vw,24px) 70px}
+article{padding:22px 18px 30px;border-radius:14px}
+}
+/* ── 高级交互层 ── */
+#layout{position:relative;z-index:1}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.b1{width:560px;height:560px;top:-160px;right:-120px;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 65%);animation:drift1 30s ease-in-out infinite alternate}
+.b2{width:480px;height:480px;bottom:-140px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%),transparent;animation:drift2 36s ease-in-out infinite alternate}
+.b3{width:640px;height:640px;top:36%;left:54%;background:radial-gradient(circle,rgba(217,70,239,.09),transparent 62%);animation:drift3 46s ease-in-out infinite alternate}
+@keyframes drift3{to{transform:translate(-90px,-70px) scale(1.14)}}
+/* 全局噪点纹理：最顶层极淡颗粒，给两主题加胶片质感 */
+html::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.032;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root[data-theme=dark] html::after{opacity:.05}
+:root[data-theme=dark] .blob{opacity:.7}
+@keyframes drift1{to{transform:translate(-60px,80px) scale(1.08)}}
+@keyframes drift2{to{transform:translate(70px,-60px) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.blob{animation:none}}
+article.spot{position:relative}
+.spot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(560px circle at var(--mx,50%) var(--my,-30%),rgba(99,102,241,.06),transparent 46%);opacity:0;transition:opacity .4s;pointer-events:none}
+.spot:hover::after{opacity:1}
+.hcard::after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(99,102,241,.13),transparent 50%);opacity:0;transition:opacity .3s;pointer-events:none}
+.hcard:hover::after{opacity:1}
+.searchwrap{display:flex;align-items:center;gap:8px;padding:7.5px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink-faint);font-size:13px;cursor:pointer;margin-left:auto;width:min(320px,36vw);transition:border-color .15s,box-shadow .15s}
+.searchwrap:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.searchwrap .ph{flex:1;text-align:left}
+.searchwrap kbd{border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10.5px;font-family:inherit}
+#kmodal{position:fixed;inset:0;z-index:50;background:rgba(2,6,23,.5);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:13vh}
+#kmodal.show{display:flex}
+#kpanel{width:min(620px,92vw);background:var(--sheet);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(2,6,23,.4);overflow:hidden;animation:kIn .18s ease}
+@keyframes kIn{from{transform:scale(.96) translateY(-10px);opacity:0}}
+.khead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.kicon{color:var(--acc);font-size:16px}
+#kinput{flex:1;border:none;outline:none;background:none;color:var(--ink);font-size:15px}
+#kinput::placeholder{color:var(--ink-faint)}
+.khead kbd,.kfoot kbd{border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;color:var(--ink-faint);font-family:inherit}
+#kres{max-height:52vh;overflow:auto;padding:8px}
+#kres a{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .1s}
+#kres a b{font-weight:600}
+#kres a .snip{font-size:12px;color:var(--ink-faint)}
+#kres a:hover,#kres a.sel{background:var(--acc-soft)}
+#kres a.sel{outline:1.5px solid var(--acc)}
+.kempty{padding:24px;text-align:center;color:var(--ink-faint);font-size:13.5px}
+.kfoot{padding:9px 16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);display:flex;gap:16px}
+#lbox{position:fixed;inset:0;z-index:55;background:rgba(2,6,23,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#lbox.show{display:flex}
+#lbox img{max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:lbIn .22s ease}
+@keyframes lbIn{from{transform:scale(.94);opacity:0}}
+article img{cursor:zoom-in;transition:transform .2s}
+/* 代码块终端化 */
+.codewrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:16px 0;background:var(--code-bg);box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+.codewrap:hover{border-color:var(--acc);box-shadow:0 6px 26px -8px rgba(99,102,241,.35)}
+.codehead{display:flex;align-items:center;gap:6px;padding:9px 14px;background:rgba(255,255,255,.045);border-bottom:1px solid rgba(255,255,255,.07)}
+.cdot{width:10px;height:10px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.cinfo{margin-left:auto;font-size:11px;color:rgba(255,255,255,.45);font-family:ui-monospace,Consolas,monospace;letter-spacing:.5px}
+/* 语言徽标按语言着色 */
+.codewrap:has(> pre.lang-csharp) .cinfo{color:#79c0ff}
+.codewrap:has(> pre.lang-xml) .cinfo{color:#7ee787}
+.codewrap:has(> pre.lang-json) .cinfo{color:#ffa657}
+pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
+/* 目录滑动指示器 */
+#tocnav{position:relative}
+.tocind{position:absolute;left:0;width:2px;background:linear-gradient(180deg,var(--acc),var(--acc-2));border-radius:2px;box-shadow:0 0 8px rgba(99,102,241,.55);transition:top .25s cubic-bezier(.4,0,.2,1),height .25s}
+#tocnav a.active{border-left-color:transparent}
+/* 表格逐行瀑布 */
+.rv tbody tr{opacity:0;transform:translateY(5px)}
+.rv.in tbody tr{animation:rowIn .32s both;animation-delay:calc(var(--r,0)*14ms)}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+#top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
+@media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
+/* 主题切换圆形揭示（View Transitions；不支持时回退直切） */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1}
+::view-transition-new(root){z-index:2}
+/* 手机档（置于 CSS 末尾保证覆盖上方 searchwrap 宽度）：搜索收成纯图标钮，把宽度让给品牌名 */
+@media(max-width:600px){
+.searchwrap{width:38px;padding:7.5px 0;justify-content:center}
+.searchwrap .ph{display:none}
+#top{gap:8px}
+#top .brand b{font-size:15px;letter-spacing:-.1px;max-width:40vw;overflow:hidden;text-overflow:ellipsis}
+#top .gh{font-size:10.5px;padding:6px 7px}
+}
+/* 手机横滚表：首列吸附，滚动时保留行上下文 */
+@media(max-width:760px){
+.tablewrap th:first-child,.tablewrap td:first-child{position:sticky;left:0;z-index:1;background:var(--sheet);box-shadow:inset -1px 0 0 var(--line)}
+.tablewrap th:first-child{background:var(--surface-2);z-index:2}
+.tablewrap.tall th:first-child{z-index:3}
+.tablewrap tbody tr:hover td:first-child{background:var(--acc-soft)}
+/* 慢设备上逐行瀑布会闪空白：手机端直接整行呈现 */
+.rv tbody tr{animation:none;opacity:1;transform:none}
+}
+@media print{
+#top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
+body{background:#fff;color:#000}
+#main{padding:0}#contentrow{display:block}
+article{box-shadow:none;border:none;max-width:100%}
+a{color:inherit}
+}
+</style></head><body><div id=pbar></div><div class="blob b1"></div><div class="blob b2"></div><header id=top><button id=burger aria-label=目录>☰</button><a class=brand href="../index.html"><b>SC 源码笔记</b><small>SURVIVALCRAFT · 行号级引擎笔记</small></a><div class=searchwrap id=search title='搜索（⌘K）'><span class=kicon>⌕</span><span class=ph>搜索…</span><kbd>⌘K</kbd></div><button id=themeBtn aria-label=切换主题>🌙</button><a class=gh href="https://github.com/3366434156/survivalcraft-notes" target=_blank rel=noopener>GitHub ↗</a></header><div id=layout><aside id=side><nav id=nav><div class=sec>总览 · 3</div><a href="../index.html">README</a><a href="../AGENTS.html">AGENTS</a><a href="../学习路线.html">学习路线</a><div class=sec>Mod 开发 · 16</div><a href="../Mod开发配方.html">Mod开发配方</a><a href="../Mod开发配方2.html">Mod开发配方2</a><a href="../Mod钩子总表.html">Mod钩子总表</a><a href="../Mod钩子明细.html">Mod钩子明细</a><a href="../数据格式参考.html">数据格式参考</a><a href="../数据格式参考2.html">数据格式参考2</a><a href="../数据格式参考3.html">数据格式参考3</a><a href="../Mod排错手册.html">Mod排错手册</a><a href="../Mod排错手册2.html">Mod排错手册2</a><a href="../Mod示例-数据驱动.html">Mod示例-数据驱动</a><a href="../Mod示例-代码方块.html">Mod示例-代码方块</a><a href="../Mod示例-电力元件.html">Mod示例-电力元件</a><a href="../Mod示例-自定义生物.html">Mod示例-自定义生物</a><a href="../Mod示例-自定义界面.html">Mod示例-自定义界面</a><a href="../Mod示例-自定义特效.html">Mod示例-自定义特效</a><a href="../Mod示例-自定义食物.html">Mod示例-自定义食物</a><div class=sec>引擎主线 · 30</div><a href="../01-引擎/01-程序入口与主循环.html">01-程序入口与主循环</a><a href="../01-引擎/02-Subsystem体系.html">02-Subsystem体系</a><a href="../01-引擎/03-实体与组件体系.html">03-实体与组件体系</a><a href="../01-引擎/04-方块系统.html">04-方块系统</a><a href="../01-引擎/05-世界与地形生成.html">05-世界与地形生成</a><a href="../01-引擎/06-渲染管线与着色器.html">06-渲染管线与着色器</a><a href="../01-引擎/07-粒子系统.html">07-粒子系统</a><a href="../01-引擎/08-音频系统.html">08-音频系统</a><a href="../01-引擎/09-UI与Widget体系.html">09-UI与Widget体系</a><a href="../01-引擎/10-输入与相机.html">10-输入与相机</a><a href="../01-引擎/11-存档持久化.html">11-存档持久化</a><a href="../01-引擎/12-ModAPI与加载链.html">12-ModAPI与加载链</a><a href="../01-引擎/13-物理与碰撞.html">13-物理与碰撞</a><a href="../01-引擎/14-光照天空与天气.html">14-光照天空与天气</a><a href="../01-引擎/15-电学与机构.html">15-电学与机构</a><a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a><a href="../01-引擎/17-Screen屏幕族.html">17-Screen屏幕族</a><a href="../01-引擎/18-Dialog对话框族.html">18-Dialog对话框族</a><a href="../01-引擎/19-媒体动画与VR.html">19-媒体动画与VR</a><a href="../01-引擎/20-内容与资源管理.html">20-内容与资源管理</a><a href="../01-引擎/21-Engine核心运行时.html">21-Engine核心运行时</a><a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a><a href="../01-引擎/23-内嵌浏览器.html">23-内嵌浏览器</a><a href="../01-引擎/24-机制全链.html">24-机制全链</a><a href="../01-引擎/25-方块实体与容器.html">25-方块实体与容器</a><a href="../01-引擎/26-生物AI与行为.html">26-生物AI与行为</a><a href="../01-引擎/27-地形修改与MovingBlocks.html">27-地形修改与MovingBlocks</a><a href="../01-引擎/28-弹道与远程武器.html">28-弹道与远程武器</a><a href="../01-引擎/29-Widget生命周期与自定义控件.html">29-Widget生命周期与自定义控件</a><a href="../01-引擎/31-服饰与装备.html">31-服饰与装备</a><div class=sec>逐文件明细 · 20</div><a href="../01-引擎/明细/02a-子系统明细.html">02a-子系统明细</a><a href="../01-引擎/明细/03a-组件明细.html">03a-组件明细</a><a href="../01-引擎/明细/04a-方块明细.html">04a-方块明细</a><a href="../01-引擎/明细/05a-地形生成明细.html">05a-地形生成明细</a><a href="../01-引擎/明细/06a-渲染管线明细.html">06a-渲染管线明细</a><a href="../01-引擎/明细/07a-粒子明细.html">07a-粒子明细</a><a href="../01-引擎/明细/08a-音频明细.html">08a-音频明细</a><a href="../01-引擎/明细/09a-Widget明细.html">09a-Widget明细</a><a href="../01-引擎/明细/10a-输入相机明细.html">10a-输入相机明细</a><a href="../01-引擎/明细/11a-序列化明细.html">11a-序列化明细</a><a href="../01-引擎/明细/12a-ModsManager明细.html">12a-ModsManager明细</a><a href="../01-引擎/明细/15a-电学元件明细.html">15a-电学元件明细</a><a href="../01-引擎/明细/16a-Game明细.html">16a-Game明细</a><a href="../01-引擎/明细/16b-Game明细2.html">16b-Game明细2</a><a href="../01-引擎/明细/17a-Screen明细.html">17a-Screen明细</a><a href="../01-引擎/明细/18a-Dialog明细.html">18a-Dialog明细</a><a href="../01-引擎/明细/19a-媒体动画明细.html">19a-媒体动画明细</a><a href="../01-引擎/明细/20a-内容资源明细.html">20a-内容资源明细</a><a href="../01-引擎/明细/21a-Engine核心明细.html">21a-Engine核心明细</a><a href="../01-引擎/明细/22a-数据资产明细.html">22a-数据资产明细</a></nav></aside><main id=main><div id=contentrow><article class=spot><h1 id="服饰与装备-穿戴-防御-叠层渲染全链">服饰与装备（穿戴·防御·叠层渲染全链）</h1>
+<blockquote>域: SC引擎+数据 · 更新: 2026-11-01 · 状态: 全链今日实读（ComponentClothing / ClothingData / ClothingBlock / ClothingSlot / Attackment / ComponentOuterClothingModel 六文件全文 + Clothes.xml·Clothes.xsd·BlocksData.txt·CraftingRecipes.xml 节选，行号均本日现行代码） · 关联: <a href="../01-引擎/16-玩法物品与背包.html">16-玩法物品与背包</a> · <a href="../01-引擎/22-数据资产与Database.html">22-数据资产与Database</a> · <a href="../数据格式参考2.html">数据格式参考2</a></blockquote>
+<h2 id="一句话定位">一句话定位</h2>
+<p>一件衣服 = 方块 203（ClothingBlock）的一个 data 编码值；属性在 <code>Clothes.xml</code> 的 <code>&lt;ClothingData&gt;</code>（43→38 条，见文末出入清单）；穿上身是往 <code>ComponentClothing.m_clothes[槽位]</code> 列表追加（可叠层），防御在 <code>Attackment.CalculateInjuryAmount</code> 内先于扣血结算，渲染是把每件衣服整图按染色叠画进两张合成贴图再覆盖到人体模型。</p>
+<h2 id="1-数据层-一件-衣服-是什么">1 数据层：一件"衣服"是什么</h2>
+<h3 id="1-1-载体结论-database-xml-vs-clothes-xml-vs-clo">1.1 载体结论（Database.xml vs Clothes.xml vs .clo）</h3>
+<div class="tablewrap"><table><thead><tr><th>载体</th><th>存什么</th><th>证据</th></tr></thead><tbody><tr><td><code>Survivalcraft/Content/Assets/Clothes.xml</code></td><td><b>原版全部 38 条 <code>&lt;ClothingData&gt;</code></b>（根 <code>&lt;Clothes&gt;</code>，49 行）</td><td>今日 grep 计数 38；条目行见文件本体</td></tr><tr><td><code>Database.xml</code></td><td><b>不存衣物条目</b>（grep ClothingData = 0）。只存 MalePlayer/FemalePlayer 实体模板上的 <code>Clothing</code> 组件模板（Database.xml:400）与 <code>OuterClothingModel</code> 组件参数（女 :3306 <code>Models/OuterClothingFemale</code>、男 :3341 <code>Models/OuterClothingMale</code>）</td><td>今日实读</td></tr><tr><td><code>.clo</code>（mod 包内）</td><td>mod 的 Clothes.xml 增量文件：按扩展名被抓取后 <code>CombineClo</code> 合并进同一 XElement 树</td><td>ModEntity.cs:344-359、ModsManager.cs:938-983</td></tr><tr><td><code>BlocksData.txt:163</code></td><td>ClothingBlock 方块级属性一行：CraftingId=<code>clothing</code>、Density=0.5、<b>Durability=15</b>、MaxStacking=1</td><td>今日按表头列位解析</td></tr></tbody></table></div>
+<p>装载路径：原版本体伪装成"基础 mod"（SurvivalCraftModEntity）走同一条 mod 管线——<code>LoadClo</code> 从 ContentManager 取 <code>Clothes</code>（SurvivalCraftModEntity.cs:134-138），<code>ClothingBlock.Initialize</code> 里 <code>ModListAllDo(LoadClo)</code> 收树后 <code>LoadClothingData</code> 展开（ClothingBlock.cs:60-64）。<code>CombineClo</code> 合并规则：同 Index + <code>New-</code> 前缀属性=字段级改写；<code>r-</code>/<code>Remove</code> 属性=删条目；否则追加（ModsManager.cs:949-965）。</p>
+<h3 id="1-2-value-编码-一件衣服-203-号方块-data-位域">1.2 value 编码：一件衣服 = 203 号方块 + data 位域</h3>
+<p><code>Terrain.MakeBlockValue(203, 0, data)</code>，data 位域（ClothingBlock.cs:160-166, 270-280）：</p>
+<div class="tablewrap"><table><thead><tr><th>位</th><th>内容</th><th>读写</th></tr></thead><tbody><tr><td>0-7 + 16-17</td><td>衣物 Index（10bit，0-1023；XML 侧 <code>&amp;1023</code> 截断）</td><td><code>GetClothingIndex/SetClothingIndex</code> ClothingBlock.cs:271-276</td></tr><tr><td>8-11</td><td>损伤 0-15（Durability=15 刚好用满 4bit）</td><td><code>GetDamage/SetDamage</code> ClothingBlock.cs:160-166</td></tr><tr><td>12-15</td><td>染色号 0-15（0=本色；调色板=世界 Palette 16 色、饱和度 ×0.85）</td><td><code>GetClothingColor/SetClothingColor</code> :278-280；SubsystemPalette.cs:92-102</td></tr></tbody></table></div>
+<p>染色值存在<b>物品 value 里</b>随存档走（不是存在 ComponentClothing）；<code>GetColor</code> 运行时查 <code>SubsystemPalette.GetFabricColor</code>（ClothingData.cs:234-237）。</p>
+<h3 id="1-3-clothingdata-xml-18-属性-实例字段">1.3 ClothingData：XML 18 属性 → 实例字段</h3>
+<p>解析：<code>ClothingBlock.LoadClothingData</code>（ClothingBlock.cs:25-58，<code>Class</code> 属性可指定 ClothingData 子类，须有 <code>(XElement)</code> 构造器）+ 构造器逐属性读取（ClothingData.cs:11-53）。属性全表见<a href="../数据格式参考2.html">数据格式参考2</a>（该页 18 属性 schema 今日复核一致）。字段侧另有三个代码挂点（数据写不了）：</p>
+<ul><li><code>Mount</code> / <code>Dismount</code> / <code>Update</code>：三个 <code>Action&lt;int, ComponentClothing&gt;</code>，穿戴/脱下/每帧回调（ClothingData.cs:96-106；Update 调用点 ComponentClothing.cs:323-336）；</li><li><code>DictionaryForOtherMods</code>：mod 间联挂数据袋（ClothingData.cs:111）；</li><li>四个 virtual：<code>ApplyArmorProtection</code> / <code>UpdateGraduallyDamagedOverTime</code> / <code>OnClotheSet</code> / <code>GetColor</code> 可被子类覆写（:122/:175/:224/:234）。</li></ul>
+<h3 id="1-4-槽位-clothingslot-可扩展">1.4 槽位：ClothingSlot 可扩展</h3>
+<ul><li>内置 4 槽 Head/Torso/Legs/Feet，注册进 <code>ClothingSlot.ClothingSlots</code> 字典（ClothingSlot.cs:27-30）；mod 经 <code>InitializeClothingSlots</code> 钩子加新槽（:39-45，注意不可 Clear 重建——引用相等作字典键）。</li><li>每槽自带 <code>BasicInsulation</code>：Head=2、Torso=0.2、Legs=0.4、Feet=2（:35-38），是"该槽裸露程度"基数。</li><li>部位不是"四格格子"而是<b>每槽一个有序列表</b>：<code>m_clothes[slot] : List&lt;int&gt;</code>，可叠层自由穿（见 §2）。</li></ul>
+<h2 id="2-穿戴链-从背包拖到身上">2 穿戴链：从背包拖到身上</h2>
+<ol><li>容量问询：把物品拖上衣服槽前 UI 先问 <code>GetSlotProcessCapacity</code> → <code>CanWear(value)</code> 且 <code>CanWearClothing</code> 通过则回 1（ComponentClothing.cs:426-449）。</li><li><b>叠层规则</b>：<code>CanWearClothing</code> 只看同槽最外层——新衣 <code>Layer</code> 必须<b>严格大于</b>当前最外层（ComponentClothing.cs:567-584，:583）。所以 Layer 是"同槽内穿几次"的深度序号，不是全局四层。</li><li>穿上：<code>ProcessSlotItems</code>（InventorySlotWidget.cs:599-601 触发）→ <code>Mount</code> 回调 → 同槽列表 Append → <code>SetClothes</code>（ComponentClothing.cs:521-529）。</li><li><code>SetClothes</code> 是唯一改衣入口（ComponentClothing.cs:129-159）：全量重算——各槽保温=BasicInsulation+Σ衣服 Insulation（经 <code>OnClotheSet</code>，ClothingData.cs:224-228）、坐骑移速因子连乘、密度修正加到 <code>ComponentBody.Density</code>（:148-149）、<code>m_clothedTexturesValid=false</code> 触发贴图重合成、末尾 ⚡<code>SetClothes</code> 钩子（:152-158）。</li><li>脱下：<code>RemoveSlotItems</code> 只弹<b>最外层</b>一件（<code>list[^1]</code>）+ <code>Dismount</code> 回调（ComponentClothing.cs:532-546）。</li><li>存档：每槽 <code>;</code> 分隔 int 列表写进实体 Clothing 组件的 <code>Clothes</code> 子字典（:295-301）；出生默认衣由 <code>PlayerData.SpawnPlayer</code> 按皮肤硬编码注入同一结构（PlayerData.cs:573-629，<code>MakeClothingValue</code> :700-702）。</li><li>UI：衣服页固定摆 4 个槽 widget（StableId 0-3），格子只显示 <code>GetSlotValue</code>=最外层（ClothingWidget.cs:33-54；ComponentClothing.cs:415）——<b>UI 一格，身上一层叠一层</b>。死亡掉落也是每槽只掉最外层一件（DropAllItems，ComponentClothing.cs:548-561）。</li></ol>
+<h2 id="3-防御结算链-挨打时衣服怎么挡">3 防御结算链：挨打时衣服怎么挡</h2>
+<p>入口：<code>Attackment.ProcessAttackment</code> → <code>ProcessAttackmentToCreature</code> → <code>CalculateInjuryAmount</code>（Attackment.cs:213/:137/:82）。</p>
+<ol><li><b>护甲先于扣血</b>：<code>CalculateInjuryAmount</code> 内 <code>EnableArmorProtection</code> 时取目标的 <code>ComponentClothing.ApplyArmorProtection(this)</code>（Attackment.cs:90-95），返回削弱后的攻击力，随后才过韧性（ResilienceFactor，:96-101）和 <code>ComponentHealth.Injure</code>（:148）。</li><li><b>随机选槽</b>：一次攻击只结算一个槽——10% Feet / 20% Legs / 60% Torso / 10% Head（ComponentClothing.cs:185-188）。⚡mod 可经 <code>DecideArmorProtectionSequence</code> 改名单、<code>ApplyProtectionBeforeClothes/AfterClothes</code> 前后插手（:190-205/:246-252）。</li><li><b>单件吸收公式</b>（ClothingData.ApplyArmorProtection，ClothingData.cs:122-167）：</li></ol>
+<p><code>吸收 = min(剩余攻击力 × saturate(ArmorProtection / attackment.ArmorProtectionDivision), 剩余Sturdiness)</code>（:130-135）。 剩余 Sturdiness 按损伤比例折减：<code>(maxDurability - damage) / maxDurability × Sturdiness</code>（:131）。<code>ArmorProtectionDivision</code> 是给 mod 强攻留的除数（Attackment.cs:66-71）。 多件同槽：列表序逐件吃同一攻击（ComponentClothing.cs:208-228），每件只扣自己 Sturdiness 上限。</p>
+<ol><li><b>耐久损耗</b>：非创造（GameMode≠0）才扣——<code>DamageItem</code> 按吸收量折算损伤数（ClothingData.cs:138-141）；损伤超 Durability=15 → <code>GetDamageDestructionValue</code>=0 物品销毁（BlocksManager.cs:1011-1035、Block.cs:466），结算后从身上剔除+碎屑粒子（ComponentClothing.cs:230-239）。<b>衣服会穿坏，原版无修补</b>。</li><li><b>自然磨损</b>：走路/游泳/跳跃时每 2s 检查一次（ComponentClothing.cs:373-376），每件按 <code>湿身 10×Sturdiness : 干爽 20×Sturdiness</code> 秒的间隔 75% 概率 +1 损伤（ClothingData.cs:175-218），坏时屏幕提示；创造或未开冒险生存机制则豁免（:177-179）。等级限制同门：<code>EnableDressLimit</code> 每 0.5s 踢掉超 <code>PlayerLevelRequired</code> 的衣服（ComponentClothing.cs:338-372）。</li><li>结算完按 Layer 升序重排该槽（ComponentClothing.cs:240-245）再 <code>SetClothes</code> 写回。</li></ol>
+<h2 id="4-渲染叠层链-layer-isouter-染色怎么变画面">4 渲染叠层链：Layer/IsOuter/染色怎么变画面</h2>
+<p>核心：<b>两张离屏合成贴图</b>，不是逐件 3D 贴模型。</p>
+<ol><li><code>ComponentClothing.UpdateRenderTargets</code>（每帧尾，ComponentClothing.cs:586-709）：加载玩家皮肤纹理，建两张与皮肤同尺寸 RenderTarget（:597-610）。</li><li>内层 RT：先整图铺皮肤，再按内层槽序（Head→Torso→<b>Feet→Legs</b>，Load 时 Reverse(2,2) :260-262）遍历所有衣物，<b>只画 <code>IsOuter=False</code></b> 的：每件衣服贴图作为一整张同 UV 布局 quad 乘染色色盖上去（:611-667，非外衣 quad :655-664）。外层 RT 同理只画 <code>IsOuter=True</code>（外层槽序 Head→Torso→Legs→Feet，:668-702）。</li><li>同槽多件按列表序（=Layer 升序）叠画 → 后画的盖先画的；<b>Layer 本身不参与跨槽绘制排序</b>，跨槽遮挡由固定槽序决定。</li><li>合成结果覆盖到模型：<code>m_innerClothedTexture</code> → <code>ComponentHumanModel.TextureOverride</code>，<code>m_outerClothedTexture</code> → <code>ComponentOuterClothingModel.TextureOverride</code>（:601/:608）；渲染器统一用 TextureOverride 替换模型贴图（SubsystemModelsRenderer.cs:400-401/:512-513；属性定义 ComponentModel.cs:102）。</li><li>外层是<b>独立 .dae 模型</b>（OuterClothingMale/Female，4 网格 Leg1/Leg2/Body/Head，ComponentOuterClothingModel.cs:44-51），每帧从人体模型拷骨骼变换（:24-27）；模型名取自 Database.xml 实体模板（CharacterSkinsManager.cs:211-223）。贴图纹理仍从 RT 来——所以外衣贴图也是"皮肤 UV 全图"。</li><li><b>第一/三人称</b>：第三人称身体+外衣模型都吃合成贴图；第一人称只画手，用内层合成贴图（ComponentFirstPersonModel.cs:190；VR 手同理 ComponentVrHandsModel.cs:112）——外衣在第一人称不可见。</li><li>染色生效点就在第 2 步的 quad 乘色（<code>GetColor</code>→<code>SubsystemPalette.GetFabricColor</code>）；掉在地上/拿在手里则是 <code>ClothingBlock.DrawBlock</code> 用原版人体 mesh + 槽位变换 + 染色直接画（ClothingBlock.cs:292-332；拾取框 <code>GetDrawDemand</code> 按 IsOuter 选内/外 mesh :284-290）。</li><li>自定义玩家模型（UV 与原版皮肤不同）可关掉合成：ValuesDictionary <code>ShowClothedTexture</code> / <code>DrawClothedTexture</code>（ComponentClothing.cs:70-83/:286-287；注意当前实现是 <b>static</b> 字段，注释称"实例级"但实为全局开关）。</li></ol>
+<h2 id="5-保温-移速-属性的消费端">5 保温/移速：属性的消费端</h2>
+<ul><li>保温：整身 <code>Insulation = 1/Σ(1/各槽保温)</code>（调和平均，ComponentClothing.cs:113-127），<code>ComponentVitalStats</code> 消费时按湿身线性衰减到 5%（ComponentVitalStats.cs:519）；<code>LeastInsulatedSlot</code> 用于"哪个部位最冷"提示（ClothingSlot.cs:31-34 的文案）。</li><li>移速：<code>MovementSpeedFactor</code> 经 <code>ComponentLevel.GenerateSpeedFactors</code> 汇入 <code>ComponentFactors.SpeedFactor</code>（ComponentLevel.cs:197-223，衣物项 :208/:364-374），<code>ComponentLocomotion</code> 乘进步速（ComponentLocomotion.cs:414/:453）；<code>SteedMovementSpeedFactor</code> 则只作用于坐骑（ComponentLocomotion.cs:419-423）。赤脚提示读 Feet 槽最外层的 <code>MovementSpeedFactor&gt;1</code>（:457-475）。</li></ul>
+<h2 id="6-合成与获取-craftingrecipes-xml">6 合成与获取（CraftingRecipes.xml）</h2>
+<div class="tablewrap"><table><thead><tr><th>链</th><th>条目</th></tr></thead><tbody><tr><td>布</td><td>棉铃→棉絮（cottonwad）→ 3×帆布 Canvas（CraftingRecipes.xml:82），帆布+线→各类棉衣（:943-980）</td></tr><tr><td>皮</td><td>皮→皮衣（:982-1008，靴子要 planks）</td></tr><tr><td>毛皮</td><td>fur→皮草三件（:1013-1022）</td></tr><tr><td>木甲</td><td>棍+线→木胸甲/木护腿（:1026-1030）</td></tr><tr><td>锁子甲</td><td>铁锭→ChainMail（:1035）</td></tr><tr><td>金属甲</td><td>铜锭+对应皮件（<code>clothing:11</code> 等）→铜甲，RequiredPlayerLevel=2（:1041-1055）；铁锭版等级 3（:1061-1075）</td></tr><tr><td>染色/脱色</td><td>桶 129 染料 + 衣服 AdHoc 配方（≥1 热量，染料耗 Durability/4）；桶 128 脱漆剂还原成 0 号色（ClothingBlock.cs:189-268，染 :210-238、脱 :239-265）</td></tr><tr><td>初始</td><td>按皮肤四件套，见 PlayerData.cs:573-629</td></tr></tbody></table></div>
+<h2 id="7-原版范例表-torso-为主-属性自-clothes-xml">7 原版范例表（Torso 为主，属性自 Clothes.xml）</h2>
+<div class="tablewrap"><table><thead><tr><th>Index</th><th>名称</th><th>Slot</th><th>Armor</th><th>Sturdiness</th><th>Insulation</th><th>IsOuter</th><th>Layer</th><th>CanBeDyed</th></tr></thead><tbody><tr><td>15</td><td>CottonTankTop</td><td>Torso</td><td>0.1</td><td>25</td><td>1.0</td><td>False</td><td>0</td><td>True</td></tr><tr><td>14</td><td>CottonTShirt</td><td>Torso</td><td>0.1</td><td>25</td><td>2.0</td><td>False</td><td>0</td><td>True</td></tr><tr><td>13</td><td>CottonShirt</td><td>Torso</td><td>0.1</td><td>25</td><td>4.0</td><td>False</td><td>1</td><td>True</td></tr><tr><td>5</td><td>LeatherJerkin</td><td>Torso</td><td>0.5</td><td>40</td><td>4.0</td><td>False</td><td>2</td><td>True</td></tr><tr><td>24</td><td>CottonSweater</td><td>Torso</td><td>0.1</td><td>25</td><td>12.0</td><td>True</td><td>2</td><td>True</td></tr><tr><td>6</td><td>FurCoat</td><td>Torso</td><td>0.25</td><td>30</td><td>16.0</td><td>True</td><td>4</td><td>True</td></tr><tr><td>2</td><td>ChainMail</td><td>Torso</td><td>1.0</td><td>50</td><td>0.0</td><td>True</td><td>3</td><td>False</td></tr><tr><td>3</td><td>IronChestPlate</td><td>Torso</td><td>1.0</td><td>100</td><td>2.0</td><td>True</td><td>4</td><td>False</td></tr></tbody></table></div>
+<p>同款同 Layer 的叠穿组合示例：Torso 槽可同时穿 14(T恤 L0)→13(衬衫 L1)→5(皮甲 L2)→3(铁甲 L4)。</p>
+<h2 id="8-mod-视角-自定义一件服饰">8 mod 视角：自定义一件服饰</h2>
+<p><b>纯数据路线（.scmod 包内，零代码）</b>：</p>
+<ol><li>包内放任意名 <code>.clo</code> 文件（按扩展名抓取，ModEntity.cs:349-357），根 <code>&lt;Mod&gt;</code>（Clothes.xsd:10 同义根），内放 <code>&lt;ClothingData Index="50" Slot="Torso" ArmorProtection="0.5" Sturdiness="40" Insulation="4.0" IsOuter="False" CanBeDyed="True" Layer="2" TextureName="Textures/Clothing/MyJerkin" DisplayName="[ClothingBlock:50]" Description="[ClothingBlock:50]" /&gt;</code>。Index 取 0-1023 内未占值（原版占 0-37；同 Index 后载者直接覆盖字典项 ClothingBlock.cs:53）。</li><li>包内贴图 <code>Assets/Textures/Clothing/MyJerkin.*</code>——<b>与皮肤同 UV 布局的整图</b>（原版范本 <code>Survivalcraft/Content/Assets/Textures/Clothing/</code>，webp）。画多少身体区域就穿出多少。</li><li>Lang 里补 <code>ClothingBlock:50</code> 的 DisplayName/Description 键（<code>[...]</code> 令牌在 ClothingData.cs:14-27 展开）。</li><li>合成：包内 <code>.cr</code> 加 <code>Recipe Result="clothing:50" ...</code>（原版同时存在 <code>ClothingBlock:30</code> 与 <code>clothing:11</code> 两种写法，CraftingRecipes.xml:943/:1041）。</li><li>改原版衣服：同 Index + <code>New-</code> 前缀属性做字段级覆盖；<code>Remove="true"</code>/<code>r-</code> 删条目（ModsManager.cs:949-962）。</li></ol>
+<p><b>什么时候才要代码</b>：改防御公式→<code>Class</code> 指向 ClothingData 子类覆写 <code>ApplyArmorProtection</code>；穿戴特效/每帧逻辑→代码里给实例的 <code>Mount/Dismount/Update</code> 赋值；新槽位→<code>AddClothingSlot</code>+<code>InitializeClothingSlots</code> 钩子。染色/叠层/保温/耐久全部数据自带，不用写一行。</p>
+<p><b>最简照抄</b>：CottonTankTop（Index 15，上表首行）属性最少、无音效；要染色的抄 CottonShirt（13）。</p>
+<h2 id="9-快查路由">9 快查路由</h2>
+<div class="tablewrap"><table><thead><tr><th>想做什么</th><th>去处</th></tr></thead><tbody><tr><td>查/改衣服属性键</td><td><a href="../数据格式参考2.html">数据格式参考2</a> §二；本页 §1.3</td></tr><tr><td>改挨打减伤/免伤</td><td>ClothingData.cs:122-167（单件）、ComponentClothing.cs:165-257（选槽与流程）、Attackment.cs:82-111（入口）</td></tr><tr><td>mod 强攻穿透护甲</td><td><code>Attackment.ArmorProtectionDivision</code>（Attackment.cs:71），防御值除以它</td></tr><tr><td>穿衣不显示/贴图错</td><td>合成链 ComponentClothing.cs:586-709；UV 布局须同皮肤；glTF 模型关 <code>ShowClothedTexture</code></td></tr><tr><td>衣服叠不上去</td><td>Layer 必须大于同槽最外层（ComponentClothing.cs:583）</td></tr><tr><td>衣服莫名消失/掉耐久</td><td>磨损规则 ClothingData.cs:175-218；销毁阈值 Durability=15（BlocksData.txt:163）</td></tr><tr><td>加新部位（如手臂）</td><td>ClothingSlot.cs:14-45 + <code>InitializeClothingSlots</code> 钩子</td></tr><tr><td>出生带自定义衣服</td><td>PlayerData.cs:632-645 overrides 的 <code>Clothing/Clothes</code> 结构</td></tr><tr><td>染色/脱色配方</td><td>ClothingBlock.cs:189-268（AdHoc，需热量≥1）</td></tr><tr><td>三大实体模板（外衣模型）</td><td>Database.xml:3306(女)/:3341(男)</td></tr></tbody></table></div>
+<h2 id="10-与既有页出入-只记录-不改原页">10 与既有页出入（只记录，不改原页）</h2>
+<ol><li><b>条目数</b>：<a href="../数据格式参考2.html">数据格式参考2</a>:69"50 行 43 条"、<a href="../01-引擎/22-数据资产与Database.html">22 页</a>:16/:58/:89"43 条/43 行"——今日实数 <b>49 行 38 条</b>（43 疑为旧版树计数）。</li><li><b>文件名</b>：批次记录写"Clothing.xsd"——实际为 <code>Survivalcraft/Content/Assets/Clothes.xsd</code>（75 行数吻合）。</li><li><a href="../01-引擎/16-玩法物品与背包.html">16 页</a> 引用的吸收公式（ClothingData.cs:122-167）、初始四件套（PlayerData.cs:573-629）、ClothingSlot 重入警示（ClothingSlot.cs:22-30）今日复核<b>一致</b>。</li></ol><nav class=pn><a class="prev" href="../01-引擎/29-Widget生命周期与自定义控件.html"><small>上一页 · SC引擎</small><b>29-Widget生命周期与自定义控件</b></a><a class="next" href="../01-引擎/明细/02a-子系统明细.html"><small>下一页 · SC引擎·明细</small><b>02a-子系统明细</b></a></nav></article><aside id=toc><div class=toc-title>本页目录</div><nav id=tocnav><a class="lvl2" href="#一句话定位">一句话定位</a><a class="lvl2" href="#1-数据层-一件-衣服-是什么">1 数据层：一件&quot;衣服&quot;是什么</a><a class="lvl3" href="#1-1-载体结论-database-xml-vs-clothes-xml-vs-clo">1.1 载体结论（Database.xml vs Clothes.xml vs .clo）</a><a class="lvl3" href="#1-2-value-编码-一件衣服-203-号方块-data-位域">1.2 value 编码：一件衣服 = 203 号方块 + data 位域</a><a class="lvl3" href="#1-3-clothingdata-xml-18-属性-实例字段">1.3 ClothingData：XML 18 属性 → 实例字段</a><a class="lvl3" href="#1-4-槽位-clothingslot-可扩展">1.4 槽位：ClothingSlot 可扩展</a><a class="lvl2" href="#2-穿戴链-从背包拖到身上">2 穿戴链：从背包拖到身上</a><a class="lvl2" href="#3-防御结算链-挨打时衣服怎么挡">3 防御结算链：挨打时衣服怎么挡</a><a class="lvl2" href="#4-渲染叠层链-layer-isouter-染色怎么变画面">4 渲染叠层链：Layer/IsOuter/染色怎么变画面</a><a class="lvl2" href="#5-保温-移速-属性的消费端">5 保温/移速：属性的消费端</a><a class="lvl2" href="#6-合成与获取-craftingrecipes-xml">6 合成与获取（CraftingRecipes.xml）</a><a class="lvl2" href="#7-原版范例表-torso-为主-属性自-clothes-xml">7 原版范例表（Torso 为主，属性自 Clothes.xml）</a><a class="lvl2" href="#8-mod-视角-自定义一件服饰">8 mod 视角：自定义一件服饰</a><a class="lvl2" href="#9-快查路由">9 快查路由</a><a class="lvl2" href="#10-与既有页出入-只记录-不改原页">10 与既有页出入（只记录，不改原页）</a></nav></aside></div><div id=foot>SC 源码笔记 · 由 tools/build_wiki.py 生成</div></main></div><div id=backdrop></div><div id=kmodal><div id=kpanel><div class=khead><span class=kicon>⌕</span><input id=kinput placeholder='搜索全部页面…' autocomplete=off><kbd>ESC</kbd></div><div id=kres></div><div class=kfoot><span>↑↓ 选择</span><span>Enter 打开</span><span>ESC 关闭</span></div></div></div><button id=btt aria-label=回到顶部>↑</button><script>
+const $=s=>document.querySelector(s);
+const ROOT="../"; // 站点根相对前缀（按页面深度注入）
+// 主题切换
+const tbtn=$('#themeBtn');
+function applyTheme(t){document.documentElement.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}tbtn.textContent=t==='dark'?'☀️':'🌙'}
+applyTheme(document.documentElement.dataset.theme||'light');
+tbtn.addEventListener('click',()=>{
+  const next=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const vt=document.startViewTransition(()=>applyTheme(next));
+    vt.ready.then(()=>{
+      const r=tbtn.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+      const mr=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+      document.documentElement.animate({clipPath:['circle(0px at '+x+'px '+y+'px)','circle('+mr+'px at '+x+'px '+y+'px)']},{duration:520,easing:'ease-in-out',pseudoElement:'::view-transition-new(root)'});
+    }).catch(()=>{});
+  } else applyTheme(next);
+});
+// ⌘K 命令面板
+let IDX=[];
+fetch(ROOT+'search.json').then(r=>r.json()).then(d=>{IDX=d});
+const kmodal=$('#kmodal'),kinput=$('#kinput'),kres=$('#kres'),kopen2=$('#search');
+let ksel=0,khits=[];
+function kRender(){
+  const q=kinput.value.trim().toLowerCase();
+  khits=q?IDX.filter(p=>p.t.toLowerCase().includes(q)||p.b.toLowerCase().includes(q)).slice(0,12):IDX.slice(0,8);
+  ksel=0;
+  kres.innerHTML=khits.map((p,i)=>{
+    const j=q?p.b.toLowerCase().indexOf(q):-1;
+    const snip=j>=0?p.b.slice(Math.max(0,j-18),j+46):'';
+    return `<a href="${ROOT}${p.u}" class="${i===0?'sel':''}"><b>${p.t}</b><span class=snip>…${snip}…</span></a>`
+  }).join('')||'<div class=kempty>无命中</div>';
+}
+function kOpen(){kmodal.classList.add('show');kinput.value='';kRender();setTimeout(()=>kinput.focus(),30)}
+function kClose(){kmodal.classList.remove('show')}
+function kMove(d){const as=[...kres.querySelectorAll('a')];if(!as.length)return;ksel=(ksel+d+as.length)%as.length;as.forEach((a,i)=>a.classList.toggle('sel',i===ksel));as[ksel].scrollIntoView({block:'nearest'})}
+kopen2.addEventListener('click',kOpen);
+kinput.addEventListener('input',kRender);
+kmodal.addEventListener('click',e=>{if(e.target===kmodal)kClose()});
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();kOpen()}
+  else if(e.key==='/'&&document.activeElement!==kinput){e.preventDefault();kOpen()}
+  else if(e.key==='Escape'){kClose()}
+  else if(kmodal.classList.contains('show')&&kres.querySelector('a')){
+    if(e.key==='ArrowDown'){e.preventDefault();kMove(1)}
+    else if(e.key==='ArrowUp'){e.preventDefault();kMove(-1)}
+    else if(e.key==='Enter'){e.preventDefault();const as=[...kres.querySelectorAll('a')];if(as[ksel])location.href=as[ksel].href}
+  }
+});
+// 移动端侧栏抽屉
+const burger=$('#burger'),side=$('#side'),backdrop=$('#backdrop');
+function setSide(open){side.classList.toggle('open',open);backdrop.classList.toggle('show',open)}
+burger.addEventListener('click',e=>{e.stopPropagation();setSide(!side.classList.contains('open'))});
+document.addEventListener('click',e=>{if(window.innerWidth<=1024&&side.classList.contains('open')&&!side.contains(e.target)&&e.target!==burger)setSide(false)});
+backdrop.addEventListener('click',()=>setSide(false));
+// 高亮当前页
+const here=decodeURIComponent(location.pathname.split('/').pop()||'index.html');
+document.querySelectorAll('#nav a').forEach(a=>{if(decodeURIComponent(a.getAttribute('href')).endsWith(here))a.classList.add('active')});
+// 右侧目录：滑动指示器 + 滚动高亮
+const tocnav=$('#tocnav');
+const tocLinks=[...document.querySelectorAll('#tocnav a')];
+if(tocLinks.length){
+  const tind=document.createElement('div');tind.className='tocind';tocnav.prepend(tind);
+  const heads=tocLinks.map(a=>document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))));
+  const onScroll=()=>{
+    let idx=0;
+    for(let i=0;i<heads.length;i++){if(heads[i]&&heads[i].getBoundingClientRect().top<=100)idx=i}
+    tocLinks.forEach((a,i)=>a.classList.toggle('active',i===idx));
+    const a=tocLinks[idx];
+    if(a){tind.style.top=a.offsetTop+'px';tind.style.height=a.offsetHeight+'px'}
+  };
+  document.addEventListener('scroll',onScroll,{passive:true});onScroll();
+}
+// 阅读进度条 + 回到顶部 + 顶栏收缩
+const pbar=$('#pbar'),btt=$('#btt'),topEl=$('#top');
+function onScroll2(){const h=document.documentElement;const max=h.scrollHeight-innerHeight;const pr=max>0?h.scrollTop/max:0;pbar.style.width=(pr*100).toFixed(2)+'%';btt.classList.toggle('show',h.scrollTop>600);topEl.classList.toggle('scrolled',h.scrollTop>10)}
+document.addEventListener('scroll',onScroll2,{passive:true});onScroll2();
+btt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+// 代码块复制按钮
+document.querySelectorAll('pre.code').forEach(pre=>{
+  const b=document.createElement('button');b.className='copybtn';b.textContent='复制';
+  b.addEventListener('click',async()=>{const txt=pre.innerText;let ok=false;
+    try{await navigator.clipboard.writeText(txt);ok=true}catch(e){
+      try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(e2){}}
+    b.textContent=ok?'✓ 已复制':'失败';
+    if(ok){b.classList.add('ok');setTimeout(()=>{b.textContent='复制';b.classList.remove('ok')},1400)}});
+  pre.appendChild(b);
+});
+// 区块滚动淡入 + 表格逐行瀑布 + 卡片跟随光晕 + 图片灯箱
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.05});
+document.querySelectorAll('article > .tablewrap, article > .codewrap, article > blockquote').forEach(el=>{
+  el.classList.add('rv');io.observe(el);
+  el.querySelectorAll('tbody tr').forEach((tr,i)=>tr.style.setProperty('--r',Math.min(i,24)));
+});
+document.querySelectorAll('.spot,.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    el.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+// Hero 卡片 3D 倾斜（光晕之上的立体层；尊重减少动效）
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+document.querySelectorAll('.hcard').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+    el.style.transform='translateY(-3px) perspective(700px) rotateX('+(-py*5).toFixed(2)+'deg) rotateY('+(px*6).toFixed(2)+'deg)';
+  });
+  el.addEventListener('mouseleave',()=>{el.style.transform=''});
+});
+}
+const lb=document.createElement('div');lb.id='lbox';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+document.querySelector('article').addEventListener('click',e=>{
+  if(e.target.tagName==='IMG'){lb.querySelector('img').src=e.target.src;lb.classList.add('show')}
+  else if(lb.classList.contains('show'))lb.classList.remove('show');
+});
+lb.addEventListener('click',()=>lb.classList.remove('show'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show')});
+</script></body></html>
