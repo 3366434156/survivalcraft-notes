@@ -359,14 +359,6 @@ background:var(--top-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur
 background:linear-gradient(135deg,var(--acc),var(--acc-2));box-shadow:0 4px 12px rgba(99,102,241,.4)}
 #top .brand small{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.6px}
 .searchwrap{position:relative;margin-left:auto;width:min(340px,38vw)}
-#search{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);font-size:13.5px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s}
-#search::placeholder{color:var(--ink-faint)}
-#search:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);background:var(--sheet)}
-.searchwrap::before{content:"⌕";position:absolute;left:11px;top:50%;transform:translateY(-54%);color:var(--ink-faint);font-size:15px;pointer-events:none}
-#sres{position:absolute;top:calc(100% + 6px);left:0;right:0;display:none;background:var(--sheet);border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 44px rgba(2,6,23,.18);max-height:62vh;overflow:auto;padding:6px;z-index:30}
-#sres a{display:block;padding:8px 10px;border-radius:8px;font-size:13.5px;color:var(--ink);text-decoration:none}
-#sres a:hover{background:var(--acc-soft)}
-#sres .snip{display:block;font-size:12px;color:var(--ink-faint);margin-top:1px}
 #themeBtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1.2;color:var(--ink)}
 #themeBtn:hover{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
 #top .gh{color:var(--ink-soft);font-size:12.5px;text-decoration:none;white-space:nowrap;border:1px solid var(--line);border-radius:9px;padding:6px 11px;background:var(--surface)}
@@ -490,6 +482,7 @@ article.wideart{max-width:1060px}
 #top .gh{display:none}
 #top .brand small{display:none}
 .searchwrap{width:min(230px,50vw)}
+.searchwrap kbd{display:none}
 #main{padding:22px clamp(14px,3vw,24px) 70px}
 article{padding:22px 18px 30px;border-radius:14px}
 }
@@ -551,6 +544,13 @@ pre.code{margin:0;border:none;border-radius:0;box-shadow:none}
 @keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 #top.scrolled{box-shadow:0 10px 28px -14px rgba(2,6,23,.28)}
 @media (prefers-reduced-motion: reduce){.rv tbody tr{opacity:1;transform:none;animation:none}.tocind{transition:none}}
+/* 手机档（置于 CSS 末尾保证覆盖上方 searchwrap 宽度）：搜索收成纯图标钮，把宽度让给品牌名 */
+@media(max-width:600px){
+.searchwrap{width:38px;padding:7.5px 0;justify-content:center}
+.searchwrap .ph{display:none}
+#top{gap:8px}
+#top .brand b{font-size:15px;letter-spacing:-.1px;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+}
 @media print{
 #top,#side,#backdrop,#toc,#foot,#burger,.searchwrap,#themeBtn{display:none!important}
 body{background:#fff;color:#000}
