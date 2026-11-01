@@ -23,7 +23,7 @@
 
 - **裸写旁路**：`Terrain/TerrainChunk.SetCellValueFast` 不计数、不降级、不发行为——只许生成管线与画布地形用；运行时直写 = 修改不落盘 + 光照网格冻结。
 - **移动分支**（`movingBlock.MovingBlockSet!=null` 时第 9 步换成）：集合未停→旧值行为 `OnBlockStartMoving`；已停→新值行为 `OnBlockStopMoving`；然后 **return——OnBlockAdded/Removed 完全不触发**（这是箱子搬家内容不丢的根因） | SubsystemTerrain.cs:401-413
-- **批量范式=爆炸**：`AddExplosion` 入队(:237-244)→`Update` 把中心 ±4 内的排队爆炸一次全爆(:246-327)→`SimulateExplosion` BFS 压力衰减波(:343-639，衰减 `pressure/(pow(块数,0.66)+5·max(步-7,0))` :376-377)→每毁格 `DestroyCell(0,noDrop=true,noPS=true)`(:671-679)+75/95% 概率链爆 `TryExplodeBlock`(:225-235,:683)+碎块变抛射物(:701-750)→`PostprocessExplosions`：存活格行为 `OnExplosion`(:794-802)+起火(:803-809)+实体/掉落物冲量(:811-838)+音效分档(:839-882) | `Survivalcraft\Subsystem\SubsystemExplosions.cs`
+- **批量范式=爆炸**：`AddExplosion` 入队(:237-244)→`Update` 把中心 ±4 内的排队爆炸一次全爆(:246-327)→`SimulateExplosion` BFS 压力衰减波(:343-639，衰减 `pressure/(pow(块数,0.66)+5·max(步-7,0))` :376-377)→每毁格 `DestroyCell(0,noDrop=true,noPS=true)`(:671-679)+邻压/韧性比>5 时 75/95% 概率链爆 `TryExplodeBlock`(:225-235,:683)+碎块变抛射物(:701-750)→`PostprocessExplosions`：存活格行为 `OnExplosion`(:794-802)+起火(:803-809)+实体/掉落物冲量(:811-838)+音效分档(:839-882) | `Survivalcraft\Subsystem\SubsystemExplosions.cs`
 
 ### mod 视角：世界编辑器/结构放置的接口清单
 
